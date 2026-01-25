@@ -54,13 +54,14 @@ This section contains user stories for our planned features.
 
 
 ### 3.1. Core user stories
-balbhalbhablh (turn the bullet points below into proper user stories)
 
 #### 3.1.1. Accounts
-- create account
-- delete account
-- login
-- logout
+- As a user, I want to view my previous high scores so that I can track my progress and improvement.
+- As a user, I want to play from different devices so that I can continue my game wherever I am.
+- As a competitive person, I don't want others to be able to play on my account and beat my personal best score.
+- As someone who likes to play short games when I only have a few minutes of spare time, I would like to be able to sign into my account quickly.
+- As a forgetful person, I would like a way to recover my password if needed.
+- As person who is worried about their privacy online, I would like to be able to delete my account if I ever get bored of the game and decide to quit playing it.
 
 #### 3.1.2. Game configuration
 -	As a player, I want to be able to adjust the number of rounds so that I can play for certain amounts of time.
@@ -77,8 +78,10 @@ balbhalbhablh (turn the bullet points below into proper user stories)
 -	As a player, I want to be able to receive a score after the game so that I can track my performance.
 
 #### 3.1.4. User-submitted locations
-- upload an image
-- define the correct location
+- As a user, if I am going to spend time taking photos to suggest a location, I would like to be notified if my submission will be added to the game or not.
+- As a student of the campus the game is based on, I would like to be able to share pictures of my favorite places on campus.
+- As a user, I would like if there was a game mode that only consisted of guessing other user submitted locations.
+- As a player, I hope all submitted locations are actually on the campus and not just random photos.
 
 #### 3.2. Optional user stories
 We will update this section if we have time to implement optional features.
