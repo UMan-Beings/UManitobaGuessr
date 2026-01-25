@@ -87,5 +87,6 @@ We will update this section if we have time to implement optional features.
 - Frontend Language: Typescript
 - Frontend Framework: React
 - Backend Language: Java
-- Backend Frameword: SpringBoot
+- Backend Framework: SpringBoot
 - Database: PostgreSQL
+
