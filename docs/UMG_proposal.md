@@ -94,10 +94,20 @@ This section contains user stories for our planned features.
 We will update this section if we have time to implement optional features.
 
 ## 4. Technology
-- Frontend Language: Typescript
-- Frontend Framework: React
-- Backend Language: Java
-- Backend Framework: SpringBoot
-- Database: PostgreSQL
+
+### 4.1. Frontend
+- TypeScript
+- ReactJS
+- React Bootstrap
+
+### 4.2. Backend
+- Java
+- Spring Boot
+- Spring Security
+- Spring Data JPA
+
+### 4.3. Database
+- PostgreSQL
+
 
 
