@@ -1,18 +1,24 @@
 # UManitobaGuessr (UMG!)
 
 ## Table of Contents
-- [1. Project](#1-project)
-- [2. Features](#2-features)
-  - [2.1. Core features](#21-core-features)
-  - [2.2. Optional features](#22-optional-features)
-- [3. User Stories](#3-user-stories)
-  - [3.1. Core user stories](#31-core-user-stories)
-    - [3.1.1. Accounts](#311-accounts)
-    - [3.1.2. Game configuration](#312-game-configuration)
-    - [3.1.3. Location guessing](#313-location-guessing)
-    - [3.1.4. User-submitted locations](#314-user-submitted-locations)
-    - [3.2. Optional user stories](#32-optional-user-stories)
-- [4. Technology](#4-technology)
+- [1. Team](#1-team)
+  - [1.1. Name](#11-name)
+  - [1.2. Members](#12-members)
+- [2. Summary and Vision](#2-summary-and-vision)
+- [3. Features](#3-features)
+  - [3.1. Core features](#31-core-features)
+  - [3.2. Optional features](#32-optional-features)
+- [4. User Stories](#4-user-stories)
+  - [4.1. Core user stories](#41-core-user-stories)
+    - [4.1.1. Accounts](#411-accounts)
+    - [4.1.2. Game configuration](#412-game-configuration)
+    - [4.1.3. Location guessing](#413-location-guessing)
+    - [4.1.4. User-submitted locations](#414-user-submitted-locations)
+    - [4.2. Optional user stories](#42-optional-user-stories)
+- [5. Technology](#5-technology)
+  - [5.1. Frontend](#51-frontend)
+  - [5.2. Backend](#52-backend)
+  - [5.3. Database](#53-database)
 
 ## 1. Team
 
@@ -108,6 +114,7 @@ We will update this section if we have time to implement optional features.
 
 ### 5.3. Database
 - PostgreSQL
+
 
 
 
