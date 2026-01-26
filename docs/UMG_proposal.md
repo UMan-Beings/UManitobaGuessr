@@ -1,9 +1,4 @@
-# UMG! (UManitobaGuessr) - Team UMan Beings
-
-- Jason Bilinsky
-- Kunhao Zhang
-- Lucas McFarlane
-- Richard Marinas
+# UManitobaGuessr (UMG!)
 
 ## Table of Contents
 - [1. Project](#1-project)
@@ -18,6 +13,18 @@
     - [3.1.4. User-submitted locations](#314-user-submitted-locations)
     - [3.2. Optional user stories](#32-optional-user-stories)
 - [4. Technology](#4-technology)
+
+## 1. Team
+### 1.1. Name
+UMan Beings
+
+### 1.2. Members
+| Name                | Username        |
+|---------------------|-----------------|
+| Richard Marinas Jr. | marinarj        |
+| Jason Bilinsky      | JasonB26        |
+| Kunhao Zhang        | GilgameshACP    |
+| Lucas McFarlane     | lucasjmcfarlane |
 
 ## 1. Summary and Vision
 
@@ -92,4 +99,5 @@ We will update this section if we have time to implement optional features.
 - Backend Language: Java
 - Backend Framework: SpringBoot
 - Database: PostgreSQL
+
 
