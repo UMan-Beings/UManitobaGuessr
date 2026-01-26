@@ -14,7 +14,7 @@
     - [4.1.2. Game configuration](#412-game-configuration)
     - [4.1.3. Location guessing](#413-location-guessing)
     - [4.1.4. User-submitted locations](#414-user-submitted-locations)
-    - [4.2. Optional user stories](#42-optional-user-stories)
+  - [4.2. Optional user stories](#42-optional-user-stories)
 - [5. Technology](#5-technology)
   - [5.1. Frontend](#51-frontend)
   - [5.2. Backend](#52-backend)
@@ -96,7 +96,7 @@ This section contains user stories for our planned features.
 - As a user, I would like if there was a game mode that only consisted of guessing other user submitted locations.
 - As a player, I hope all submitted locations are actually on the campus and not just random photos.
 
-#### 4.2. Optional user stories
+### 4.2. Optional user stories
 We will update this section if we have time to implement optional features.
 
 ## 5. Technology
@@ -114,6 +114,7 @@ We will update this section if we have time to implement optional features.
 
 ### 5.3. Database
 - PostgreSQL
+
 
 
 
