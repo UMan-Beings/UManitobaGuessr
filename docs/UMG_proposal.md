@@ -103,8 +103,8 @@ We will update this section if we have time to implement optional features.
 
 ### 5.1. Frontend
 - TypeScript
-- ReactJS
-- React Bootstrap
+- VueJS
+- Vuetify
 
 ### 5.2. Backend
 - Java
@@ -114,6 +114,7 @@ We will update this section if we have time to implement optional features.
 
 ### 5.3. Database
 - PostgreSQL
+
 
 
 
