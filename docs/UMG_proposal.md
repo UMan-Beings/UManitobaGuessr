@@ -69,12 +69,62 @@ This section contains user stories for our planned features.
 ### 4.1. Core user stories
 
 #### 4.1.1. Accounts
-- As a user, I want to view my previous high scores so that I can track my progress and improvement.
-- As a user, I want to play from different devices so that I can continue my game wherever I am.
-- As a competitive person, I don't want others to be able to play on my account and beat my personal best score.
-- As someone who likes to play short games when I only have a few minutes of spare time, I would like to be able to sign into my account quickly.
-- As a forgetful person, I would like a way to recover my password if needed.
-- As person who is worried about their privacy online, I would like to be able to delete my account if I ever get bored of the game and decide to quit playing it.
+
+**Title: Play From Different Devices**  
+As a: registered user  
+I want to: log into my account from different devices  
+So that I can: continue my game progress wherever I am  
+
+Acceptance Criteria:
+- The user can log in to the same account on multiple devices.
+- Game progress and high scores are synchronized across devices.
+- Updates made on one device are reflected on other devices after login or refresh.
+- The user does not need to create a new account for each device.
+
+
+**Title: Account Security for Competitive Play**  
+As a: competitive user  
+I want to: restrict access to my account  
+So that I can: ensure no one else can play on my account or affect my high score  
+
+Acceptance Criteria:
+- The system requires authentication to access an account.
+- Only the authenticated user can play games that affect their high score.
+- Logging out prevents further changes to the user’s account data.
+
+**Title: Quick Sign-In for Short Play Sessions**  
+As a: user with limited time  
+I want to: sign into my account quickly  
+So that I can: start playing short games without unnecessary delay  
+
+Acceptance Criteria:
+- The login process consists of minimal required steps.
+- Returning users can sign in within a few seconds.
+- Clear error messages are shown if login fails.
+- The user is taken directly to the game after successful login.
+
+**Title: Password Recovery**  
+As a: forgetful user  
+I want to: recover my password using a verification method (e.g., email)  
+So that I can: regain access to my account if I forget my password  
+
+Acceptance Criteria:
+- A password recovery option is available on the login screen.
+- The system verifies the user’s identity (e.g., via email).
+- The user can reset their password successfully.
+- The new password works immediately for login.
+
+**Title: Account Deletion for Privacy**  
+As a: privacy-conscious user  
+I want to: delete my account and associated data  
+So that I can: permanently remove my information from the system when I stop playing  
+
+Acceptance Criteria:
+- The user can request account deletion from account settings.
+- The system asks for confirmation before deleting the account.
+- All user-related data, including high scores, is permanently removed.
+- The deleted account can no longer be used to log in.
+
 
 #### 4.1.2. Game configuration
 -	As a player, I want to be able to adjust the number of rounds so that I can play for certain amounts of time.
@@ -90,11 +140,49 @@ This section contains user stories for our planned features.
 -	As a player, I want to be able to check the game progress so that I can determine the number of remaining rounds.
 -	As a player, I want to be able to receive a score after the game so that I can track my performance.
 
-#### 4.1.4. User-submitted locations
-- As a user, if I am going to spend time taking photos to suggest a location, I would like to be notified if my submission will be added to the game or not.
-- As a student of the campus the game is based on, I would like to be able to share pictures of my favorite places on campus.
-- As a user, I would like if there was a game mode that only consisted of guessing other user submitted locations.
-- As a player, I hope all submitted locations are actually on the campus and not just random photos.
+#### 4.1.4. Player Statistics
+**Title: Display Total Guesses**    
+As a: registered user  
+I want to: see the total number of guesses I have made    
+So that I can: track my overall game activity    
+
+Acceptance Criteria:
+- The total number of guesses is displayed on the user's profile or dashboard.
+- The number updates automatically after each completed game.
+- The display format is clear and readable.
+
+
+**Title: Display Total Score**  
+As a: registered user  
+I want to: view my cumulative score across all games  
+So that I can: monitor my overall performance and progress  
+
+Acceptance Criteria:
+- The total score is displayed on the user's profile or dashboard.
+- The score updates immediately after each game ends.
+- The user can distinguish total score from individual game scores.
+
+
+**Title: Display Average Score**  
+As a: registered user  
+I want to: see my average score per game  
+So that I can: evaluate my performance consistency  
+
+Acceptance Criteria:
+- The average score is calculated based on all completed games.
+- The average updates automatically as new games are completed.
+- The calculation method is transparent and consistent.
+
+
+**Title: Display Average Time to Guess**  
+As a: registered user   
+I want to: view my average time taken to guess correctly  
+So that I can: track my speed and improve my performance  
+
+Acceptance Criteria:
+- The average time is displayed on the user's profile or dashboard.
+- The average updates automatically after each game.
+- The time is displayed in a clear format (e.g., seconds or minutes:seconds).
 
 ### 4.2. Optional user stories
 We will update this section if we have time to implement optional features.
