@@ -62,7 +62,15 @@ Furthermore, **UMG** allows users to upload pictures to create custom challenges
 ### 2.2. Vision
 **UManitobaGuessr** aims to insipre curiosity about the campus and the University of Manitoba, and connect people through the exploration. By blending entertainment and knowledge, **UMG** aspires to make learning about our campus an engaging and rewarding experience.
 
-(TA: Taufiqul Khan (Taufiq))
+### 2.3. Stakeholders
+
+#### 2.3.1. Internal
+- Development team
+- Course instructor
+- Teaching assitant
+
+#### 2.3.2. External
+- Students, staff, and visitors of the University of Manitoba Fort Garry campus
 
 ## 3. Features
 This section contains the core and optional features for our application.
@@ -287,6 +295,7 @@ Acceptance Criteria:
 
 ### 5.3. Database
 - PostgreSQL
+
 
 
 
