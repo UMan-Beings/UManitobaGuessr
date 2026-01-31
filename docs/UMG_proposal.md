@@ -67,7 +67,7 @@ Furthermore, **UMG** allows users to upload pictures to create custom challenges
 #### 2.3.1. Internal
 - Development team
 - Course instructor
-- Teaching assitant
+- Teaching assistant
 
 #### 2.3.2. External
 - Students, staff, and visitors of the University of Manitoba Fort Garry campus
@@ -295,6 +295,7 @@ Acceptance Criteria:
 
 ### 5.3. Database
 - PostgreSQL
+
 
 
 
