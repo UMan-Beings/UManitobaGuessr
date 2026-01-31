@@ -15,9 +15,10 @@
   - [3.2. Optional features](#32-optional-features)
 - [4. User Stories](#4-user-stories)
   - [4.1. Game configuration](#41-game-configuration)
-    - [4.1.1. Adjusting Number of Rounds](#411-adjusting-number-of-rounds)
-    - [4.1.2. Enable/Disable Timer](#412-enabledisable-timer)
-    - [4.1.3. Adjusting Timer Duration](#413-adjusting-timer-duration)
+    - [4.1.1. Game Configuration Overview](#411-game-configuration-overview) 
+    - [4.1.2. Adjusting Number of Rounds](#412-adjusting-number-of-rounds)
+    - [4.1.3. Enable/Disable Timer](#413-enabledisable-timer)
+    - [4.1.4. Adjusting Timer Duration](#414-adjusting-timer-duration)
   - [4.2. Location guessing](#42-location-guessing)
     - [4.2.1. Image View](#421-image-view)
     - [4.2.2. Making a Guess](#422-making-a-guess)
@@ -100,15 +101,30 @@ This section contains user stories for our planned core features. The user stori
 
 ### 4.1. Game configuration
 
-#### 4.1.1. Adjusting Number of Rounds  
+#### 4.1.1. Game Configuration Overview
+As a: player  
+I want to: access and use a game configuration page before starting a game  
+So that I can: review and adjust my game settings.  
+
+Acceptance Criteria:
+- Given I am on the main menu, I should be able to navigate to the game configuration page.
+- Given I am on the game configuration page, I should see the current values for number of rounds, timer enabled/disabled, and timer duration.
+- Given I leave the game configuration menu and return to it during the same session, my previously selected configurations should still be set.
+- Given I start a new game, the game should use the settings from the game configuration page.
+
+#### 4.1.2. Adjusting Number of Rounds  
 As a: player  
 I want to: be able to adjust the number of rounds  
 So that I can: play for certain amounts of time  
 
 Acceptance Criteria:
 - Given I am at the configuration page, I should have buttons to adjust the number of rounds.
+- Given I click the increment button, the number of rounds should increase by one.
+- Given I click the decrement button, the number of rounds should decrease by one.
+- Given the number of rounds is at the maximum allowed value, the increment button should be disabled.
+- Given the number of rounds is at the minimum allowed value, the decrement button should be disabled.
 
-#### 4.1.2. Enable/Disable Timer
+#### 4.1.3. Enable/Disable Timer
 As a: player  
 I want to: be able to turn on the timer  
 So that I can: play with a time limit for extra difficulty  
@@ -116,13 +132,17 @@ So that I can: play with a time limit for extra difficulty
 Acceptance Criteria:
 - Given I am at the configuration page, when I click on "Timer" button, I should be able to enable/disable the timer.
 
-#### 4.1.3. Adjusting Timer Duration
+#### 4.1.4. Adjusting Timer Duration
 As a: player  
 I want to: be able to adjust the timer duration  
 So that I can: choose the challenge level I want  
 
 Acceptance Criteria:
-- Given I am at the configuration page, I should be able to set a time length and play with the duration setting.
+- Given I am on the game configuration page and the timer is disabled, the timer duration value and input field should not be shown.
+- Given I am on the game configuration page and the timer is enabled, the timer duration value in seconds and input field should be shown.
+- Given the timer duration field is shown, when I enter a number into the field, the displayed timer duration should updated to that value.
+- Given I enter a number that is outside the minimum or maximum timer duration, the input should be rejected and an error message should be shown.
+- Given I enter a non-numeric character into the duration input field, the input should be rejected and an error message should be shown.
 
 ### 4.2. Location guessing
 
@@ -298,6 +318,7 @@ Acceptance Criteria:
 
 ### 5.3. Database
 - PostgreSQL
+
 
 
 
