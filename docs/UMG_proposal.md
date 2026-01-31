@@ -1,6 +1,6 @@
 # UManitobaGuessr (UMG!)
 
-## Table of Contents
+# Table of Contents
 - [1. Team](#1-team)
   - [1.1. Name](#11-name)
   - [1.2. Members](#12-members)
@@ -9,17 +9,33 @@
   - [3.1. Core features](#31-core-features)
   - [3.2. Optional features](#32-optional-features)
 - [4. User Stories](#4-user-stories)
-  - [4.1. Core user stories](#41-core-user-stories)
-    - [4.1.1. Game configuration](#411-game-configuration)
-    - [4.1.2. Location guessing](#412-location-guessing)
-    - [4.1.3. Accounts](#413-accounts)
-    - [4.1.4. Player Statistics](#414-player-statistics)
-  - [4.2. Optional user stories](#42-optional-user-stories)
+  - [4.1. Game configuration](#41-game-configuration)
+    - [4.1.1. Adjusting Number of Rounds](#411-adjusting-number-of-rounds)
+    - [4.1.2. Enable/Disable Timer](#412-enabledisable-timer)
+    - [4.1.3. Adjusting Timer Duration](#413-adjusting-timer-duration)
+  - [4.2. Location guessing](#42-location-guessing)
+    - [4.2.1. Image View](#421-image-view)
+    - [4.2.2. Making a Guess](#422-making-a-guess)
+    - [4.2.3. Image/Map Zoom](#423-imagemap-zoom)
+    - [4.2.4. Reveal Correct Answer](#424-reveal-correct-answer)
+    - [4.2.5. Confirm and Cancel Selection](#425-confirm-and-cancel-selection)
+    - [4.2.6. Round Counter](#426-round-counter)
+    - [4.2.7. Receiving Score After Game](#427-receiving-score-after-game)
+  - [4.3. Accounts](#43-accounts)
+    - [4.3.1. Play From Different Devices](#431-play-from-different-devices)
+    - [4.3.2. Account Security for Competitive Play](#432-account-security-for-competitive-play)
+    - [4.3.3. Quick Sign-In for Short Play Sessions](#433-quick-sign-in-for-short-play-sessions)
+    - [4.3.4. Password Recovery](#434-password-recovery)
+    - [4.3.5. Account Deletion for Privacy](#435-account-deletion-for-privacy)
+  - [4.4. Player Statistics](#44-player-statistics)
+    - [4.4.1. Display Total Guesses](#441-display-total-guesses)
+    - [4.4.2. Display Total Score](#442-display-total-score)
+    - [4.4.3. Display Average Score](#443-display-average-score)
+    - [4.4.4. Display Average Time to Guess](#444-display-average-time-to-guess)
 - [5. Technology](#5-technology)
   - [5.1. Frontend](#51-frontend)
   - [5.2. Backend](#52-backend)
   - [5.3. Database](#53-database)
-
 
 ## 1. Team
 
@@ -65,13 +81,11 @@ We might implement some of these features in Sprint 3 or 4.
 - Leaderboards
 
 ## 4. User Stories
-This section contains user stories for our planned features.
+This section contains user stories for our planned core features. The user stories for optional features will be written if we have time to implement them.
 
-### 4.1. Core user stories
+### 4.1. Game configuration
 
-#### 4.1.1. Game configuration
-
-**Title: Adjusting Number of Rounds**  
+#### 4.1.1. Adjusting Number of Rounds  
 As a: player
 I want to: be able to adjust the number of rounds
 So that I can: play for certain amounts of time
@@ -79,7 +93,7 @@ So that I can: play for certain amounts of time
 Acceptance Criteria:
 - Given I am at the configuration page, I should have buttons to adjust the number of rounds.
 
-**Title: Enable/Disable Timer**  
+#### 4.1.2. Enable/Disable Timer
 As a: player
 I want to: be able to turn on the timer
 So that I can: play with a time limit for extra difficulty
@@ -87,7 +101,7 @@ So that I can: play with a time limit for extra difficulty
 Acceptance Criteria:
 - Given I am at the configuration page, when I click on "Timer" button, I should be able to enable/disable the timer.
 
-**Title: Adjusting Timer Duration**  
+#### 4.1.3. Adjusting Timer Duration
 As a: player
 I want to: be able to adjust the timer duration
 So that I can: choose the challenge level I want
@@ -95,9 +109,9 @@ So that I can: choose the challenge level I want
 Acceptance Criteria:
 - Given I am at the configuration page, I should be able to set a time length and play with the duration setting.
 
-#### 4.1.2. Location guessing
+### 4.2. Location guessing
 
-**Title: Image View**  
+#### 4.2.1. Image View
 As a: player
 I want to: be able to view the picture
 So that I can: gather information about the location
@@ -105,7 +119,7 @@ So that I can: gather information about the location
 Acceptance Criteria:
 - Given a new round of game, I can view the picture of the current location.
 
-**Title: Making a Guess**  
+#### 4.2.2. Making a Guess
 As a: player
 I want to: be able to click on the map
 so that I can: guess the location of the picture
@@ -114,7 +128,7 @@ Acceptance Criteria:
 - Given I am in the game, when I hover over the map, the map should maximize for better view.
 - Given the map is maximized, when I click a location, it should be marked as the current guess.
 
-**Title: Image/Map Zoom**  
+#### 4.2.3. Image/Map Zoom
 As a: player
 I want to: be able to zoom in and out
 So that I can: check details of pictures or make precise guesses
@@ -122,7 +136,7 @@ So that I can: check details of pictures or make precise guesses
 Acceptance Criteria:
 - Given a picture or a map, I can zoom in and out on the cursor position when I scroll up or down accordingly.
 
-**Title: Reveal Correct Answer**  
+#### 4.2.4. Reveal Correct Answer
 As a: player
 I want to: know the correct answer after guessing
 So that I can: know my performance
@@ -130,7 +144,7 @@ So that I can: know my performance
 Acceptance Criteria:
 - Given a guess, after I submit the answer, I should be shown the correct location of the picture.
 
-**Title: Confirm and Cancel Selection**  
+#### 4.2.5. Confirm and Cancel Selection
 As a: player
 I want to: be able to verify and cancel my guess
 So that I can: make changes when I misclick
@@ -139,7 +153,7 @@ Acceptance Criteria:
 - Given a location was selected, I can choose another location by clicking another location on the map.
 - Given a location was selected, when I click "confirm", the location should be submitted as the final answer.
 
-**Title: Round Counter**  
+#### 4.2.6. Round Counter
 As a: player
 I want to: be able to check the game progress
 So that I can: determine the number of remaining round
@@ -147,7 +161,7 @@ So that I can: determine the number of remaining round
 Acceptance Criteria:
 - Given a game, I can check how many rounds are left with a counter on screen.
 
-**Title: Receiving Score After Game**  
+#### 4.2.7. Receiving Score After Game
 As a: player
 I want to: be able to receive a score after the game
 So that I can: track my performance
@@ -155,9 +169,9 @@ So that I can: track my performance
 Acceptance criteria:
 - Given that a guess was submitted, I should receive a score based on precision of my answer and time taken.
 
-#### 4.1.3. Accounts
+### 4.3. Accounts
 
-**Title: Play From Different Devices**  
+#### 4.3.1. Play From Different Devices
 As a: registered user  
 I want to: log into my account from different devices  
 So that I can: continue my game progress wherever I am  
@@ -168,7 +182,7 @@ Acceptance Criteria:
 - Given that the user logs in with the same account, updates made on one device are reflected on other devices after login or refresh.
 - Given that the user has an account, the user does not need to create new accounts for different devices.
 
-**Title: Account Security for Competitive Play**  
+#### 4.3.2. Account Security for Competitive Play
 As a: competitive user  
 I want to: restrict access to my account  
 So that I can: ensure no one else can play on my account or affect my high score  
@@ -178,7 +192,7 @@ Acceptance Criteria:
 - Given that an account is present, only the authenticated user can play games that affect their high score.
 - Given that an account is present, logging out prevents further changes to the user’s account data.
 
-**Title: Quick Sign-In for Short Play Sessions**  
+#### 4.3.3. Quick Sign-In for Short Play Sessions
 As a: user with limited time  
 I want to: sign into my account quickly  
 So that I can: start playing short games without unnecessary delay  
@@ -189,7 +203,7 @@ Acceptance Criteria:
 - Given a login attemp failed, clear error messages are shown.
 - Given a login attemp was successful, the user is taken directly to the game homepage.
 
-**Title: Password Recovery**  
+#### 4.3.4. Password Recovery
 As a: forgetful user  
 I want to: recover my password using a verification method (e.g., email)  
 So that I can: regain access to my account if I forget my password  
@@ -201,7 +215,7 @@ Acceptance Criteria:
 - Given the resetting page, the user can enter a new password.
 - Given a reset of password, the new password works immediately.
 
-**Title: Account Deletion for Privacy**  
+#### 4.3.5. Account Deletion for Privacy
 As a: privacy-conscious user  
 I want to: delete my account and associated data  
 So that I can: permanently remove my information from the system when I stop playing  
@@ -212,9 +226,9 @@ Acceptance Criteria:
 - Given confirmation of deletion, all user-related data, including high scores, is permanently removed.
 - Given confirmation of deletion, the deleted account can no longer be used to log in.
 
-#### 4.1.4. Player Statistics
+### 4.4. Player Statistics
 
-**Title: Display Total Guesses**    
+#### 4.4.1. Display Total Guesses
 As a: registered user  
 I want to: see the total number of guesses I have made    
 So that I can: track my overall game activity    
@@ -224,7 +238,7 @@ Acceptance Criteria:
 - Given the statisics page, the total number of guesses updates automatically after each completed game.
 - Given the statisics page, the display format is clear and readable.
 
-**Title: Display Total Score**  
+#### 4.4.2. Display Total Score
 As a: registered user  
 I want to: view my cumulative score across all games  
 So that I can: monitor my overall performance and progress  
@@ -234,7 +248,7 @@ Acceptance Criteria:
 - Given the statisics page, the score updates immediately after each game ends.
 - Given the statisics page, the user can distinguish total score from individual game scores.
 
-**Title: Display Average Score**  
+#### 4.4.3. Display Average Score
 As a: registered user  
 I want to: see my average score per game  
 So that I can: evaluate my performance consistency  
@@ -244,7 +258,7 @@ Acceptance Criteria:
 - Given the statisics page, the average updates automatically as new games are completed.
 - Given the statisics page, the calculation method is transparent and consistent.
 
-**Title: Display Average Time to Guess**  
+#### 4.4.4. Display Average Time to Guess
 As a: registered user   
 I want to: view my average time taken to guess correctly  
 So that I can: track my speed and improve my performance  
@@ -253,9 +267,6 @@ Acceptance Criteria:
 - Given the statisics page, the average time is displayed on the user's profile or dashboard.
 - Given the statisics page, the average updates automatically after each game.
 - Given the statisics page, the time is displayed in a clear format (e.g., seconds or minutes:seconds).
-
-### 4.2. Optional user stories
-We will update this section if we have time to implement optional features.
 
 ## 5. Technology
 
@@ -272,6 +283,7 @@ We will update this section if we have time to implement optional features.
 
 ### 5.3. Database
 - PostgreSQL
+
 
 
 
