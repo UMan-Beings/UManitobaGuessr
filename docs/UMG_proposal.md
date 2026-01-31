@@ -1,10 +1,12 @@
 # UManitobaGuessr (UMG!)
 
-# Table of Contents
+## Table of Contents
 - [1. Team](#1-team)
   - [1.1. Name](#11-name)
   - [1.2. Members](#12-members)
-- [2. Summary and Vision](#2-summary-and-vision)
+- [2. Project](#2-project)
+  - [2.1. Summary](#21-summary)
+  - [2.2. Vision](#22-vision)
 - [3. Features](#3-features)
   - [3.1. Core features](#31-core-features)
   - [3.2. Optional features](#32-optional-features)
@@ -50,12 +52,14 @@ UMan Beings
 | Kunhao Zhang        | GilgameshACP    |
 | Lucas McFarlane     | lucasjmcfarlane |
 
-## 2. Summary and Vision
+## 2. Project
 
+### 2.1. Summary
 **UManitobaGuessr (UMG)** is an interactive geography-based game inspired by GeoGuessr, it challenges players to identify real-world locations on campus of the University of Manitoba based on clues given as pictures. Players can test their knowledge of Fort Garry Campus through scores they receive based on their performance, and learn places they do not know while playing the game.
 
-Furthermore, **UMG** allows users to upload pictures to create custom challenges. Unlike traditional GeoGuessr games, **UManitobaGuessr** focuses on the university and it builds a community by building a community where everyone can participate to fill in new locations.
+Furthermore, **UMG** allows users to upload pictures to create custom challenges. Unlike traditional GeoGuessr games, **UManitobaGuessr** focuses on the university and it builds a community where everyone can participate to fill in new locations.
 
+### 2.2. Vision
 **UManitobaGuessr** aims to insipre curiosity about the campus and the University of Manitoba, and connect people through the exploration. By blending entertainment and knowledge, **UMG** aspires to make learning about our campus an engaging and rewarding experience.
 
 (TA: Taufiqul Khan (Taufiq))
@@ -283,6 +287,7 @@ Acceptance Criteria:
 
 ### 5.3. Database
 - PostgreSQL
+
 
 
 
