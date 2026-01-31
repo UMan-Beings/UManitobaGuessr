@@ -10,15 +10,16 @@
   - [3.2. Optional features](#32-optional-features)
 - [4. User Stories](#4-user-stories)
   - [4.1. Core user stories](#41-core-user-stories)
-    - [4.1.1. Accounts](#411-accounts)
-    - [4.1.2. Game configuration](#412-game-configuration)
-    - [4.1.3. Location guessing](#413-location-guessing)
-    - [4.1.4. User-submitted locations](#414-user-submitted-locations)
+    - [4.1.1. Game configuration](#411-game-configuration)
+    - [4.1.2. Location guessing](#412-location-guessing)
+    - [4.1.3. Accounts](#413-accounts)
+    - [4.1.4. Player Statistics](#414-player-statistics)
   - [4.2. Optional user stories](#42-optional-user-stories)
 - [5. Technology](#5-technology)
   - [5.1. Frontend](#51-frontend)
   - [5.2. Backend](#52-backend)
   - [5.3. Database](#53-database)
+
 
 ## 1. Team
 
@@ -48,10 +49,10 @@ This section contains the core and optional features for our application.
 
 ### 3.1. Core features
 There are four core features that are fundamental for the game.
-- Accounts
 - Game configuration
 - Location guessing
-- User-submitted locations
+- Account management
+- Player statistics
 
 ### 3.2. Optional features
 We might implement some of these features in Sprint 3 or 4.
@@ -68,65 +69,7 @@ This section contains user stories for our planned features.
 
 ### 4.1. Core user stories
 
-#### 4.1.1. Accounts
-
-**Title: Play From Different Devices**  
-As a: registered user  
-I want to: log into my account from different devices  
-So that I can: continue my game progress wherever I am  
-
-Acceptance Criteria:
-- Given that the user has an account, the user can log in to the same account on multiple devices.
-- Given that the user logs in with the same account, game progress and high scores are synchronized across devices.
-- Given that the user logs in with the same account, updates made on one device are reflected on other devices after login or refresh.
-- Given that the user has an account, the user does not need to create new accounts for different devices.
-
-**Title: Account Security for Competitive Play**  
-As a: competitive user  
-I want to: restrict access to my account  
-So that I can: ensure no one else can play on my account or affect my high score  
-
-Acceptance Criteria:
-- Given that an account is present, the system requires authentication to access an account.
-- Given that an account is present, only the authenticated user can play games that affect their high score.
-- Given that an account is present, logging out prevents further changes to the user’s account data.
-
-**Title: Quick Sign-In for Short Play Sessions**  
-As a: user with limited time  
-I want to: sign into my account quickly  
-So that I can: start playing short games without unnecessary delay  
-
-Acceptance Criteria:
-- Given the login page, the login process consists of minimal required steps.
-- Given the login page, Returning users can sign in within a few seconds.
-- Given a login attemp failed, clear error messages are shown.
-- Given a login attemp was successful, the user is taken directly to the game homepage.
-
-**Title: Password Recovery**  
-As a: forgetful user  
-I want to: recover my password using a verification method (e.g., email)  
-So that I can: regain access to my account if I forget my password  
-
-Acceptance Criteria:
-- Given the login page, a password recovery option is available on the login screen.
-- Given the recovery page, the system verifies the user’s identity (e.g., via email).
-- Given the verification of email, the user can receive an email containing a link for resetting the password.
-- Given the resetting page, the user can enter a new password.
-- Given a reset of password, the new password works immediately.
-
-**Title: Account Deletion for Privacy**  
-As a: privacy-conscious user  
-I want to: delete my account and associated data  
-So that I can: permanently remove my information from the system when I stop playing  
-
-Acceptance Criteria:
-- Given the account management page, the user can request account deletion by clicking "Delete account".
-- Given the deletion page, the system asks for confirmation before deleting the account.
-- Given confirmation of deletion, all user-related data, including high scores, is permanently removed.
-- Given confirmation of deletion, the deleted account can no longer be used to log in.
-
-
-#### 4.1.2. Game configuration
+#### 4.1.1. Game configuration
 
 **Title: Adjusting Number of Rounds**  
 As a: player
@@ -152,7 +95,7 @@ So that I can: choose the challenge level I want
 Acceptance Criteria:
 - Given I am at the configuration page, I should be able to set a time length and play with the duration setting.
 
-#### 4.1.3. Location guessing
+#### 4.1.2. Location guessing
 
 **Title: Image View**  
 As a: player
@@ -212,6 +155,62 @@ So that I can: track my performance
 Acceptance criteria:
 - Given that a guess was submitted, I should receive a score based on precision of my answer and time taken.
 
+#### 4.1.3. Accounts
+
+**Title: Play From Different Devices**  
+As a: registered user  
+I want to: log into my account from different devices  
+So that I can: continue my game progress wherever I am  
+
+Acceptance Criteria:
+- Given that the user has an account, the user can log in to the same account on multiple devices.
+- Given that the user logs in with the same account, game progress and high scores are synchronized across devices.
+- Given that the user logs in with the same account, updates made on one device are reflected on other devices after login or refresh.
+- Given that the user has an account, the user does not need to create new accounts for different devices.
+
+**Title: Account Security for Competitive Play**  
+As a: competitive user  
+I want to: restrict access to my account  
+So that I can: ensure no one else can play on my account or affect my high score  
+
+Acceptance Criteria:
+- Given that an account is present, the system requires authentication to access an account.
+- Given that an account is present, only the authenticated user can play games that affect their high score.
+- Given that an account is present, logging out prevents further changes to the user’s account data.
+
+**Title: Quick Sign-In for Short Play Sessions**  
+As a: user with limited time  
+I want to: sign into my account quickly  
+So that I can: start playing short games without unnecessary delay  
+
+Acceptance Criteria:
+- Given the login page, the login process consists of minimal required steps.
+- Given the login page, Returning users can sign in within a few seconds.
+- Given a login attemp failed, clear error messages are shown.
+- Given a login attemp was successful, the user is taken directly to the game homepage.
+
+**Title: Password Recovery**  
+As a: forgetful user  
+I want to: recover my password using a verification method (e.g., email)  
+So that I can: regain access to my account if I forget my password  
+
+Acceptance Criteria:
+- Given the login page, a password recovery option is available on the login screen.
+- Given the recovery page, the system verifies the user’s identity (e.g., via email).
+- Given the verification of email, the user can receive an email containing a link for resetting the password.
+- Given the resetting page, the user can enter a new password.
+- Given a reset of password, the new password works immediately.
+
+**Title: Account Deletion for Privacy**  
+As a: privacy-conscious user  
+I want to: delete my account and associated data  
+So that I can: permanently remove my information from the system when I stop playing  
+
+Acceptance Criteria:
+- Given the account management page, the user can request account deletion by clicking "Delete account".
+- Given the deletion page, the system asks for confirmation before deleting the account.
+- Given confirmation of deletion, all user-related data, including high scores, is permanently removed.
+- Given confirmation of deletion, the deleted account can no longer be used to log in.
 
 #### 4.1.4. Player Statistics
 
@@ -273,10 +272,6 @@ We will update this section if we have time to implement optional features.
 
 ### 5.3. Database
 - PostgreSQL
-
-
-
-
 
 
 
