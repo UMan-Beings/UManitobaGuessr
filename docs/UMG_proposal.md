@@ -11,15 +11,15 @@
     - [2.3.1. Internal](#231-internal)
     - [2.3.2. External](#232-external)
 - [3. Features](#3-features)
-  - [3.1. Core features](#31-core-features)
-  - [3.2. Optional features](#32-optional-features)
+  - [3.1. Core](#31-core-features)
+  - [3.2. Optional](#32-optional-features)
 - [4. User Stories](#4-user-stories)
-  - [4.1. Game configuration](#41-game-configuration)
+  - [4.1. Game Configuration](#41-game-configuration)
     - [4.1.1. Game Configuration Overview](#411-game-configuration-overview) 
     - [4.1.2. Adjusting Number of Rounds](#412-adjusting-number-of-rounds)
     - [4.1.3. Enable/Disable Timer](#413-enabledisable-timer)
     - [4.1.4. Adjusting Timer Duration](#414-adjusting-timer-duration)
-  - [4.2. Location guessing](#42-location-guessing)
+  - [4.2. Location Guessing](#42-location-guessing)
     - [4.2.1. Image View](#421-image-view)
     - [4.2.2. Making a Guess](#422-making-a-guess)
     - [4.2.3. Image/Map Zoom](#423-imagemap-zoom)
@@ -318,6 +318,7 @@ Acceptance Criteria:
 
 ### 5.3. Database
 - PostgreSQL
+
 
 
 
