@@ -7,6 +7,9 @@
 - [2. Project](#2-project)
   - [2.1. Summary](#21-summary)
   - [2.2. Vision](#22-vision)
+  - [2.3. Stakeholders](#23-stakeholders)
+    - [2.3.1. Internal](#231-internal)
+    - [2.3.2. External](#232-external)
 - [3. Features](#3-features)
   - [3.1. Core features](#31-core-features)
   - [3.2. Optional features](#32-optional-features)
@@ -295,6 +298,7 @@ Acceptance Criteria:
 
 ### 5.3. Database
 - PostgreSQL
+
 
 
 
