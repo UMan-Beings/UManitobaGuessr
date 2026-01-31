@@ -86,25 +86,25 @@ This section contains user stories for our planned core features. The user stori
 ### 4.1. Game configuration
 
 #### 4.1.1. Adjusting Number of Rounds  
-As a: player
-I want to: be able to adjust the number of rounds
-So that I can: play for certain amounts of time
+As a: player  
+I want to: be able to adjust the number of rounds  
+So that I can: play for certain amounts of time  
 
 Acceptance Criteria:
 - Given I am at the configuration page, I should have buttons to adjust the number of rounds.
 
 #### 4.1.2. Enable/Disable Timer
-As a: player
-I want to: be able to turn on the timer
-So that I can: play with a time limit for extra difficulty
+As a: player  
+I want to: be able to turn on the timer  
+So that I can: play with a time limit for extra difficulty  
 
 Acceptance Criteria:
 - Given I am at the configuration page, when I click on "Timer" button, I should be able to enable/disable the timer.
 
 #### 4.1.3. Adjusting Timer Duration
-As a: player
-I want to: be able to adjust the timer duration
-So that I can: choose the challenge level I want
+As a: player  
+I want to: be able to adjust the timer duration  
+So that I can: choose the challenge level I want  
 
 Acceptance Criteria:
 - Given I am at the configuration page, I should be able to set a time length and play with the duration setting.
@@ -112,59 +112,59 @@ Acceptance Criteria:
 ### 4.2. Location guessing
 
 #### 4.2.1. Image View
-As a: player
-I want to: be able to view the picture
-So that I can: gather information about the location
+As a: player  
+I want to: be able to view the picture  
+So that I can: gather information about the location  
 
 Acceptance Criteria:
 - Given a new round of game, I can view the picture of the current location.
 
 #### 4.2.2. Making a Guess
-As a: player
-I want to: be able to click on the map
-so that I can: guess the location of the picture
+As a: player  
+I want to: be able to click on the map  
+so that I can: guess the location of the picture  
 
 Acceptance Criteria:
 - Given I am in the game, when I hover over the map, the map should maximize for better view.
 - Given the map is maximized, when I click a location, it should be marked as the current guess.
 
 #### 4.2.3. Image/Map Zoom
-As a: player
-I want to: be able to zoom in and out
-So that I can: check details of pictures or make precise guesses
+As a: player  
+I want to: be able to zoom in and out  
+So that I can: check details of pictures or make precise guesses  
 
 Acceptance Criteria:
 - Given a picture or a map, I can zoom in and out on the cursor position when I scroll up or down accordingly.
 
 #### 4.2.4. Reveal Correct Answer
-As a: player
-I want to: know the correct answer after guessing
-So that I can: know my performance
+As a: player  
+I want to: know the correct answer after guessing  
+So that I can: know my performance  
 
 Acceptance Criteria:
 - Given a guess, after I submit the answer, I should be shown the correct location of the picture.
 
 #### 4.2.5. Confirm and Cancel Selection
-As a: player
-I want to: be able to verify and cancel my guess
-So that I can: make changes when I misclick
+As a: player  
+I want to: be able to verify and cancel my guess  
+So that I can: make changes when I misclick  
 
 Acceptance Criteria:
 - Given a location was selected, I can choose another location by clicking another location on the map.
 - Given a location was selected, when I click "confirm", the location should be submitted as the final answer.
 
 #### 4.2.6. Round Counter
-As a: player
-I want to: be able to check the game progress
-So that I can: determine the number of remaining round
+As a: player  
+I want to: be able to check the game progress  
+So that I can: determine the number of remaining round  
 
 Acceptance Criteria:
 - Given a game, I can check how many rounds are left with a counter on screen.
 
 #### 4.2.7. Receiving Score After Game
-As a: player
-I want to: be able to receive a score after the game
-So that I can: track my performance
+As a: player  
+I want to: be able to receive a score after the game  
+So that I can: track my performance  
 
 Acceptance criteria:
 - Given that a guess was submitted, I should receive a score based on precision of my answer and time taken.
@@ -230,8 +230,8 @@ Acceptance Criteria:
 
 #### 4.4.1. Display Total Guesses
 As a: registered user  
-I want to: see the total number of guesses I have made    
-So that I can: track my overall game activity    
+I want to: see the total number of guesses I have made  
+So that I can: track my overall game activity  
 
 Acceptance Criteria:
 - Given the statisics page, the total number of guesses is displayed.
@@ -259,7 +259,7 @@ Acceptance Criteria:
 - Given the statisics page, the calculation method is transparent and consistent.
 
 #### 4.4.4. Display Average Time to Guess
-As a: registered user   
+As a: registered user  
 I want to: view my average time taken to guess correctly  
 So that I can: track my speed and improve my performance  
 
@@ -283,6 +283,7 @@ Acceptance Criteria:
 
 ### 5.3. Database
 - PostgreSQL
+
 
 
 
