@@ -20,6 +20,7 @@ Please read the resources below. This document explains how we apply them in thi
 
 #### Notes
 - Do not mix unrelated changes in one commit or PR
+- Keep PRs small and easy to review
 - Automatic branch deletion on merge is enabled
 
 ## Branch names
@@ -86,7 +87,7 @@ The PR title should follow the same rules as a commit subject line:
 - Short
 
 ### Description
-Keep PRs small and easy to review. It does not have to be perfect when opened. Explain:
+The PR description should explain:
 - What changed
 - Why it changed
 - How to test it
