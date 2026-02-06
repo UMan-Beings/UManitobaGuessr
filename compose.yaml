@@ -1,9 +1,24 @@
 services:
-  postgres:
-    image: 'postgres:latest'
+  app_umg:
+    image: 'umg:latest'
+    build:
+      context: ./backend  # Updated to point to the backend folder
+    container_name: app_umg
+    depends_on:
+      - db_umg
     environment:
-      - 'POSTGRES_DB=mydatabase'
-      - 'POSTGRES_PASSWORD=secret'
-      - 'POSTGRES_USER=myuser'
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://db_umg:5432/
+      - SPRING_DATASOURCE_USERNAME=postgres
+      - SPRING_DATASOURCE_PASSWORD=adminpass
+      - SPRING_JPA_HIBERNATE_DDL_AUTO=update
     ports:
-      - '5432'
+      - "8081:8081"
+          
+  db_umg:
+    image: 'postgres:latest'
+    container_name: db_umg
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=adminpass
+    ports:
+      - "5432:5432"
