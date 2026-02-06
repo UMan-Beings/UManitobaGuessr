@@ -24,7 +24,7 @@ Please read the resources below. This document explains how we apply them in thi
 - Automatic branch deletion on merge is enabled
 
 ## Branch names
-Follow these rules when writing a branch name:
+Follow these rules when naming a branch:
 - Summarize work with a short, descriptive name
 - All lowercase
 - Words separated by dashes
@@ -59,8 +59,8 @@ Follow these rules when writing a subject line:
 
 ### Body
 Bodies are optional. Follow these rules when you include one:
-- Wrap the body at 72 characters
-- Use the body to explain what and why, not how
+- Wrap at 72 characters
+- Explain the what and why, not how
     - What problem were you seeing?
     - What behavior changed?
     - Why did you choose this approach?
