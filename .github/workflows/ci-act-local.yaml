@@ -1,4 +1,6 @@
-# THIS is used for local testing. The program act can not cpoppy
+# THIS is used for local testing. The program act can not handle separate jobs.
+# If we want it to work for testing, the ci-pipeline will need to be one job (which i thinkk will get extremely large once front end is added)
+# USed this for testing locally because i dont want a bunch of commits testing if it worked on github actions.
 name: CI Pipeline
 
 on:
