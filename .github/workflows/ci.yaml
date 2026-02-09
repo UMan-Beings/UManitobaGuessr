@@ -47,7 +47,7 @@ jobs:
           distribution: temurin
           java-version: 21
           cache: gradle
-          cache-dependency-path: backend/gradle.properties
+          cache-dependency-path: backend/build.gradle
 
       # step 3: make gradle wrapper executable
       - name: Make Gradle wrapper executable
