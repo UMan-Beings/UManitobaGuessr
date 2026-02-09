@@ -1,0 +1,3 @@
+# Versions that get shipped. Manually change these so tags update to current version during the cd phase. 
+frontend=1.0.0
+backend=1.0.0

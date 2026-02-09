@@ -113,19 +113,27 @@ jobs:
           name: tested-backend-jar
           path: backend/build/libs/
 
-      # step 3: build docker image using jar
+      # step 3: read backend version and seet image tag
+      - name: read backend version
+        run: |
+          VER=$(grep backend version.txt | cut -d '=' -f2)
+          IMG_TAG=${VER}-{GITHUB_SHA::8}
+          # make varialbes available to all steps within THIS job
+          echo "VER=$VER" >> $GITHUB_ENV
+          echo "IMG_TAG=$IMG_TAG" >> $GITHUB_ENV
+
+      # step 4: build docker image using jar
       - name: build backend docker image
         run: |
-          IMAGE_TAG=${GITHUB_SHA::8}  # unique tag from commit sha
           docker compose build backend
-          docker tag springboot-backend:latest springboot-backend:$IMAGE_TAG
+          docker tag springboot-backend:latest springboot-backend:$IMG_TAG
           docker tag springboot-backend:latest springboot-backend:latest
 
-      # step 4: save docker image as tar for later upload
+      # step 5: save docker image as tar for later upload
       - name: save backend docker image
         run: docker save springboot-backend:latest -o backend-image.tar
 
-      # step 5: upload docker image artifact
+      # step 6: upload docker image artifact
       - name: upload backend docker image
         uses: actions/upload-artifact@v3
         with:
@@ -141,6 +149,15 @@ jobs:
       # step 1: checkout repository
       - name: checkout repository
         uses: actions/checkout@v4
+
+      # step 2: read backend version and seet image tag
+      - name: read backend version
+        run: |
+          VER=$(grep backend version.txt | cut -d '=' -f2)
+          IMG_TAG=${VER}-{GITHUB_SHA::8}
+          # make varialbes available to all steps within THIS job
+          echo "VER=$VER" >> $GITHUB_ENV
+          echo "IMG_TAG=$IMG_TAG" >> $GITHUB_ENV
 
       # step 2: download docker image artifact
       - name: download docker image artifact
@@ -164,13 +181,11 @@ jobs:
       # step 5: tag docker image for ghcr
       - name: tag docker image
         run: |
-          IMAGE_TAG=${GITHUB_SHA::8}  # match sha tag
           docker tag springboot-backend:latest ghcr.io/${{ github.repository_owner }}/springboot-backend:$IMAGE_TAG
           docker tag springboot-backend:latest ghcr.io/${{ github.repository_owner }}/springboot-backend:latest
 
       # step 6: push docker image to ghcr
       - name: push docker image
         run: |
-          IMAGE_TAG=${GITHUB_SHA::8}
           docker push ghcr.io/${{ github.repository_owner }}/springboot-backend:$IMAGE_TAG
           docker push ghcr.io/${{ github.repository_owner }}/springboot-backend:latest
