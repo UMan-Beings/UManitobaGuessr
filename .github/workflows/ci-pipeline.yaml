@@ -2,17 +2,18 @@ name: ci pipeline
 
 on:
   push:
-    # Run on all branches
-    branches: 
+    # run tests on all branches
+    branches:
       - '**'
   pull_request:
+    # run tests on prs to main
     branches: main
   workflow_dispatch:
 
 jobs:
   test-build-backend:
     runs-on: ubuntu-latest
-    # This job runs tests for all branches
+    # this job runs tests for all branches
     services:
       postgres:
         image: postgres:latest
@@ -45,7 +46,7 @@ jobs:
         working-directory: backend
         run: chmod +x gradlew
 
-      # step 4: cache gradle dependencies, and back 
+      # step 4: cache gradle dependencies and wrapper
       - name: cache gradle
         uses: actions/cache@v3
         with:
@@ -57,26 +58,22 @@ jobs:
             ${{ runner.os }}-gradle-${{ hashFiles('backend/gradle.properties') }}-
             ${{ runner.os }}-gradle-
 
-      # step 5: start docker compose services (postgres + backend)
-      # -d container runs in detached mode (logs won't show in terminal), up
-      - name: start docker compose
-        run: docker compose up --build -d
-
-      # step 6: wait for postgres to be ready
-      # exec runs command inside existing backend container
+      # step 5: wait for postgres to be ready
+      # we need postgres running for integration tests
       - name: wait for postgres
         run: |
-          until docker compose exec -T postgres pg_isready; do
+          until pg_isready -h localhost -p 5432 -U myuser; do
             echo "waiting for postgres..."
             sleep 2
           done
 
-      # step 7: run backend tests inside backend container
+      # step 6: run backend tests on runner (not in docker)
       - name: run backend tests
-        run: docker compose exec -T backend ./gradlew test
+        working-directory: backend
+        run: ./gradlew test
 
-      #### INCLUDE THIS IF we want PR suggestions in the CI
-      # step 8: run sonarcloud analysis
+      #### INCLUDE THIS IF we want pr suggestions in the ci
+      # step 7: run sonarcloud analysis
       # - name: run sonarcloud scan
       #   uses: SonarSource/sonarcloud-github-action@master
       #   with:
@@ -85,20 +82,15 @@ jobs:
       #   env:
       #     SONAR_TOKEN: ${{secrets.SONAR_TOKEN}}
 
-      # step 9: stop and remove containers after testing
-      # -v remove volumes 
-      - name: teardown docker compose
-        run: docker compose down -v
-
-      # step 10: build backend jar inside container, skip tests
-      # --rm remove container
+      # step 8: build backend jar (only for main branch)
       - name: build backend jar
-        if: github.ref == 'refs/heads/main'  # Only build jar for main branch
-        run: docker compose run --rm backend ./gradlew build -x test
+        if: github.ref == 'refs/heads/main'
+        working-directory: backend
+        run: ./gradlew build -x test
 
-      # step 11: upload backend jar as artifact for next job
+      # step 9: upload backend jar artifact (only for main branch)
       - name: upload backend jar
-        if: github.ref == 'refs/heads/main'  # Only upload for main branch
+        if: github.ref == 'refs/heads/main'
         uses: actions/upload-artifact@v3
         with:
           name: tested-backend-jar
@@ -107,29 +99,29 @@ jobs:
   build-backend-image:
     runs-on: ubuntu-latest
     needs: test-build-backend
-    if: github.ref == 'refs/heads/main'  # Only run for main branch
+    if: github.ref == 'refs/heads/main'  # only build image on main
 
     steps:
       # step 1: checkout repository
       - name: checkout repository
         uses: actions/checkout@v4
 
-      # step 2: download backend jar from previous job
+      # step 2: download jar artifact from previous job
       - name: download backend jar
         uses: actions/download-artifact@v3
         with:
           name: tested-backend-jar
           path: backend/build/libs/
 
-      # step 3: build backend docker image
+      # step 3: build docker image using jar
       - name: build backend docker image
         run: |
-          IMAGE_TAG=${GITHUB_SHA::8}  # use first 8 chars of commit SHA as unique tag
+          IMAGE_TAG=${GITHUB_SHA::8}  # unique tag from commit sha
           docker compose build backend
           docker tag springboot-backend:latest springboot-backend:$IMAGE_TAG
           docker tag springboot-backend:latest springboot-backend:latest
 
-      # step 4: save backend image as artifact
+      # step 4: save docker image as tar for later upload
       - name: save backend docker image
         run: docker save springboot-backend:latest -o backend-image.tar
 
@@ -143,7 +135,7 @@ jobs:
   push-backend-image:
     runs-on: ubuntu-latest
     needs: build-backend-image
-    if: github.ref == 'refs/heads/main'  # Only run for main branch
+    if: github.ref == 'refs/heads/main'  # only push on main
 
     steps:
       # step 1: checkout repository
@@ -157,11 +149,11 @@ jobs:
           name: backend-docker-image
           path: backend-image.tar
 
-      # step 3: load docker image
+      # step 3: load docker image into docker
       - name: load docker image
         run: docker load -i backend-image.tar
 
-      # step 4: login to github container registry
+      # step 4: log in to github container registry
       - name: log in to ghcr
         uses: docker/login-action@v2
         with:
@@ -170,16 +162,15 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
 
       # step 5: tag docker image for ghcr
-      # Gives each docker image a unique SHA, and keeps the latest tag
       - name: tag docker image
         run: |
-          IMAGE_TAG=${GITHUB_SHA::8}  # match SHA tag
+          IMAGE_TAG=${GITHUB_SHA::8}  # match sha tag
           docker tag springboot-backend:latest ghcr.io/${{ github.repository_owner }}/springboot-backend:$IMAGE_TAG
           docker tag springboot-backend:latest ghcr.io/${{ github.repository_owner }}/springboot-backend:latest
 
       # step 6: push docker image to ghcr
       - name: push docker image
         run: |
-          IMAGE_TAG=${GITHUB_SHA::8}  # match SHA tag
+          IMAGE_TAG=${GITHUB_SHA::8}
           docker push ghcr.io/${{ github.repository_owner }}/springboot-backend:$IMAGE_TAG
           docker push ghcr.io/${{ github.repository_owner }}/springboot-backend:latest
