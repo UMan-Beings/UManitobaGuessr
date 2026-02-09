@@ -9,7 +9,7 @@
 
         <v-spacer />
 
-        <h3 class="text-center text-h6">
+        <h3 class="text-center text-h5">
             Rounds
         </h3>
         <v-btn-toggle v-model="rounds" variant="outlined" class="flex-toggle-btn justify-center w-100 mt-4" mandatory divided>
@@ -19,7 +19,7 @@
             <v-btn :value="20">20</v-btn>
         </v-btn-toggle>
 
-        <h3 class="text-center text-h6 mt-8">
+        <h3 class="text-center text-h5 mt-8">
             Timer
         </h3>
         <v-btn-toggle v-model="timer" variant="outlined" class="flex-toggle-btn justify-center w-100 mt-4" mandatory divided>
