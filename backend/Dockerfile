@@ -1,5 +1,5 @@
 # Use an official Gradle image to build the application
-FROM amazoncorretto:17 AS build
+FROM amazoncorretto:21 AS build
 
 # Set the working directory inside the container
 WORKDIR /app
@@ -15,7 +15,7 @@ COPY src /app/src
 RUN ./gradlew bootJar
 
 # Use an official OpenJDK image to run the application
-FROM amazoncorretto:17
+FROM amazoncorretto:21
 
 # Set the working directory inside the container
 WORKDIR /app
