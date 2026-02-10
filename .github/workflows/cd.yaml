@@ -14,13 +14,14 @@ jobs:
     runs-on: ubuntu-latest
     env:
       VERSION: ${{ github.ref_name }}
-
+      SPRING_PROFILES_ACTIVE: prod    #sets the active spring profile to prod for the release build
     steps:
       # step 1: checkout repo at release tag
       - name: Checkout repository
         uses: actions/checkout@v6
         with:
-          fetch-depth: 0  # get full history to ensure release tag is available
+          ref: ${{ env.VERSION }}  # checkout the code at the release tag that triggered this workflow
+          fetch-depth: 1           # only fetch this commit
 
       # step 2: set up java 21
       - name: Set up java
@@ -58,12 +59,15 @@ jobs:
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
       # step 7: build and push images to GHCR and Docker Hub
+      # Release tag for the version that is published becomes the docker image tag
       - name: Build and push images to GHCR and docker hub
         uses: docker/build-push-action@v6
         with:
           context: ./backend
           file: ./backend/Dockerfile
           push: true
+          build-args: |
+            SPRING_PROFILES_ACTIVE=${{ env.SPRING_PROFILES_ACTIVE }}
           tags: |
             ghcr.io/${{ github.repository_owner }}/springboot-backend:${{ env.VERSION }}
             ghcr.io/${{ github.repository_owner }}/springboot-backend:latest

@@ -15,30 +15,25 @@ jobs:
     runs-on: ubuntu-latest
     # github runner variables
     env:
-      DB_HOST: localhost
-      DB_USER: myuser
-      DB_PASS: secret
-      DB_NAME: mydatabase
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/${{ secrets.DB_NAME }}
+      SPRING_DATASOURCE_USERNAME: ${{ secrets.DB_USER }}
+      SPRING_DATASOURCE_PASSWORD: ${{ secrets.DB_PASS }}
+      SPRING_PROFILES_ACTIVE: prod
     
     services:
       postgres:
-        image: postgres:latest
+        image: postgres:18
         env:
-          POSTGRES_USER: myuser
-          POSTGRES_PASSWORD: secret
-          POSTGRES_DB: mydatabase
+          POSTGRES_DB: ${{ secrets.DB_NAME }}
+          POSTGRES_USER: ${{ secrets.DB_USER }}
+          POSTGRES_PASSWORD: ${{ secrets.DB_PASS }}
         ports:
           - 5432:5432
-        options: >-
-          --health-cmd="pg_isready -U myuser"
-          --health-interval=10s
-          --health-timeout=5s
-          --health-retries=5
 
     steps:
       # step 1: checkout repository
       - name: Checkout repository
-        uses: actions/checkout@v6 
+        uses: actions/checkout@v6
 
       # step 2: set up java 21 and cache gradle
       - name: Set up Java 21 and cache Gradle
@@ -62,21 +57,28 @@ jobs:
             sleep 2
           done
 
-      # step 5: run backend tests
-      - name: Run backend tests
+      # step 5: build backend (includes tests, coverage, and packaging)
+      # use ./gradlew build here instead of ./gradlew test; allows sonar to detect any packaging errors
+      - name: Build backend
         working-directory: backend
         env:
           SPRING_DATASOURCE_URL: jdbc:postgresql://localhost:5432/${{ env.DB_NAME }}
           SPRING_DATASOURCE_USERNAME: ${{ env.DB_USER }}
           SPRING_DATASOURCE_PASSWORD: ${{ env.DB_PASS }}
-        run: ./gradlew test --no-daemon
+        run: ./gradlew build --no-daemon
 
-      # optional: SonarCloud analysis
-      # use this suggestions on code in PRs. Otherwise we can remove this comment
-      # - name: Run SonarCloud scan
-      #   uses: SonarSource/sonarcloud-github-action@master
-      #   with:
-      #     projectKey: your_project_key
-      #     organization: your_organization
-      #   env:
-      #     SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+      # step 6: SonarQubeCloud analysis (PRs only)
+      - name: Run SonarQubeCloud scan
+        if: github.event_name == 'pull_request'
+        uses: SonarSource/sonarcloud-github-action@v5.0.0
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+
+      # step 7: run SonarQube analysis via gradle on main branch, this builds so we can check for packaging errors
+      - name: Run SonarQube (Gradle)
+        if: github.ref == 'refs/heads/main'
+        working-directory: backend
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_HOST_URL: https://sonarcloud.io
+        run: ./gradlew sonarqube --no-daemon
