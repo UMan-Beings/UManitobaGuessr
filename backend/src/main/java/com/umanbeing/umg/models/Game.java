@@ -18,6 +18,12 @@ public class Game {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "userId", nullable = false)
     private User user;
+    
+    @Column(nullable = false)
+    private Integer maxTimerSeconds;
+
+    @Column(nullable = false)
+    private Integer totalRounds;
 
     @OneToMany(mappedBy = "game", cascade = CascadeType.ALL, orphanRemoval = true)
     @OrderBy("roundNumber ASC")
