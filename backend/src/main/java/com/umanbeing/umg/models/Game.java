@@ -1,4 +1,4 @@
-package com.umanbeing.umg.Models;
+package com.umanbeing.umg.models;
 
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -13,13 +13,13 @@ import java.util.List;
 public class Game {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long game_id;
+    private Long gameId;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", nullable = false)
+    @JoinColumn(name = "userId", nullable = false)
     private User user;
 
     @OneToMany(mappedBy = "game", cascade = CascadeType.ALL, orphanRemoval = true)
-    @OrderBy("round_number ASC")
+    @OrderBy("roundNumber ASC")
     private List<Round> rounds = new ArrayList<>();
 }

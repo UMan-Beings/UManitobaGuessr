@@ -1,4 +1,4 @@
-package com.umanbeing.umg.Models;
+package com.umanbeing.umg.models;
 
 import jakarta.persistence.*;
 import java.math.BigDecimal;
@@ -12,23 +12,23 @@ import lombok.Setter;
 public class Guess {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long guess_id;
+    private Long guessId;
 
     @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "round_id", nullable = false, unique = true)
+    @JoinColumn(name = "roundId", nullable = false, unique = true)
     private Round round;
 
     @Column(nullable = false, precision = 9, scale = 6)
-    private BigDecimal guessed_latitude;
+    private BigDecimal guessedLatitude;
 
     @Column(nullable = false, precision = 9, scale = 6)
-    private BigDecimal guessed_longitude;
+    private BigDecimal guessedLongitude;
 
     @Column(nullable = false)
-    private Integer guess_time_ms;
+    private Integer guessTimeMs;
 
     @Column(nullable = false)
-    private Integer distance_meters;
+    private Integer distanceMeters;
 
     @Column(nullable = false)
     private Integer score;

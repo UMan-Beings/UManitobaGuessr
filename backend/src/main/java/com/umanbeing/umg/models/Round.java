@@ -1,4 +1,4 @@
-package com.umanbeing.umg.Models;
+package com.umanbeing.umg.models;
 
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -11,18 +11,18 @@ import lombok.Setter;
 public class Round {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long round_id;
+    private Long roundId;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "game_id", nullable = false)
+    @JoinColumn(name = "gameId", nullable = false)
     private Game game;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "location_id", nullable = false)
+    @JoinColumn(name = "locationId", nullable = false)
     private Location location;
 
     @Column(nullable = false)
-    private Integer round_number;
+    private Integer roundNumber;
 
     @OneToOne(mappedBy = "round", cascade = CascadeType.ALL, orphanRemoval = true)
     private Guess guess;
