@@ -11,6 +11,9 @@ COPY gradle /app/gradle
 # Copy the source code
 COPY src /app/src
 
+# Make Gradle wrapper executable
+RUN chmod +x ./gradlew
+
 # Build the application
 RUN ./gradlew bootJar
 
