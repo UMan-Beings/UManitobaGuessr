@@ -15,7 +15,13 @@ jobs:
     runs-on: ubuntu-latest
     # github runner variables
     env:
-      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/${{ secrets.DB_NAME }}
+      DB_HOST: localhost
+      DB_NAME: ${{ secrets.DB_NAME }}
+      DB_USER: ${{ secrets.DB_USER }}
+      DB_PASS: ${{ secrets.DB_PASS }}
+      SPRING_SECURITY_USER_NAME: ${{ secrets.SPRING_SECURITY_USER_NAME }}
+      SPRING_SECURITY_USER_PASSWORD: ${{ secrets.SPRING_SECURITY_USER_PASSWORD }}
+      SPRING_DATASOURCE_URL: jdbc:postgresql://localhost:5432/${{ secrets.DB_NAME }}
       SPRING_DATASOURCE_USERNAME: ${{ secrets.DB_USER }}
       SPRING_DATASOURCE_PASSWORD: ${{ secrets.DB_PASS }}
       SPRING_PROFILES_ACTIVE: prod
@@ -27,6 +33,11 @@ jobs:
           POSTGRES_DB: ${{ secrets.DB_NAME }}
           POSTGRES_USER: ${{ secrets.DB_USER }}
           POSTGRES_PASSWORD: ${{ secrets.DB_PASS }}
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
         ports:
           - 5432:5432
 
@@ -51,8 +62,9 @@ jobs:
       # step 4: wait for postgres
       # we need postgres running for integration tests
       - name: Wait for Postgres to be ready
+        timeout-minutes: 1
         run: |
-          until pg_isready -h $DB_HOST -p 5432 -U $DB_USER; do
+          until pg_isready -h $DB_HOST -p 5432; do
             echo "waiting for postgres..."
             sleep 2
           done
@@ -61,10 +73,6 @@ jobs:
       # use ./gradlew build here instead of ./gradlew test; allows sonar to detect any packaging errors
       - name: Build backend
         working-directory: backend
-        env:
-          SPRING_DATASOURCE_URL: jdbc:postgresql://localhost:5432/${{ env.DB_NAME }}
-          SPRING_DATASOURCE_USERNAME: ${{ env.DB_USER }}
-          SPRING_DATASOURCE_PASSWORD: ${{ env.DB_PASS }}
         run: ./gradlew build --no-daemon
 
       # step 6: SonarQubeCloud analysis (PRs only)
@@ -73,12 +81,3 @@ jobs:
         uses: SonarSource/sonarcloud-github-action@v5.0.0
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-
-      # step 7: run SonarQube analysis via gradle on main branch, this builds so we can check for packaging errors
-      - name: Run SonarQube (Gradle)
-        if: github.ref == 'refs/heads/main'
-        working-directory: backend
-        env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-          SONAR_HOST_URL: https://sonarcloud.io
-        run: ./gradlew sonarqube --no-daemon
