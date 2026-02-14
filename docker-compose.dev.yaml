@@ -15,7 +15,7 @@
 
 services:
   db_umg:
-    image: postgres:18
+    image: postgres:latest
     container_name: db_umg_dev
     env_file:
       - ./env/.env.dev
