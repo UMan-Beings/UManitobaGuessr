@@ -34,13 +34,10 @@ The following guides illustrate how to use some features concretely:
 ### Additional Links
 These additional references should also help you:
 
-* [Gradle Build Scans – insights for your project's build](https://scans.gradle.com#gradle)
+* [Gradle Build Scans – insights for your project's build](https://scans.gradle.com)
 
-### Docker Compose support
-This project contains Docker Compose files named `docker-compose.dev.yaml` `docker-compose.prod.yaml`.
+This project contains Docker Compose files named `docker-compose.dev.yaml` and `docker-compose.prod.yaml`.
 In these files, the following services have been defined:
 
 * postgres: [`postgres:18`](https://hub.docker.com/_/postgres)
-
-Please review the tags of the used images and set them to the same as you're running in production.
-
+ Please review the tags of the used images and set them to the same as you're running in production.
