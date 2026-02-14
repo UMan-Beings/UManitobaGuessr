@@ -32,7 +32,7 @@ services:
     env_file:
       - ./env/.env.prod
     ports:
-      - "${HOST_PORT:-8080}:8080"
+      - "${HOST_PORT:-7000}:8081"
     depends_on:
       - db_umg
 

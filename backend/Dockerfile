@@ -27,7 +27,7 @@ WORKDIR /app
 # Copy the built JAR file from the build stage
 COPY --from=build /app/build/libs/*.jar app.jar
 
-EXPOSE 8080
+EXPOSE 8081
 
 # start springboot when a container is run from this image
 ENTRYPOINT ["java", "-jar", "app.jar"]
