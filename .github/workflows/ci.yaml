@@ -7,7 +7,7 @@ on:
       - '**'
   pull_request:
     # run tests on prs to main
-    branches: main
+    branches: [main]
   workflow_dispatch:
 
 jobs:
