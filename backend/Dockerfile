@@ -1,6 +1,4 @@
-# -------------------------
-# Step 1: Build the JAR
-# -------------------------
+# Use an official Gradle image to build the application
 FROM amazoncorretto:21 AS build
 
 # Set the working directory inside the container
@@ -16,9 +14,7 @@ COPY src /app/src
 # Build the application
 RUN ./gradlew bootJar
 
-# -------------------------
-# Step 1: Runtime
-# -------------------------
+# Use an official OpenJDK image to run the application
 FROM amazoncorretto:21
 
 # Set the working directory inside the container
@@ -27,7 +23,8 @@ WORKDIR /app
 # Copy the built JAR file from the build stage
 COPY --from=build /app/build/libs/*.jar app.jar
 
+# Expose the application port
 EXPOSE 8081
 
-# start springboot when a container is run from this image
+# Run the application
 ENTRYPOINT ["java", "-jar", "app.jar"]
