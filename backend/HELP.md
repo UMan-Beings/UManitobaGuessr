@@ -40,4 +40,4 @@ This project contains Docker Compose files named `docker-compose.dev.yaml` and `
 In these files, the following services have been defined:
 
 * postgres: [`postgres:18`](https://hub.docker.com/_/postgres)
- Please review the tags of the used images and set them to the same as you're running in production.
+Please review the tags of the used images and set them to the same as you're running in production.
