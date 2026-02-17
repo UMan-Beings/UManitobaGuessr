@@ -11,6 +11,9 @@ COPY gradle /app/gradle
 # Copy the source code
 COPY src /app/src
 
+# Make Gradle wrapper executable
+RUN chmod +x ./gradlew
+
 # Build the application
 RUN ./gradlew bootJar
 
@@ -19,6 +22,9 @@ FROM amazoncorretto:21
 
 # Set the working directory inside the container
 WORKDIR /app
+
+# Set default Spring profile to prod
+ENV SPRING_PROFILES_ACTIVE=prod
 
 # Copy the built JAR file from the build stage
 COPY --from=build /app/build/libs/*.jar app.jar
