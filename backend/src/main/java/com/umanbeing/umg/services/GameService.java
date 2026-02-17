@@ -11,6 +11,9 @@ public class GameService {
     @Autowired
     private GameRepo gameRepo;
 
+    @Autowired
+    private RoundService roundService;
+
     public Game createNewGame(int totalRounds, int maxTimerSeconds) {
         Game game = new Game();
         game.setTotalRounds(totalRounds);
@@ -18,8 +21,14 @@ public class GameService {
         game.setCompleted(false);
         game.setCurrentRoundNumber(1);
         game.setGameState("GUESS");
-        //TODO: Add rounds required for the game after implementing the Round entity
-        return gameRepo.save(game);
+
+        // Save the game first to ensure it has an ID
+        Game savedGame = gameRepo.save(game);
+
+        // Use RoundService to create rounds for the saved game
+        savedGame.setRounds(roundService.createRoundForGame(savedGame));
+
+        return gameRepo.save(savedGame);
     }
 
     public Game save(Game game) {
