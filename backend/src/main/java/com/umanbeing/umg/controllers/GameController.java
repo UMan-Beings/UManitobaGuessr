@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import com.umanbeing.umg.services.GameService;
 import org.springframework.beans.factory.annotation.Autowired;
 import com.umanbeing.umg.models.Game;
+import com.umanbeing.umg.models.Guess;
 import com.umanbeing.umg.services.GuessService;
 import com.umanbeing.umg.models.Round;
 import org.springframework.http.ResponseEntity;
@@ -66,7 +67,7 @@ public class GameController {
     public String makeGuess(@RequestParam Long gameId, @RequestParam BigDecimal lat, @RequestParam BigDecimal lng) {
         Game game = gameService.getGameById(gameId);
         Round currentRound = game.getRounds().get(game.getCurrentRoundNumber() - 1);
-        guessService.createGuess(currentRound, lat, lng);
+        Guess guess = guessService.createGuess(currentRound, lat, lng);
 
         game.setGameState("REVEAL");
         game.setCurrentRoundNumber(game.getCurrentRoundNumber() + 1);
@@ -81,8 +82,8 @@ public class GameController {
         response.put("guessedLng", lng);
         response.put("actualLat", currentRound.getLocation().getLatitude());
         response.put("actualLng", currentRound.getLocation().getLongitude());
-        response.put("score", currentRound.getGuess().getScore());
-        response.put("scoreReceived", 1);
+        response.put("score", game.getScore());
+        response.put("scoreReceived", guess.getScore());
         
 
         return ResponseEntity.ok(response).toString();
@@ -98,7 +99,7 @@ public class GameController {
             game.setGameState("FINISHED");
             game.setCompleted(true);
             response.put("phase", game.getGameState());
-            response.put("score", 1);
+            response.put("score", game.getScore());
         } else {
             game.setGameState("GUESS");
             game.setCurrentRoundNumber(game.getCurrentRoundNumber() + 1);

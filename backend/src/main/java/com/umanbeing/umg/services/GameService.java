@@ -24,6 +24,7 @@ public class GameService {
         game.setCompleted(false);
         game.setCurrentRoundNumber(1);
         game.setGameState("GUESS");
+        game.setScore(0);
 
         // Save the game first to ensure it has an ID
         Game savedGame = gameRepo.save(game);

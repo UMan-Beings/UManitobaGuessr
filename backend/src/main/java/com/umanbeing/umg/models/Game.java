@@ -34,6 +34,9 @@ public class Game {
     @Column(nullable = false)
     private Integer currentRoundNumber;
 
+    @Column(nullable = false)
+    private Integer score;
+
     @OneToMany(mappedBy = "game", cascade = CascadeType.ALL, orphanRemoval = true)
     @OrderBy("roundNumber ASC")
     private List<Round> rounds = new ArrayList<>();
