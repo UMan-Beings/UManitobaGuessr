@@ -25,6 +25,15 @@ public class Game {
     @Column(nullable = false)
     private Integer totalRounds;
 
+    @Column(nullable = false)
+    private boolean isCompleted;
+
+    @Column(nullable = false)
+    private String gameState;
+
+    @Column(nullable = false)
+    private Integer currentRoundNumber;
+
     @OneToMany(mappedBy = "game", cascade = CascadeType.ALL, orphanRemoval = true)
     @OrderBy("roundNumber ASC")
     private List<Round> rounds = new ArrayList<>();
