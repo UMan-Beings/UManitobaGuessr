@@ -1,6 +1,5 @@
 package com.umanbeing.umg.services;
 import org.springframework.stereotype.Service;
-import org.springframework.beans.factory.annotation.Autowired;
 import com.umanbeing.umg.repos.RoundRepo;
 import com.umanbeing.umg.models.Round;
 import com.umanbeing.umg.models.Location;
@@ -11,11 +10,13 @@ import java.util.Random;
 
 @Service
 public class RoundService {
-    @Autowired
     private RoundRepo roundRepo;
-
-    @Autowired
     private LocationRepo locationRepo;
+
+    public RoundService(RoundRepo roundRepo, LocationRepo locationRepo) {
+        this.roundRepo = roundRepo;
+        this.locationRepo = locationRepo;
+    }
 
     public List<Round> createRoundForGame(Game game) {
         // Round round = new Round();

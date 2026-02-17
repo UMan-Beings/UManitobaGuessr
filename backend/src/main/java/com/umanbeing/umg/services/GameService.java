@@ -3,16 +3,19 @@ package com.umanbeing.umg.services;
 import org.springframework.stereotype.Service;
 import com.umanbeing.umg.models.Game;
 import com.umanbeing.umg.repos.GameRepo;
-import org.springframework.beans.factory.annotation.Autowired;
 
 @Service
 public class GameService {
 
-    @Autowired
-    private GameRepo gameRepo;
+    
+    private final GameRepo gameRepo;
 
-    @Autowired
-    private RoundService roundService;
+    private final RoundService roundService;
+
+    public GameService(GameRepo gameRepo, RoundService roundService) {
+        this.gameRepo = gameRepo;
+        this.roundService = roundService;
+    }
 
     public Game createNewGame(int totalRounds, int maxTimerSeconds) {
         Game game = new Game();
