@@ -13,3 +13,9 @@ backend/gradlew text eol=lf
 *.png binary
 *.jpg binary
 *.jpeg binary
+*.svg binary
+*.pptx binary
+*.docx binary
+*.xlsx binary
+*.gif binary
+*.webp binary
