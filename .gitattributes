@@ -8,7 +8,7 @@ backend/gradlew text eol=lf
 # Windows command scripts should use CRLF
 *.bat text eol=crlf
 
-# Binary files, don't line normalize
+# Binary files (no line ending normalization)
 *.jar binary
 *.png binary
 *.jpg binary
