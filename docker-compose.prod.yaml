@@ -20,7 +20,7 @@ services:
     env_file:
       - ./env/.env.prod
     healthcheck:
-      test: ["CMD", "pg_isready", "-q"]
+      test: ["CMD", "pg_isready", "-U", "myuser", "-d", "prod_database", "-q"]
       interval: 10s
       timeout: 5s
       retries: 5
