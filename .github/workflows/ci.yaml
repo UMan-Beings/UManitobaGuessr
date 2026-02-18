@@ -24,6 +24,8 @@ jobs:
       SPRING_DATASOURCE_URL: jdbc:postgresql://localhost:5432/test_db
       SPRING_DATASOURCE_USERNAME: test_user
       SPRING_DATASOURCE_PASSWORD: test_pass
+      # TODO: Remove this override once CI Postgres is configured for TLS; prod defaults to require SSL.
+      DB_SSL_MODE: disable
       SPRING_PROFILES_ACTIVE: prod
     
     services:
