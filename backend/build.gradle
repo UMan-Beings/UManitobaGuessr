@@ -61,7 +61,7 @@ tasks.named('jacocoTestReport', JacocoReport) {
 	dependsOn tasks.named('test')
 	reports {
 		xml.required.set(true)
-		xml.outputLocation.set(file("${buildDir}/reports/jacoco/test/jacocoTestReport.xml"))
+		xml.outputLocation.set(new File(layout.buildDirectory.get().asFile, "reports/jacoco/test/jacocoTestReport.xml"))
 		html.required.set(true)
 	}
 }

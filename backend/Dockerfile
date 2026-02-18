@@ -23,9 +23,6 @@ FROM amazoncorretto:21
 # Set the working directory inside the container
 WORKDIR /app
 
-# Set default Spring profile to prod
-ENV SPRING_PROFILES_ACTIVE=prod
-
 # Copy the built JAR file from the build stage
 COPY --from=build /app/build/libs/*.jar app.jar
 

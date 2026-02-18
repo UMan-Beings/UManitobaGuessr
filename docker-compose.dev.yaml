@@ -19,6 +19,11 @@ services:
     container_name: db_umg_dev
     env_file:
       - ./env/.env.dev
+    healthcheck:
+      test: ["CMD", "pg_isready", "-q"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
     ports:
       - "${POSTGRES_PORT:-5432}:5432"
     volumes:
@@ -34,7 +39,8 @@ services:
     ports:
       - "${HOST_PORT:-8000}:8081"
     depends_on:
-      - db_umg
+      db_umg:
+        condition: service_healthy
 
 volumes:
   postgres_dev_data:
