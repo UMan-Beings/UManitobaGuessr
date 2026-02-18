@@ -1,0 +1,15 @@
+# Fix line endings for all text files
+# Stops Git from thinking the whole file changed due to OS differences
+* text=auto
+
+# Gradle wrapper script must use LF for Linux/macOS/CI
+backend/gradlew text eol=lf
+
+# Windows command scripts should use CRLF
+*.bat text eol=crlf
+
+# Binary files, don't line normalize
+*.jar binary
+*.png binary
+*.jpg binary
+*.jpeg binary
