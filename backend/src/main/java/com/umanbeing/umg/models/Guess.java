@@ -19,10 +19,10 @@ public class Guess {
     private Round round;
 
     @Column(nullable = false, precision = 9, scale = 6)
-    private BigDecimal guessedLatitude;
+    private BigDecimal guessedX;
 
     @Column(nullable = false, precision = 9, scale = 6)
-    private BigDecimal guessedLongitude;
+    private BigDecimal guessedY;
 
     @Column(nullable = false)
     private Integer guessTimeMs;

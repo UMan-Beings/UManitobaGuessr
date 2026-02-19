@@ -20,8 +20,8 @@ public class Location {
     private String imageUrl;
 
     @Column(nullable = false, precision = 9, scale = 6)
-    private BigDecimal latitude;
+    private BigDecimal corX;
 
     @Column(nullable = false, precision = 9, scale = 6)
-    private BigDecimal longitude;
+    private BigDecimal corY;
 }

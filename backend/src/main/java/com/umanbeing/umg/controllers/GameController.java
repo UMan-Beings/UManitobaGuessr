@@ -64,10 +64,10 @@ public class GameController {
     //TODO: Implement the guess submission logic here
     //Return the result of the guess (actual location, score for the round, and updated game state)
     @RequestMapping(value = "/games/{gameId}/guess", method = RequestMethod.POST)
-    public String makeGuess(@RequestParam Long gameId, @RequestParam BigDecimal lat, @RequestParam BigDecimal lng) {
+    public String makeGuess(@RequestParam Long gameId, @RequestParam BigDecimal corX, @RequestParam BigDecimal corY) {
         Game game = gameService.getGameById(gameId);
         Round currentRound = game.getRounds().get(game.getCurrentRoundNumber() - 1);
-        Guess guess = guessService.createGuess(currentRound, lat, lng);
+        Guess guess = guessService.createGuess(currentRound, corX, corY);
 
         game.setGameState("REVEAL");
         game.setCurrentRoundNumber(game.getCurrentRoundNumber() + 1);
@@ -78,10 +78,10 @@ public class GameController {
         response.put("totalRounds", game.getTotalRounds());
         response.put("imageUrl", game.getRounds().get(game.getCurrentRoundNumber() - 1).getLocation().getImageUrl());
         response.put("timeLimitSeconds", game.getMaxTimerSeconds());
-        response.put("guessedLat", lat);
-        response.put("guessedLng", lng);
-        response.put("actualLat", currentRound.getLocation().getLatitude());
-        response.put("actualLng", currentRound.getLocation().getLongitude());
+        response.put("guessedX", corX);
+        response.put("guessedY", corY);
+        response.put("actualX", currentRound.getLocation().getCorX());
+        response.put("actualY", currentRound.getLocation().getCorY());
         response.put("score", game.getScore());
         response.put("scoreReceived", guess.getScore());
         
