@@ -1,0 +1,46 @@
+# ------------------------------------
+# Commands to run in prod environment
+# -----------------------------------
+
+# Build and run prod environment
+# docker-compose -f docker-compose.prod.yaml -p umg_prod up --build
+
+# Stop prod environment
+# docker-compose -f docker-compose.prod.yaml -p umg_prod down
+
+# Remove prod containers, network, and volumes
+# docker-compose -f docker-compose.prod.yaml -p umg_prod down -v
+
+# http://localhost:7000
+
+services:
+  db_umg:
+    image: postgres:18 
+    container_name: db_umg_prod
+    env_file:
+      - ./env/.env.prod
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "myuser", "-d", "prod_database", "-q"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    ports:
+      - "${POSTGRES_PORT:-5432}:5432"
+    volumes:
+      - postgres_prod_data:/var/lib/postgresql
+
+  backend_umg:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: backend_umg_prod
+    env_file:
+      - ./env/.env.prod
+    ports:
+      - "${HOST_PORT:-7000}:8081"
+    depends_on:
+      db_umg:
+        condition: service_healthy
+
+volumes:
+  postgres_prod_data:

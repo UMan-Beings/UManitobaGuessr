@@ -1,0 +1,46 @@
+# ---------------------------------------
+# Commands for running in dev environment
+# ---------------------------------------
+
+# Build and run dev environment
+# docker-compose -f docker-compose.dev.yaml -p umg_dev up --build
+
+# Stop dev environment
+# docker-compose -f docker-compose.dev.yaml -p umg_dev down
+
+# Remove dev containers, network, and volumes
+# docker-compose -f docker-compose.dev.yaml -p umg_dev down -v
+
+# http://localhost:8000
+
+services:
+  db_umg:
+    image: postgres:18
+    container_name: db_umg_dev
+    env_file:
+      - ./env/.env.dev
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "myuser", "-d", "dev_database", "-q"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    ports:
+      - "${POSTGRES_PORT:-5432}:5432"
+    volumes:
+      - postgres_dev_data:/var/lib/postgresql
+
+  backend_umg:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: backend_umg_dev
+    env_file:
+      - ./env/.env.dev
+    ports:
+      - "${HOST_PORT:-8000}:8081"
+    depends_on:
+      db_umg:
+        condition: service_healthy
+
+volumes:
+  postgres_dev_data:

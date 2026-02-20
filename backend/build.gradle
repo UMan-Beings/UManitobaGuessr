@@ -1,5 +1,6 @@
 plugins {
 	id 'java'
+    id 'jacoco'
 	id 'org.springframework.boot' version '4.0.2'
 	id 'io.spring.dependency-management' version '1.1.7'
 }
@@ -50,4 +51,21 @@ dependencies {
 
 tasks.named('test') {
 	useJUnitPlatform()
+}
+
+jacoco {
+	toolVersion = '0.8.10'
+}
+
+tasks.named('jacocoTestReport', JacocoReport) {
+	dependsOn tasks.named('test')
+	reports {
+		xml.required.set(true)
+		xml.outputLocation.set(new File(layout.buildDirectory.get().asFile, "reports/jacoco/test/jacocoTestReport.xml"))
+		html.required.set(true)
+	}
+}
+
+tasks.named('check') {
+	dependsOn tasks.named('jacocoTestReport')
 }

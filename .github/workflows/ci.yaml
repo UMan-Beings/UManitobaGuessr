@@ -1,0 +1,89 @@
+name: CI pipeline
+
+on:
+  push:
+    # run tests on all branches
+    branches:
+      - '**'
+  pull_request:
+    # run tests on prs to main
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  test-backend:
+    runs-on: ubuntu-latest
+    # github runner variables
+    env:
+      DB_HOST: localhost
+      DB_NAME: test_db
+      DB_USER: test_user
+      DB_PASS: test_pass
+      SPRING_SECURITY_USER_NAME: ci_user
+      SPRING_SECURITY_USER_PASSWORD: ci_pass
+      SPRING_DATASOURCE_URL: jdbc:postgresql://localhost:5432/test_db
+      SPRING_DATASOURCE_USERNAME: test_user
+      SPRING_DATASOURCE_PASSWORD: test_pass
+      # TODO: Remove this override once CI Postgres is configured for TLS; prod defaults to require SSL.
+      DB_SSL_MODE: disable
+      SPRING_PROFILES_ACTIVE: prod
+    
+    services:
+      postgres:
+        image: postgres:18
+        env:
+          POSTGRES_DB: test_db
+          POSTGRES_USER: test_user
+          POSTGRES_PASSWORD: test_pass
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432
+
+    steps:
+      # step 1: checkout repository
+      - name: Checkout repository
+        uses: actions/checkout@v6
+
+      # step 2: set up java 21 and cache gradle
+      - name: Set up Java 21 and cache Gradle
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+          cache: gradle
+          cache-dependency-path: backend/build.gradle
+
+      # step 3: make gradle wrapper executable
+      - name: Make Gradle wrapper executable
+        run: chmod +x backend/gradlew
+
+      # step 4: wait for postgres
+      # we need postgres running for integration tests
+      - name: Wait for Postgres to be ready
+        timeout-minutes: 1
+        run: |
+          until pg_isready -h $DB_HOST -p 5432; do
+            echo "waiting for postgres..."
+            sleep 2
+          done
+
+      # step 5: build backend (includes tests, coverage, and packaging)
+      # use ./gradlew build here instead of ./gradlew test; allows sonar to detect any packaging errors
+      - name: Build backend
+        working-directory: backend
+        run: ./gradlew build --no-daemon
+
+      # step 6: SonarQubeCloud analysis (PRs only)
+      - name: Run SonarQubeCloud scan
+        if: github.event_name == 'pull_request'
+        uses: SonarSource/sonarqube-scan-action@v2
+        with:
+          args: -Dsonar.organization=${{ secrets.SONAR_ORGANIZATION }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_HOST_URL: https://sonarcloud.io
