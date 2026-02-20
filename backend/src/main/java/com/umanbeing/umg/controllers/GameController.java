@@ -1,5 +1,4 @@
 package com.umanbeing.umg.controllers;
-import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -13,7 +12,10 @@ import com.umanbeing.umg.models.Game;
 import com.umanbeing.umg.models.Guess;
 import com.umanbeing.umg.services.GuessService;
 import com.umanbeing.umg.models.Round;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.http.ResponseEntity;
+import com.umanbeing.umg.controllers.dto.CreateGameRequest;
+import com.umanbeing.umg.controllers.dto.MakeGuessRequest;
 
 
 @RestController
@@ -30,8 +32,8 @@ public class GameController {
     //Return game ID, initial game state (GUESS phase)
     //Receive total rouns, count down seconds, and user ID as parameters
     @RequestMapping(value = "/games", method = RequestMethod.POST)
-    public ResponseEntity<Map<String, Object>> createNewGame(@RequestParam Integer totalRounds, @RequestParam Integer maxTimerSeconds, @RequestParam Long userId) {
-        Game game = gameService.createNewGame(totalRounds, maxTimerSeconds);
+    public ResponseEntity<Map<String, Object>> createNewGame(@RequestBody CreateGameRequest request) {
+        Game game = gameService.createNewGame(request.getTotalRounds(), request.getMaxTimerSeconds());
         
         Map<String, Object> response = new HashMap<>();
         response.put("gameId", game.getGameId());
@@ -41,7 +43,6 @@ public class GameController {
         response.put("imageUrl", game.getRounds().get(game.getCurrentRoundNumber() - 1).getLocation().getImageUrl());
         response.put("score", 0);
         response.put("timeLimitSeconds", game.getMaxTimerSeconds());
-
 
         return ResponseEntity.ok(response);
     }
@@ -64,27 +65,26 @@ public class GameController {
     //TODO: Implement the guess submission logic here
     //Return the result of the guess (actual location, score for the round, and updated game state)
     @RequestMapping(value = "/games/{gameId}/guess", method = RequestMethod.POST)
-    public String makeGuess(@RequestParam Long gameId, @RequestParam BigDecimal corX, @RequestParam BigDecimal corY) {
+    public String makeGuess(@RequestParam Long gameId, @RequestBody MakeGuessRequest request) {
         Game game = gameService.getGameById(gameId);
         Round currentRound = game.getRounds().get(game.getCurrentRoundNumber() - 1);
-        Guess guess = guessService.createGuess(currentRound, corX, corY);
+        Guess guess = guessService.createGuess(currentRound, request.getCorX(), request.getCorY());
 
         game.setGameState("REVEAL");
         game.setCurrentRoundNumber(game.getCurrentRoundNumber() + 1);
-        //TODO: game.score
+
         Map<String, Object> response = new HashMap<>();
         response.put("phase", game.getGameState());
         response.put("round", game.getCurrentRoundNumber());
         response.put("totalRounds", game.getTotalRounds());
         response.put("imageUrl", game.getRounds().get(game.getCurrentRoundNumber() - 1).getLocation().getImageUrl());
         response.put("timeLimitSeconds", game.getMaxTimerSeconds());
-        response.put("guessedX", corX);
-        response.put("guessedY", corY);
+        response.put("guessedX", request.getCorX());
+        response.put("guessedY", request.getCorY());
         response.put("actualX", currentRound.getLocation().getCorX());
         response.put("actualY", currentRound.getLocation().getCorY());
         response.put("score", game.getScore());
         response.put("scoreReceived", guess.getScore());
-        
 
         return ResponseEntity.ok(response).toString();
     }
