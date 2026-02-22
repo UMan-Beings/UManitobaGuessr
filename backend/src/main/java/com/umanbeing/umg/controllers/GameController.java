@@ -100,6 +100,8 @@ public class GameController {
             game.setCompleted(true);
             response.put("phase", game.getGameState());
             response.put("score", game.getScore());
+            response.put("totalRounds", game.getTotalRounds());
+            response.put("round", game.getCurrentRoundNumber());
         } else {
             game.setGameState("GUESS");
             game.setCurrentRoundNumber(game.getCurrentRoundNumber() + 1);
