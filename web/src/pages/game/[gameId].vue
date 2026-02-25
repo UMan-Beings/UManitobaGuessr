@@ -51,8 +51,8 @@
     },
     {
       imageUrl: 'https://uman-beings.github.io/UMG-Pictures/IMG_3652.jpg',
-      lat: 1234,
-      lng: 1517,
+      lat: 1172,
+      lng: 1776,
     },
     {
       imageUrl: 'https://uman-beings.github.io/UMG-Pictures/IMG_3655.jpg',
