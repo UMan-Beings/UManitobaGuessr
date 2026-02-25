@@ -2,7 +2,7 @@
   <div class="overflow-hidden position-absolute top-0 h-screen w-100">
     <div ref="mapDiv" class="w-100 h-100" />
   </div>
-  
+
   <v-btn
     class="map-overlay rounded-lg position-absolute bottom-0 left-0 right-0 ma-4"
     color="primary"
@@ -19,8 +19,8 @@
   import { useLeafletImageMap } from '@/map/useLeafletImageMap'
 
   const props = defineProps<{
-    guessLat: number
-    guessLng: number
+    guessLat?: number
+    guessLng?: number
     actualLat: number
     actualLng: number
   }>()
@@ -38,18 +38,22 @@
     mapInstance.setMinZoom(-1.8)
     mapInstance.setMaxZoom(0)
 
-    const guessLatLng = L.latLng([props.guessLat, props.guessLng])
     const actualLatLng = L.latLng([props.actualLat, props.actualLng])
-
-    const guessMarker = L.marker(guessLatLng)
     const actualMarker = L.marker(actualLatLng)
-    const polyline = L.polyline([guessLatLng, actualLatLng])
-
-    mapInstance.addLayer(guessMarker)
     mapInstance.addLayer(actualMarker)
-    mapInstance.addLayer(polyline)
 
-    mapInstance.flyToBounds(polyline.getBounds(), { padding: [33,33] })
+    if (props.guessLat != null && props.guessLng != null) {
+      const guessLatLng = L.latLng([props.guessLat, props.guessLng])
+      const guessMarker = L.marker(guessLatLng)
+      mapInstance.addLayer(guessMarker)
+
+      const polyline = L.polyline([guessLatLng, actualLatLng])
+      mapInstance.addLayer(polyline)
+
+      mapInstance.flyToBounds(polyline.getBounds(), { padding: [33, 33] })
+    } else {
+      mapInstance.flyTo(actualMarker.getLatLng())
+    }
   })
 
   function nextRound () {
