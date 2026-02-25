@@ -13,31 +13,32 @@ import java.util.List;
 public class Game {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "\"gameId\"")
     private Long gameId;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "userId", nullable = false)
+    @JoinColumn(name = "\"userId\"", nullable = false)
     private User user;
     
-    @Column(nullable = false)
+    @Column(name = "\"maxTimerSeconds\"", nullable = false)
     private Integer maxTimerSeconds;
 
-    @Column(nullable = false)
+    @Column(name = "\"totalRounds\"", nullable = false)
     private Integer totalRounds;
 
-    @Column(nullable = false)
+    @Column(name = "\"isCompleted\"", nullable = false)
     private boolean isCompleted;
 
-    @Column(nullable = false)
+    @Column(name = "\"gameState\"", nullable = false)
     private String gameState;
 
-    @Column(nullable = false)
+    @Column(name = "\"currentRoundNumber\"", nullable = false)
     private Integer currentRoundNumber;
 
-    @Column(nullable = false)
+    @Column(name = "\"score\"", nullable = false)
     private Integer score;
 
-    @OneToMany(mappedBy = "game", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "game", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     @OrderBy("roundNumber ASC")
     private List<Round> rounds = new ArrayList<>();
 }

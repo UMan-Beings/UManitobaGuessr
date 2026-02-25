@@ -11,17 +11,18 @@ import lombok.Setter;
 public class Round {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "\"roundId\"")
     private Long roundId;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "gameId", nullable = false)
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "\"gameId\"", nullable = false)
     private Game game;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "locationId", nullable = false)
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "\"locationId\"", nullable = false)
     private Location location;
 
-    @Column(nullable = false)
+    @Column(name = "\"roundNumber\"", nullable = false)
     private Integer roundNumber;
 
     @OneToOne(mappedBy = "round", cascade = CascadeType.ALL, orphanRemoval = true)

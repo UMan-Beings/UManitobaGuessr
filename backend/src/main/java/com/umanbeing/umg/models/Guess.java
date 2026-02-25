@@ -15,21 +15,21 @@ public class Guess {
     private Long guessId;
 
     @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "roundId", nullable = false, unique = true)
+    @JoinColumn(name = "\"roundId\"", nullable = false, unique = true)
     private Round round;
 
-    @Column(nullable = false, precision = 9, scale = 6)
+    @Column(name = "\"guessedX\"", nullable = false, precision = 9, scale = 6)
     private BigDecimal guessedX;
 
-    @Column(nullable = false, precision = 9, scale = 6)
+    @Column(name = "\"guessedY\"", nullable = false, precision = 9, scale = 6)
     private BigDecimal guessedY;
 
-    @Column(nullable = false)
+    @Column(name = "\"guessTimeMs\"", nullable = false)
     private Integer guessTimeMs;
 
-    @Column(nullable = false)
+    @Column(name = "\"distanceMeters\"", nullable = false)
     private Integer distanceMeters;
 
-    @Column(nullable = false)
+    @Column(name = "\"score\"", nullable = false)
     private Integer score;
 }

@@ -14,14 +14,15 @@ public class Location {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long locationId;
 
+    @Column(name = "\"name\"", nullable = false)
     private String name;
 
-    @Column(nullable = false)
+    @Column(name = "\"imageUrl\"", nullable = false)
     private String imageUrl;
 
-    @Column(nullable = false, precision = 9, scale = 6)
+    @Column(name = "\"corX\"", nullable = false, precision = 9, scale = 6)
     private BigDecimal corX;
 
-    @Column(nullable = false, precision = 9, scale = 6)
+    @Column(name = "\"corY\"", nullable = false, precision = 9, scale = 6)
     private BigDecimal corY;
 }
