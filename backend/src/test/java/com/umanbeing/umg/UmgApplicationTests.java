@@ -9,10 +9,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.math.BigDecimal;
 
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
-import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -21,7 +19,6 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.security.test.context.support.WithMockUser;
-import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
@@ -31,7 +28,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 @SpringBootTest
 @ActiveProfiles("test")
 @AutoConfigureMockMvc
-@Sql(scripts = {"classpath:db/data.sql"}, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_CLASS)//"classpath:db/schema.sql", 
+@Sql(scripts = {"classpath:db/data.sql"}, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_CLASS)
 @TestMethodOrder(org.junit.jupiter.api.MethodOrderer.OrderAnnotation.class)
 class UmgApplicationTests {
 
@@ -109,7 +106,7 @@ class UmgApplicationTests {
 
     @Test
     @WithMockUser
-    @org.junit.jupiter.api.Order(5)
+    @org.junit.jupiter.api.Order(3)
     void testGetGameById() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/games/{gameId}", gameId))
                 .andExpect(MockMvcResultMatchers.status().isOk())
@@ -154,10 +151,10 @@ class UmgApplicationTests {
 
     @Test
     @WithMockUser
-    @org.junit.jupiter.api.Order(4)
+    @org.junit.jupiter.api.Order(6)
     void testDatabaseContent() {
         // Verify that the game created in the first test exists in the database with the correct values
-        // Return everytthing in round table
+        // Return everything in round table
         jdbcTemplate.query("SELECT * FROM ROUND", (rs) -> {
             Long roundId = rs.getLong("roundId");
             Long gameId = rs.getLong("gameId");

@@ -47,16 +47,6 @@ public class GameService {
 
         // Use RoundService to create rounds for the saved game
         List<Round> rounds = roundService.createRoundForGame(savedGame);
-        if (rounds == null || rounds.size() != totalRounds) {
-            throw new IllegalStateException("Failed to create the correct number of rounds for the game");
-        }
-
-        //validate that rounds have all the necessary information
-        rounds.forEach(round -> {
-            if (round.getRoundNumber() == null || round.getLocation() == null) {
-                throw new IllegalStateException("Round is missing necessary information: " + round);
-            }
-        });
 
         savedGame.getRounds().addAll(rounds);
 

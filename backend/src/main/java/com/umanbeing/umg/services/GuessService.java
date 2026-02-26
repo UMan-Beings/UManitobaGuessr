@@ -29,6 +29,7 @@ public class GuessService {
         //TODO: Calculate guessTimeMs, distanceMeters, and score based on the round's location and the guessed coordinates
         guess.setDistanceMeters(distance(guessedX, guessedY, round.getLocation().getCorX(), round.getLocation().getCorY()));
         guess.setScore(calculateScore(guessedX, guessedY, round.getLocation().getCorX(), round.getLocation().getCorY()));
+        guess.setGuessTimeMs(null);
         round.getGame().setScore(round.getGame().getScore() + guess.getScore());
         return guessRepo.save(guess);
     }
