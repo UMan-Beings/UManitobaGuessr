@@ -18,7 +18,6 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.jdbc.Sql;
-import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
@@ -48,7 +47,6 @@ class UmgApplicationTests {
     }
 
     @Test
-    @WithMockUser
     @org.junit.jupiter.api.Order(1)
     void testDatabaseInitialization() {
         // Verify that the game created in the first test exists in the database with the correct values
@@ -70,7 +68,6 @@ class UmgApplicationTests {
 
 
     @Test
-    @WithMockUser
     @org.junit.jupiter.api.Order(2)
     void testCreateNewGame() throws Exception {
         // Create a request object
@@ -105,7 +102,6 @@ class UmgApplicationTests {
     }
 
     @Test
-    @WithMockUser
     @org.junit.jupiter.api.Order(3)
     void testGetGameById() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/games/{gameId}", gameId))
@@ -114,7 +110,6 @@ class UmgApplicationTests {
     }
 
     @Test
-    @WithMockUser
     @org.junit.jupiter.api.Order(4)
     void testMakeGuess() throws Exception {
         // Create a request object
@@ -139,7 +134,6 @@ class UmgApplicationTests {
     }
 
     @Test
-    @WithMockUser
     @org.junit.jupiter.api.Order(5)
     void testRequestNextRound() throws Exception {
 
@@ -151,7 +145,6 @@ class UmgApplicationTests {
     }
 
     @Test
-    @WithMockUser
     @org.junit.jupiter.api.Order(6)
     void testDatabaseContent() {
         // Verify that the game created in the first test exists in the database with the correct values
