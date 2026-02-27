@@ -5,7 +5,7 @@ import com.umanbeing.umg.models.Round;
 import com.umanbeing.umg.models.Location;
 import com.umanbeing.umg.repos.LocationRepo;
 import com.umanbeing.umg.models.Game;
-import java.util.Random;
+import java.security.SecureRandom;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
@@ -15,7 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class RoundService {
     private RoundRepo roundRepo;
     private LocationRepo locationRepo;
-    private final Random random = new Random(); // Reuse Random instance
+    private final SecureRandom random = new SecureRandom(); // Reuse SecureRandom instance
 
     public RoundService(RoundRepo roundRepo, LocationRepo locationRepo) {
         this.roundRepo = roundRepo;
