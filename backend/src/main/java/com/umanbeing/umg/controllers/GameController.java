@@ -39,7 +39,6 @@ public class GameController {
     @RequestMapping(value = "/games", method = RequestMethod.POST)
     public ResponseEntity<Map<String, Object>> createNewGame(@RequestBody CreateGameRequest request) {
         Game game = gameService.createNewGame(request.getTotalRounds(), request.getMaxTimerSeconds(), testUserId);
-        System.out.println("Game id :" + game.getGameId());
         Map<String, Object> response = new HashMap<>();
         response.put("gameId", game.getGameId());
         response.put("phase", game.getGameState());

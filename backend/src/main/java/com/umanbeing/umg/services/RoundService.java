@@ -52,14 +52,10 @@ public class RoundService {
         AtomicInteger roundNumber = new AtomicInteger(1);
         rounds.forEach(round -> {
             round.setRoundNumber(roundNumber.getAndIncrement());
-            System.out.println("Creating round: " + round.getRoundNumber() + ", Game ID: " + game.getGameId() + ", Location ID: " + round.getLocation().getLocationId());
         });
 
         // Save rounds
-        rounds.forEach(round -> {System.out.println("Saving round: " + round.getRoundNumber() + ", Game ID: " + game.getGameId() + ", Location ID: " + round.getLocation().getLocationId()); roundRepo.save(round);});
-
-        // Log the total number of rounds created
-        System.out.println("Total rounds created: " + rounds.size() + " for game: " + game.getGameId());
+        rounds.forEach(round ->{roundRepo.save(round);});
 
         return rounds;
     }

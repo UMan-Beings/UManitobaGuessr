@@ -27,7 +27,7 @@ public class GuessService {
         guess.setGuessedX(guessedX);
         guess.setGuessedY(guessedY);
         guess.setGuessTimeSeconds(guessTimeSeconds);
-        guess.setDistanceMeters(distance(guessedX, guessedY, round.getLocation().getCorX(), round.getLocation().getCorY()));
+        guess.setDistanceMeters(calculateDistance(guessedX, guessedY, round.getLocation().getCorX(), round.getLocation().getCorY()));
         guess.setScore(calculateScore(guessedX, guessedY, round.getLocation().getCorX(), round.getLocation().getCorY()));
         round.getGame().setScore(round.getGame().getScore() + guess.getScore());
         
@@ -35,29 +35,30 @@ public class GuessService {
         return guessRepo.save(guess);
     }
 
-    // private Integer distance(BigDecimal x1, BigDecimal y1, BigDecimal x2, BigDecimal y2) {
-    //     final int R = 6371; // Mean radius of the Earth in kilometers
-    //     double latDistance = Math.toRadians(x2.doubleValue() - x1.doubleValue());
-    //     double lonDistance = Math.toRadians(y2.doubleValue() - y1.doubleValue());
-    //     double a = Math.sin(latDistance / 2) * Math.sin(latDistance / 2)
-    //             + Math.cos(Math.toRadians(x1.doubleValue())) * Math.cos(Math.toRadians(x2.doubleValue()))
-    //             * Math.sin(lonDistance / 2) * Math.sin(lonDistance / 2);
-    //     double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-    //     return (int) (R * c * 1000); // Distance in meters
-    // }
-
-    private Integer distance(BigDecimal x1, BigDecimal y1, BigDecimal x2, BigDecimal y2) {
-        return (int) Math.sqrt(Math.pow(x2.doubleValue() - x1.doubleValue(), 2) + Math.pow(y2.doubleValue() - y1.doubleValue(), 2));
+    private Integer calculateDistance(BigDecimal x1, BigDecimal y1, BigDecimal x2, BigDecimal y2) {
+        return (int) Math.hypot(x1.doubleValue() - x2.doubleValue(), y1.doubleValue() - y2.doubleValue());
     }
 
-    
-
-    //TODO: Add time in consideration for scoring
     public Integer calculateScore(BigDecimal x1, BigDecimal y1, BigDecimal x2, BigDecimal y2) {
-        Integer distanceInteger = distance(x1, y1, x2, y2);
-        // Simple scoring algorithm: 1000 points for a perfect guess, minus 1 point per meter and 1 point per second
-        //int score = 1000 - distanceMeters - (guessTimeMs / 1000);
-        return (int) (1000 * Math.exp(-0.01 * distanceInteger));
+
+        double calculatedScore = 0;
+
+        double distance = calculateDistance(x1, y1, x2, y2);
+
+        double fullScoreDistance = 50;
+        double maxDistance = 350;
+        double maxScore = 1000;
+
+        if (distance <= fullScoreDistance) {
+            calculatedScore = maxScore;
+        } else {
+            double scaledDistance = distance - fullScoreDistance;
+            double scoringRange = maxDistance - fullScoreDistance;
+
+            calculatedScore = Math.max(0, Math.round(maxScore * (1 - scaledDistance / scoringRange)));
+        }
+
+        return (int) calculatedScore;
     }
 
 }
