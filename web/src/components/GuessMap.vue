@@ -6,8 +6,8 @@
 
     <v-btn
       class="mt-2 w-100 rounded-lg"
-      :color="guessMarker ? 'primary' : undefined"
-      :disabled="!guessMarker"
+      :color="guessMarker ? 'primary' : 'grey-darken-3'"
+      :readonly="!guessMarker"
       size="large"
       @click="submitGuess"
     >
