@@ -5,8 +5,8 @@
 </template>
 
 <style scoped>
-.logo{
-  color: white;
+.logo {
+  color: #56b3ff;
   font-size: 80px;
   font-weight: 900;
   line-height: 1;
@@ -17,7 +17,7 @@
   transition: color .15s ease;
 }
 
-.logo:hover{
-  color:#2196f3;
+.logo:hover {
+  color: #2196f3;
 }
 </style>
