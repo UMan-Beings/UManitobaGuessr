@@ -32,8 +32,10 @@
   watch(map, (mapInstance, _, onCleanup) => {
     if (!mapInstance) return
     
-    mapInstance.setMinZoom(-1.9)
+    const minZoom = -1.9
+    mapInstance.setMinZoom(minZoom)
     mapInstance.setMaxZoom(0)
+    mapInstance.setZoom(minZoom)
 
     const onMapClick = (e: L.LeafletMouseEvent) => {
       const latLng = e.latlng
