@@ -8,9 +8,10 @@ DELETE FROM "LOCATION";
 DELETE FROM "User";
 
 -- Insert test data for User with explicit userId values
-MERGE INTO "User" ("userId", "username", "email", "passwordHash", "profileImageUrl") VALUES
+INSERT INTO "User" ("userId", "username", "email", "passwordHash", "profileImageUrl") VALUES
 (1, 'testuser1', 'testuser1@example.com', 'hashedpassword1', 'https://example.com/profile1.png'),
-(2, 'testuser2', 'testuser2@example.com', 'hashedpassword2', 'https://example.com/profile2.png');
+(2, 'testuser2', 'testuser2@example.com', 'hashedpassword2', 'https://example.com/profile2.png')
+ON CONFLICT ("userId") DO NOTHING;
 
 -- Insert test data for Location
 INSERT INTO "LOCATION" ("name", "imageUrl", "corX", "corY") VALUES
