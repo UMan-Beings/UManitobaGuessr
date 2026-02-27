@@ -24,8 +24,8 @@ public class Guess {
     @Column(name = "\"guessedY\"", nullable = false, precision = 9, scale = 6)
     private BigDecimal guessedY;
 
-    @Column(name = "\"guessTimeMs\"", nullable = false)
-    private Integer guessTimeMs;
+    @Column(name = "\"guessTimeSeconds\"", nullable = false)
+    private Long guessTimeSeconds;
 
     @Column(name = "\"distanceMeters\"", nullable = false)
     private Integer distanceMeters;

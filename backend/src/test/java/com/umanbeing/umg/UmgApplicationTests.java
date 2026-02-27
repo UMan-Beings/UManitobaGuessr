@@ -121,6 +121,7 @@ class UmgApplicationTests {
         MakeGuessRequest request = new MakeGuessRequest();
         request.setCorX(BigDecimal.valueOf(100));
         request.setCorY(BigDecimal.valueOf(200));
+        request.setGuessTimeSeconds(30L);
 
         // Convert the request object to JSON
         String requestJson = objectMapper.writeValueAsString(request);

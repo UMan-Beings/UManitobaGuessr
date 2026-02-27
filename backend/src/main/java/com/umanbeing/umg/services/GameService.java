@@ -61,7 +61,8 @@ public class GameService {
     public Game getGameById(Long gameId) {
         Game game = gameRepo.findById(gameId).orElse(null);
         if (game != null) {
-            game.setRounds(roundService.getRoundsForGame(game));
+            game.getRounds().clear();
+            game.getRounds().addAll(roundService.getRoundsForGame(game));
         }
         return game;
     }
