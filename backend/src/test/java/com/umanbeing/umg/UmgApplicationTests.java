@@ -52,8 +52,8 @@ class UmgApplicationTests {
     @org.junit.jupiter.api.Order(1)
     void testDatabaseInitialization() {
         // Verify that the game created in the first test exists in the database with the correct values
-        // Return everytthing in round table
-        jdbcTemplate.query("SELECT * FROM ROUND", (rs) -> {
+        // Return everything in round table
+        jdbcTemplate.query("SELECT * FROM \"ROUND\"", (rs) -> {
             Long roundId = rs.getLong("roundId");
             Long gameId = rs.getLong("gameId");
             Long locationId = rs.getLong("locationId");
@@ -62,7 +62,7 @@ class UmgApplicationTests {
         });
 
         System.out.println("Verifying game data in the database...");
-        jdbcTemplate.query("SELECT * FROM GAME", (rs) -> {
+        jdbcTemplate.query("SELECT * FROM \"GAME\"", (rs) -> {
             Long gameId = rs.getLong("gameId");
             System.out.println("Game ID: " + gameId);
         });
@@ -95,9 +95,9 @@ class UmgApplicationTests {
                 .getContentAsString();
 
         this.gameId = objectMapper.readTree(responseContent).get("gameId").asLong();
-        //verify that gameid is in database
+        // Verify that gameId is in database
         Long count = jdbcTemplate.queryForObject(
-            "SELECT COUNT(*) FROM GAME WHERE \"gameId\" = ?",
+            "SELECT COUNT(*) FROM \"GAME\" WHERE \"gameId\" = ?",
             Long.class,
             this.gameId
         );
@@ -156,7 +156,7 @@ class UmgApplicationTests {
     void testDatabaseContent() {
         // Verify that the game created in the first test exists in the database with the correct values
         // Return everything in round table
-        jdbcTemplate.query("SELECT * FROM ROUND", (rs) -> {
+        jdbcTemplate.query("SELECT * FROM \"ROUND\"", (rs) -> {
             Long roundId = rs.getLong("roundId");
             Long gameId = rs.getLong("gameId");
             Long locationId = rs.getLong("locationId");
@@ -165,7 +165,7 @@ class UmgApplicationTests {
         });
 
         System.out.println("Verifying game data in the database...");
-        jdbcTemplate.query("SELECT * FROM GAME", (rs) -> {
+        jdbcTemplate.query("SELECT * FROM \"GAME\"", (rs) -> {
             Long gameId = rs.getLong("gameId");
             System.out.println("Game ID: " + gameId);
         });
