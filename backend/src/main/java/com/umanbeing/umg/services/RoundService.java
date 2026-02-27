@@ -5,8 +5,8 @@ import com.umanbeing.umg.models.Round;
 import com.umanbeing.umg.models.Location;
 import com.umanbeing.umg.repos.LocationRepo;
 import com.umanbeing.umg.models.Game;
-import java.util.List;
 import java.util.Random;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 import org.springframework.transaction.annotation.Transactional;
@@ -15,6 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class RoundService {
     private RoundRepo roundRepo;
     private LocationRepo locationRepo;
+    private final Random random = new Random(); // Reuse Random instance
 
     public RoundService(RoundRepo roundRepo, LocationRepo locationRepo) {
         this.roundRepo = roundRepo;
@@ -35,7 +36,6 @@ public class RoundService {
             throw new IllegalStateException("Not enough locations to create a round.");
         }
 
-        Random random = new Random();
         List<Location> randomLocations = random.ints(0, allLocations.size())
             .distinct()
             .limit(game.getTotalRounds())
