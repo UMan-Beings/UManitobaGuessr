@@ -8,23 +8,25 @@ import java.util.List;
 
 
 @Entity
-@Table
+@Table(name = "\"User\"")
 @Getter
 @Setter
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "\"userId\"")
     private Long userId;
 
-    @Column(nullable = false, unique = true)
+    @Column(name = "\"username\"", nullable = false, unique = true)
     private String username;
 
-    @Column(nullable = false, unique = true)
+    @Column(name = "\"email\"", nullable = false, unique = true)
     private String email;
 
-    @Column(nullable = false)
+    @Column(name = "\"passwordHash\"", nullable = false)
     private String passwordHash;
 
+    @Column(name = "\"profileImageUrl\"")
     private String profileImageUrl;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)

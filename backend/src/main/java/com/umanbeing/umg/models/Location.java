@@ -6,22 +6,24 @@ import lombok.Getter;
 import lombok.Setter;
 
 @Entity
-@Table
+@Table(name = "\"LOCATION\"")
 @Getter
 @Setter
 public class Location {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "\"locationId\"")
     private Long locationId;
 
+    @Column(name = "\"name\"", nullable = false)
     private String name;
 
-    @Column(nullable = false)
+    @Column(name = "\"imageUrl\"", nullable = false)
     private String imageUrl;
 
-    @Column(nullable = false, precision = 9, scale = 6)
-    private BigDecimal latitude;
+    @Column(name = "\"corX\"", nullable = false, precision = 9, scale = 6)
+    private BigDecimal corX;
 
-    @Column(nullable = false, precision = 9, scale = 6)
-    private BigDecimal longitude;
+    @Column(name = "\"corY\"", nullable = false, precision = 9, scale = 6)
+    private BigDecimal corY;
 }
