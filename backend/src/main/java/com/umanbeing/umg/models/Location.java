@@ -6,12 +6,13 @@ import lombok.Getter;
 import lombok.Setter;
 
 @Entity
-@Table
+@Table(name = "\"LOCATION\"")
 @Getter
 @Setter
 public class Location {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "\"locationId\"")
     private Long locationId;
 
     @Column(name = "\"name\"", nullable = false)

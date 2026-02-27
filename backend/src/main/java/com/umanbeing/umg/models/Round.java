@@ -5,7 +5,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 @Entity
-@Table
+@Table(name = "\"ROUND\"")
 @Getter
 @Setter
 public class Round {
