@@ -11,8 +11,8 @@
 </script>
 
 <style scoped>
-.blur{
+.blur {
   backdrop-filter: blur(6px);
-  background: rgba(0,0,0,.25);
+  background: rgba(0,0,0,.4);
 }
 </style>
