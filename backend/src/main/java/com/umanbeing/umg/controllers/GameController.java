@@ -15,6 +15,8 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.http.ResponseEntity;
+
+import com.domain.GameState;
 import com.umanbeing.umg.controllers.dto.CreateGameRequest;
 import com.umanbeing.umg.controllers.dto.MakeGuessRequest;
 
@@ -51,7 +53,7 @@ public class GameController {
     public ResponseEntity<Map<String, Object>> getGameById(@PathVariable Long gameId) {
         Game game = gameService.getGameById(gameId);
 
-        String phase = game.getGameState();
+        GameState phase = game.getGameState();
         Round currentRound = game.getRounds().get(game.getCurrentRoundNumber() - 1);
         Guess guess = currentRound.getGuess();
         
@@ -62,10 +64,10 @@ public class GameController {
         response.put("round", game.getCurrentRoundNumber());
         response.put("timeLimitSeconds", game.getMaxTimerSeconds());
 
-        if ("GUESS".equals(phase)) {
+        if (GameState.GUESS == phase) {
             response.put("imageUrl", currentRound.getLocation().getImageUrl());
         }
-        else if ("REVEAL".equals(phase)) {
+        else if (GameState.REVEAL == phase) {
             response.put("actualX", currentRound.getLocation().getCorX());
             response.put("actualY", currentRound.getLocation().getCorY());
 

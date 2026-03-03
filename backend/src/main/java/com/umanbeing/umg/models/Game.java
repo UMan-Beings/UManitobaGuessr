@@ -6,6 +6,8 @@ import lombok.Setter;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.domain.GameState;
+
 @Entity
 @Table(name = "\"GAME\"")
 @Getter
@@ -29,8 +31,9 @@ public class Game {
     @Column(name = "\"isCompleted\"", nullable = false)
     private boolean isCompleted;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "\"gameState\"", nullable = false)
-    private String gameState;
+    private GameState gameState;
 
     @Column(name = "\"currentRoundNumber\"", nullable = false)
     private Integer currentRoundNumber;

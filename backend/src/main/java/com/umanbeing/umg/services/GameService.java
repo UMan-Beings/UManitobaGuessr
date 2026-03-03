@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
+import com.domain.GameState;
 import com.umanbeing.umg.models.Game;
 import com.umanbeing.umg.models.Guess;
 import com.umanbeing.umg.repos.GameRepo;
@@ -64,7 +65,7 @@ public class GameService {
         game.setMaxTimerSeconds(maxTimerSeconds);
         game.setCompleted(false);
         game.setCurrentRoundNumber(1);
-        game.setGameState("GUESS");
+        game.setGameState(GameState.GUESS);
         game.setScore(0);
         game.setUser(user);
         // Save the game first to ensure it has an ID
@@ -82,7 +83,7 @@ public class GameService {
     public Game submitGuess(Long gameId, BigDecimal guessedX, BigDecimal guessedY, Long guessTimeSeconds) {
         Game game = getGameById(gameId);
 
-        if (!"GUESS".equals(game.getGameState())) {
+        if (GameState.GUESS != game.getGameState()) {
             throw new ResponseStatusException(HttpStatus.CONFLICT);
         }
 
@@ -103,7 +104,7 @@ public class GameService {
         Round currentRound = game.getRounds().get(game.getCurrentRoundNumber() - 1);
 
         guessService.createGuess(currentRound, guessedX, guessedY, guessTimeSeconds);
-        game.setGameState("REVEAL");
+        game.setGameState(GameState.REVEAL);
 
         return gameRepo.save(game);
     }
@@ -116,7 +117,7 @@ public class GameService {
             throw new ResponseStatusException(HttpStatus.CONFLICT);
         }
 
-        if (!"GUESS".equals(game.getGameState())) {
+        if (GameState.GUESS != game.getGameState()) {
             throw new ResponseStatusException(HttpStatus.CONFLICT);
         }
 
@@ -125,7 +126,7 @@ public class GameService {
 
         guessService.createGuess(currentRound, null, null, guessTime);
 
-        game.setGameState("REVEAL");
+        game.setGameState(GameState.REVEAL);
 
         return gameRepo.save(game);
     }
@@ -134,7 +135,7 @@ public class GameService {
     public Game nextRound(Long gameId) {
         Game game = getGameById(gameId);
 
-        if (!"REVEAL".equals(game.getGameState())) {
+        if (GameState.REVEAL != game.getGameState()) {
             throw new ResponseStatusException(HttpStatus.CONFLICT);
         }
 
@@ -147,10 +148,10 @@ public class GameService {
         }
 
         if (currentRoundNumber == game.getTotalRounds()) {
-            game.setGameState("FINISHED");
+            game.setGameState(GameState.FINISHED);
             game.setCompleted(true);
         } else {
-            game.setGameState("GUESS");
+            game.setGameState(GameState.GUESS);
             game.setCurrentRoundNumber(currentRoundNumber + 1); 
         }
 
