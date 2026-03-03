@@ -19,6 +19,7 @@ public class GameService {
 
     private static final int MAX_ROUNDS = 20;
     private static final int MAX_TIME_LIMIT_SECONDS = 300;
+    private static final int GUESS_TIME_MAX_SECONDS = 3600;
     
     private final GameRepo gameRepo;
 
@@ -91,6 +92,12 @@ public class GameService {
 
         if (guessTimeSeconds == null) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+        }
+
+        if (game.getMaxTimerSeconds() > 0) {
+            guessTimeSeconds = Math.min(guessTimeSeconds, game.getMaxTimerSeconds());
+        } else {
+            guessTimeSeconds = Math.min(guessTimeSeconds, GUESS_TIME_MAX_SECONDS);
         }
         
         Round currentRound = game.getRounds().get(game.getCurrentRoundNumber() - 1);
