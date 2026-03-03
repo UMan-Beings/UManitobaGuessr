@@ -39,7 +39,7 @@ public class GameController {
         response.put("round", game.getCurrentRoundNumber());
         response.put("totalRounds", game.getTotalRounds());
         response.put("imageUrl", game.getRounds().get(game.getCurrentRoundNumber() - 1).getLocation().getImageUrl());
-        response.put("score", 0);
+        response.put("score", game.getScore());
         response.put("timeLimitSeconds", game.getMaxTimerSeconds());
 
         return ResponseEntity.ok(response);
