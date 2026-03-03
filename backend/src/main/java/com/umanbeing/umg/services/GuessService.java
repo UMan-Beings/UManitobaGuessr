@@ -2,7 +2,11 @@ package com.umanbeing.umg.services;
 
 import java.math.BigDecimal;
 
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
+
 import com.umanbeing.umg.models.Guess;
 import com.umanbeing.umg.repos.GuessRepo;
 import com.umanbeing.umg.models.Round;
@@ -29,10 +33,14 @@ public class GuessService {
         guess.setGuessTimeSeconds(guessTimeSeconds);
         guess.setDistanceMeters(calculateDistance(guessedX, guessedY, round.getLocation().getCorX(), round.getLocation().getCorY()));
         guess.setScore(calculateScore(guessedX, guessedY, round.getLocation().getCorX(), round.getLocation().getCorY()));
-        round.getGame().setScore(round.getGame().getScore() + guess.getScore());
-        
 
-        return guessRepo.save(guess);
+        try {
+            Guess savedGuess = guessRepo.save(guess);
+            round.setGuess(savedGuess);
+            return savedGuess;
+        } catch (DataIntegrityViolationException exception) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT);
+        }
     }
 
     private Integer calculateDistance(BigDecimal x1, BigDecimal y1, BigDecimal x2, BigDecimal y2) {
