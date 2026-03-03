@@ -17,6 +17,10 @@ import java.lang.Math;
 public class GuessService {
 
     private final GuessRepo guessRepo;
+    
+    private static final double FULL_SCORE_DISTANCE = 50;
+    private static final double MAX_DISTANCE = 350;
+    private static final int MAX_SCORE = 1000;
 
     public GuessService(GuessRepo guessRepo) {
         this.guessRepo = guessRepo;
@@ -38,8 +42,9 @@ public class GuessService {
             guess.setScore(0);
         } else {
             Location location = round.getLocation();
-            guess.setDistanceMeters(calculateDistance(guessedX, guessedY, location.getCorX(), location.getCorY()));
-            guess.setScore(calculateScore(guessedX, guessedY, location.getCorX(), location.getCorY()));
+            Integer distance = calculateDistance(guessedX, guessedY, location.getCorX(), location.getCorY());
+            guess.setDistanceMeters(distance);
+            guess.setScore(calculateScore(distance));
         }
 
         try {
@@ -55,26 +60,22 @@ public class GuessService {
         return (int) Math.hypot(x1.doubleValue() - x2.doubleValue(), y1.doubleValue() - y2.doubleValue());
     }
 
-    public Integer calculateScore(BigDecimal x1, BigDecimal y1, BigDecimal x2, BigDecimal y2) {
+    private int calculateScore(int distance) {
+        int calculatedScore = 0;
 
-        double calculatedScore = 0;
-
-        double distance = calculateDistance(x1, y1, x2, y2);
-
-        double fullScoreDistance = 50;
-        double maxDistance = 350;
-        double maxScore = 1000;
-
-        if (distance <= fullScoreDistance) {
-            calculatedScore = maxScore;
+        if (distance <= FULL_SCORE_DISTANCE) {
+            calculatedScore = MAX_SCORE;
         } else {
-            double scaledDistance = distance - fullScoreDistance;
-            double scoringRange = maxDistance - fullScoreDistance;
+            double scaledDistance = distance - FULL_SCORE_DISTANCE;
+            double scoringRange = MAX_DISTANCE - FULL_SCORE_DISTANCE;
 
-            calculatedScore = Math.max(0, Math.round(maxScore * (1 - scaledDistance / scoringRange)));
+            calculatedScore = Math.max(
+                0, 
+                (int) Math.round(MAX_SCORE * (1 - scaledDistance / scoringRange))
+            );
         }
 
-        return (int) calculatedScore;
+        return calculatedScore;
     }
 
 }
