@@ -1,7 +1,10 @@
 package com.umanbeing.umg.services;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
+
 import com.umanbeing.umg.models.Game;
 import com.umanbeing.umg.repos.GameRepo;
 import com.umanbeing.umg.models.User;
@@ -56,11 +59,16 @@ public class GameService {
     }
 
     public Game getGameById(Long gameId) {
-        Game game = gameRepo.findById(gameId).orElse(null);
-        if (game != null) {
-            game.getRounds().clear();
-            game.getRounds().addAll(roundService.getRoundsForGame(game));
+        if (gameId == null) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
         }
+
+        Game game = gameRepo.findById(gameId).orElse(null);
+
+        if (game == null) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        }
+
         return game;
     }
 
