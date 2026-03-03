@@ -55,14 +55,32 @@ public class GameController {
     @RequestMapping(value = "/games/{gameId}", method = RequestMethod.GET)
     public ResponseEntity<Map<String, Object>> getGameById(@PathVariable Long gameId) {
         Game game = gameService.getGameById(gameId);
-        Map<String, Object> response = new HashMap<>();
-        
-        if (game == null) {
-            response.put("phase", null);
-            return ResponseEntity.notFound().build();
-        }
 
-        response.put("phase", game.getGameState());
+        String phase = game.getGameState();
+        Round currentRound = game.getRounds().get(game.getCurrentRoundNumber() - 1);
+        Guess guess = currentRound.getGuess();
+        
+        Map<String, Object> response = new HashMap<>();
+        response.put("phase", phase);
+        response.put("score", game.getScore());
+        response.put("totalRounds", game.getTotalRounds());
+        response.put("round", game.getCurrentRoundNumber());
+        response.put("timeLimitSeconds", game.getMaxTimerSeconds());
+
+        if ("GUESS".equals(phase)) {
+            response.put("imageUrl", currentRound.getLocation().getImageUrl());
+        }
+        else if ("REVEAL".equals(phase)) {
+            response.put("actualX", currentRound.getLocation().getCorX());
+            response.put("actualY", currentRound.getLocation().getCorY());
+
+            if (guess != null) {
+                response.put("guessedX", guess.getGuessedX());
+                response.put("guessedY", guess.getGuessedY());
+                response.put("scoreReceived", guess.getScore());
+                response.put("guessTimeSeconds", guess.getGuessTimeSeconds());
+            }
+        }
 
         return ResponseEntity.ok(response);
     }
