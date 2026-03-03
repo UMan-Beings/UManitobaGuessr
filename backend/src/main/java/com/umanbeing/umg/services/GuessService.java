@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import com.umanbeing.umg.models.Guess;
+import com.umanbeing.umg.models.Location;
 import com.umanbeing.umg.repos.GuessRepo;
 import com.umanbeing.umg.models.Round;
 import java.lang.Math;
@@ -31,8 +32,15 @@ public class GuessService {
         guess.setGuessedX(guessedX);
         guess.setGuessedY(guessedY);
         guess.setGuessTimeSeconds(guessTimeSeconds);
-        guess.setDistanceMeters(calculateDistance(guessedX, guessedY, round.getLocation().getCorX(), round.getLocation().getCorY()));
-        guess.setScore(calculateScore(guessedX, guessedY, round.getLocation().getCorX(), round.getLocation().getCorY()));
+
+        if (guessedX == null || guessedY == null) {
+            guess.setDistanceMeters(null);
+            guess.setScore(0);
+        } else {
+            Location location = round.getLocation();
+            guess.setDistanceMeters(calculateDistance(guessedX, guessedY, location.getCorX(), location.getCorY()));
+            guess.setScore(calculateScore(guessedX, guessedY, location.getCorX(), location.getCorY()));
+        }
 
         try {
             Guess savedGuess = guessRepo.save(guess);
