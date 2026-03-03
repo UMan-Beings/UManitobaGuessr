@@ -92,6 +92,28 @@ public class GameService {
     }
 
     @Transactional
+    public Game timeout(Long gameId) {
+        Game game = getGameById(gameId);
+
+        if (game.getMaxTimerSeconds() <= 0) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT);
+        }
+
+        if (!"GUESS".equals(game.getGameState())) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT);
+        }
+
+        Round currentRound = game.getRounds().get(game.getCurrentRoundNumber() - 1);
+        long guessTime = game.getMaxTimerSeconds();
+
+        guessService.createGuess(currentRound, null, null, guessTime);
+
+        game.setGameState("REVEAL");
+
+        return gameRepo.save(game);
+    }
+
+    @Transactional
     public Game nextRound(Long gameId) {
         Game game = getGameById(gameId);
 

@@ -104,6 +104,27 @@ public class GameController {
 
         return ResponseEntity.ok(response);
     }
+
+    @RequestMapping(value = "/games/{gameId}/timeout", method=RequestMethod.POST)
+    public ResponseEntity<Map<String, Object>> timeout(@PathVariable Long gameId) {
+        Game game = gameService.timeout(gameId);
+        Round currentRound = game.getRounds().get(game.getCurrentRoundNumber() - 1);
+        Guess guess = currentRound.getGuess();
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("phase", game.getGameState());
+        response.put("round", game.getCurrentRoundNumber());
+        response.put("totalRounds", game.getTotalRounds());
+        response.put("imageUrl", currentRound.getLocation().getImageUrl());
+        response.put("timeLimitSeconds", game.getMaxTimerSeconds());
+        response.put("actualX", currentRound.getLocation().getCorX());
+        response.put("actualY", currentRound.getLocation().getCorY());
+        response.put("score", game.getScore());
+        response.put("scoreReceived", guess.getScore());
+        response.put("guessTimeSeconds", guess.getGuessTimeSeconds());
+
+        return ResponseEntity.ok(response);
+    }
     
     //Implement the logic to move to the next round here
     //Return the new game state (GUESS phase for the next round, or FINISHED if it was the last round)
