@@ -30,10 +30,7 @@ public class GameService {
         Game game = new Game();
 
         // Get the user from the UserService and set it to the game
-        User user = userService.getUserById(userId);
-        if (user == null) {
-            throw new IllegalArgumentException("User with ID " + userId + " not found");
-        }
+        User user = userId == null ? null : userService.getUserById(userId);
 
         game.setTotalRounds(totalRounds);
         game.setMaxTimerSeconds(maxTimerSeconds);

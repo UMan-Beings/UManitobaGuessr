@@ -16,8 +16,8 @@ public class Game {
     @Column(name = "\"gameId\"")
     private Long gameId;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "\"userId\"", nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY, optional = true)
+    @JoinColumn(name = "\"userId\"", nullable = true)
     private User user;
     
     @Column(name = "\"maxTimerSeconds\"", nullable = false)
@@ -36,7 +36,7 @@ public class Game {
     private Integer currentRoundNumber;
 
     @Column(name = "\"score\"", nullable = false)
-    private Integer score;
+    private Integer score; // cant we just sum the guess scores?
 
     @OneToMany(mappedBy = "game", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     @OrderBy("roundNumber ASC")

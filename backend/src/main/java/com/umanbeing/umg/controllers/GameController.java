@@ -31,14 +31,13 @@ public class GameController {
     @Autowired
     private GuessService guessService;
 
-    private final Long testUserId = 1L; // Replace with actual user ID from authentication context
-
     //Implement the game creation logic here
     //Return game ID, initial game state (GUESS phase)
     //Receive total rouns, count down seconds, and user ID as parameters
     @RequestMapping(value = "/games", method = RequestMethod.POST)
     public ResponseEntity<Map<String, Object>> createNewGame(@RequestBody CreateGameRequest request) {
-        Game game = gameService.createNewGame(request.getTotalRounds(), request.getMaxTimerSeconds(), testUserId);
+        Game game = gameService.createNewGame(request.getTotalRounds(), request.getMaxTimerSeconds(), request.getUserId());
+
         Map<String, Object> response = new HashMap<>();
         response.put("gameId", game.getGameId());
         response.put("phase", game.getGameState());
