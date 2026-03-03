@@ -17,6 +17,8 @@ import java.util.List;
 @Service
 public class GameService {
 
+    private static final int MAX_ROUNDS = 20;
+    private static final int MAX_TIME_LIMIT_SECONDS = 300;
     
     private final GameRepo gameRepo;
 
@@ -40,7 +42,15 @@ public class GameService {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
         }
 
+        if (totalRounds > MAX_ROUNDS) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+        }
+
         if (maxTimerSeconds < 0) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+        }
+
+        if (maxTimerSeconds > MAX_TIME_LIMIT_SECONDS) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
         }
         
