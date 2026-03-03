@@ -25,6 +25,6 @@ COPY --from=build /app/dist /usr/share/nginx/html
 # Switch to a non root user for security.
 USER 101:101
 
-EXPOSE 8080
+EXPOSE 8081
 
 CMD ["nginx", "-g", "daemon off;"]

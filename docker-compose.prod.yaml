@@ -2,7 +2,7 @@
 # Commands to run in prod environment
 # -----------------------------------
 
-# Build and run prod environment
+# Build and run full prod app (db + backend + frontend)
 # docker-compose -f docker-compose.prod.yaml -p umg_prod up --build
 
 # Stop prod environment
@@ -11,11 +11,11 @@
 # Remove prod containers, network, and volumes
 # docker-compose -f docker-compose.prod.yaml -p umg_prod down -v
 
-# http://localhost:7000
+# App URL (frontend + proxied API): http://localhost:7000
 
 services:
   db_umg:
-    image: postgres:18 
+    image: postgres:18
     container_name: db_umg_prod
     env_file:
       - ./env/.env.prod
@@ -29,6 +29,7 @@ services:
     volumes:
       - postgres_prod_data:/var/lib/postgresql
 
+  # spring boot backend
   backend_umg:
     build:
       context: ./backend
@@ -36,11 +37,24 @@ services:
     container_name: backend_umg_prod
     env_file:
       - ./env/.env.prod
-    ports:
-      - "${HOST_PORT:-7000}:8081"
+    # keep backend internal, frontend nginx proxies /api requests to this service.
+    expose:
+      - "8081"
     depends_on:
       db_umg:
         condition: service_healthy
+
+  # vue frontend
+  frontend_umg:
+    build:
+      context: ./web
+      dockerfile: Dockerfile
+    container_name: frontend_umg_prod
+    ports:
+      - "${FRONTEND_PORT:-7000}:8081"
+    depends_on:
+      backend_umg:
+        condition: service_started
 
 volumes:
   postgres_prod_data:
