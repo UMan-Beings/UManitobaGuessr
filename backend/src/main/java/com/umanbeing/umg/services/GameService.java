@@ -36,6 +36,14 @@ public class GameService {
 
     @Transactional
     public Game createNewGame(int totalRounds, int maxTimerSeconds, Long userId) {
+        if (totalRounds <= 0) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+        }
+
+        if (maxTimerSeconds < 0) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+        }
+        
         Game game = new Game();
 
         // Get the user from the UserService and set it to the game
