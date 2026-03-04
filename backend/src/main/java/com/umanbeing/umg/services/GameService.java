@@ -5,7 +5,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
-import com.domain.GameState;
+import com.umanbeing.umg.domain.GameState;
 import com.umanbeing.umg.models.Game;
 import com.umanbeing.umg.models.Guess;
 import com.umanbeing.umg.repos.GameRepo;

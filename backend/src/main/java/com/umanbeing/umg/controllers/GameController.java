@@ -16,9 +16,9 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.http.ResponseEntity;
 
-import com.domain.GameState;
 import com.umanbeing.umg.controllers.dto.CreateGameRequest;
 import com.umanbeing.umg.controllers.dto.MakeGuessRequest;
+import com.umanbeing.umg.domain.GameState;
 
 @CrossOrigin(origins = "http://localhost:3000")
 @RestController

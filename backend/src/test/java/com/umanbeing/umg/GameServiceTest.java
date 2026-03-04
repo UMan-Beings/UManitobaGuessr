@@ -28,7 +28,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.server.ResponseStatusException;
 
-import com.domain.GameState;
+import com.umanbeing.umg.domain.GameState;
 import com.umanbeing.umg.models.Game;
 import com.umanbeing.umg.models.Guess;
 import com.umanbeing.umg.models.Round;

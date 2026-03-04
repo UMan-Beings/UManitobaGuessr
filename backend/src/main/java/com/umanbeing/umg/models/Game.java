@@ -6,7 +6,7 @@ import lombok.Setter;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.domain.GameState;
+import com.umanbeing.umg.domain.GameState;
 
 @Entity
 @Table(name = "\"GAME\"")
