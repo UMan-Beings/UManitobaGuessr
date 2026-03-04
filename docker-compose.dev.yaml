@@ -28,6 +28,8 @@ services:
       - "${POSTGRES_PORT:-5432}:5432"
     volumes:
       - postgres_dev_data:/var/lib/postgresql
+    networks:
+      - app_internal
 
   # spring boot backend
   backend_umg:
@@ -43,6 +45,8 @@ services:
     depends_on:
       db_umg:
         condition: service_healthy
+    networks:
+      - app_internal
 
   # vue frontend
   frontend_umg:
@@ -61,7 +65,15 @@ services:
     depends_on:
       backend_umg:
         condition: service_started
+    networks:
+      - frontend_net
+      - app_internal
 
 volumes:
   postgres_dev_data:
   web_node_modules:
+
+networks:
+  frontend_net:
+  app_internal:
+    internal: true

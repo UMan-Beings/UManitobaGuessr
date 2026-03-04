@@ -24,10 +24,10 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
-    ports:
-      - "${POSTGRES_PORT:-5432}:5432"
     volumes:
       - postgres_prod_data:/var/lib/postgresql
+    networks:
+      - app_internal
 
   # spring boot backend
   backend_umg:
@@ -43,6 +43,8 @@ services:
     depends_on:
       db_umg:
         condition: service_healthy
+    networks:
+      - app_internal
 
   # vue frontend
   frontend_umg:
@@ -55,6 +57,14 @@ services:
     depends_on:
       backend_umg:
         condition: service_started
+    networks:
+      - frontend_net
+      - app_internal
 
 volumes:
   postgres_prod_data:
+
+networks:
+  frontend_net:
+  app_internal:
+    internal: true
