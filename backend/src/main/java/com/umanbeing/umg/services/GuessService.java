@@ -29,8 +29,6 @@ public class GuessService {
     public Guess createGuess(Round round, BigDecimal guessedX, BigDecimal guessedY, Long guessTimeSeconds) {
         Guess guess = new Guess();
         guess.setRound(round);
-        guess.setGuessedX(guessedX);
-        guess.setGuessedY(guessedY);
         guess.setGuessTimeSeconds(guessTimeSeconds);
 
         if (guessedX == null || guessedY == null) {
@@ -39,6 +37,9 @@ public class GuessService {
         } else {
             Location location = round.getLocation();
             Integer distance = calculateDistance(guessedX, guessedY, location.getCorX(), location.getCorY());
+
+            guess.setGuessedX(guessedX);
+            guess.setGuessedY(guessedY);
             guess.setDistanceMeters(distance);
             guess.setScore(calculateScore(distance));
         }
