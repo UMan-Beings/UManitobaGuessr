@@ -44,4 +44,8 @@ public class Game {
     @OneToMany(mappedBy = "game", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     @OrderBy("roundNumber ASC")
     private List<Round> rounds = new ArrayList<>();
+
+    public Round getCurrentRound() {
+        return rounds.get(currentRoundNumber - 1);
+    }
 }

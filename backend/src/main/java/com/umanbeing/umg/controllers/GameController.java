@@ -40,7 +40,7 @@ public class GameController {
         response.put("phase", game.getGameState());
         response.put("round", game.getCurrentRoundNumber());
         response.put("totalRounds", game.getTotalRounds());
-        response.put("imageUrl", game.getRounds().get(game.getCurrentRoundNumber() - 1).getLocation().getImageUrl());
+        response.put("imageUrl", game.getCurrentRound().getLocation().getImageUrl());
         response.put("score", game.getScore());
         response.put("timeLimitSeconds", game.getMaxTimerSeconds());
 
@@ -54,7 +54,7 @@ public class GameController {
         Game game = gameService.getGameById(gameId);
 
         GameState phase = game.getGameState();
-        Round currentRound = game.getRounds().get(game.getCurrentRoundNumber() - 1);
+        Round currentRound = game.getCurrentRound();
         Guess guess = currentRound.getGuess();
         
         Map<String, Object> response = new HashMap<>();
@@ -87,7 +87,7 @@ public class GameController {
     @RequestMapping(value = "/games/{gameId}/guess", method = RequestMethod.POST)
     public ResponseEntity<Map<String, Object>> makeGuess(@PathVariable Long gameId, @RequestBody MakeGuessRequest request) {
         Game game = gameService.submitGuess(gameId, request.getCorX(), request.getCorY(), request.getGuessTimeSeconds());
-        Round currentRound = game.getRounds().get(game.getCurrentRoundNumber() - 1);
+        Round currentRound = game.getCurrentRound();
         Guess guess = currentRound.getGuess();
 
         Map<String, Object> response = new HashMap<>();
@@ -110,7 +110,7 @@ public class GameController {
     @RequestMapping(value = "/games/{gameId}/timeout", method=RequestMethod.POST)
     public ResponseEntity<Map<String, Object>> timeout(@PathVariable Long gameId) {
         Game game = gameService.timeout(gameId);
-        Round currentRound = game.getRounds().get(game.getCurrentRoundNumber() - 1);
+        Round currentRound = game.getCurrentRound();
         Guess guess = currentRound.getGuess();
 
         Map<String, Object> response = new HashMap<>();
@@ -142,8 +142,10 @@ public class GameController {
         response.put("timeLimitSeconds", game.getMaxTimerSeconds());
 
         if (!game.isCompleted()) {
-            Round currentRound = game.getRounds().get(game.getCurrentRoundNumber() - 1);
-            response.put("imageUrl", currentRound.getLocation().getImageUrl());
+            response.put(
+                "imageUrl",
+                game.getCurrentRound().getLocation().getImageUrl()
+            );
         }
 
         return ResponseEntity.ok(response);

@@ -101,7 +101,7 @@ public class GameService {
             guessTimeSeconds = Math.min(guessTimeSeconds, GUESS_TIME_MAX_SECONDS);
         }
         
-        Round currentRound = game.getRounds().get(game.getCurrentRoundNumber() - 1);
+        Round currentRound = game.getCurrentRound();
 
         guessService.createGuess(currentRound, guessedX, guessedY, guessTimeSeconds);
         game.setGameState(GameState.REVEAL);
@@ -121,7 +121,7 @@ public class GameService {
             throw new ResponseStatusException(HttpStatus.CONFLICT);
         }
 
-        Round currentRound = game.getRounds().get(game.getCurrentRoundNumber() - 1);
+        Round currentRound = game.getCurrentRound();
         long guessTime = game.getMaxTimerSeconds();
 
         guessService.createGuess(currentRound, null, null, guessTime);
@@ -140,7 +140,7 @@ public class GameService {
         }
 
         int currentRoundNumber = game.getCurrentRoundNumber();
-        Round currentRound = game.getRounds().get(currentRoundNumber - 1);
+        Round currentRound = game.getCurrentRound();
         Guess guess = currentRound.getGuess();
 
         if (guess != null) {
