@@ -2,7 +2,7 @@
 # Commands for running in dev environment
 # ---------------------------------------
 
-# Build and run dev environment
+# Build and run full dev app (db + backend + frontend)
 # docker-compose -f docker-compose.dev.yaml -p umg_dev up --build
 
 # Stop dev environment
@@ -11,7 +11,7 @@
 # Remove dev containers, network, and volumes
 # docker-compose -f docker-compose.dev.yaml -p umg_dev down -v
 
-# http://localhost:8000
+# App URL (frontend + proxied API): http://localhost:3000/game/test
 
 services:
   db_umg:
@@ -28,7 +28,10 @@ services:
       - "${POSTGRES_PORT:-5432}:5432"
     volumes:
       - postgres_dev_data:/var/lib/postgresql
+    networks:
+      - app_internal
 
+  # spring boot backend
   backend_umg:
     build:
       context: ./backend
@@ -36,11 +39,41 @@ services:
     container_name: backend_umg_dev
     env_file:
       - ./env/.env.dev
-    ports:
-      - "${HOST_PORT:-8000}:8081"
+    # keep backend internal, frontend nginx proxies /api requests to this service.
+    expose:
+      - "8081"
     depends_on:
       db_umg:
         condition: service_healthy
+    networks:
+      - app_internal
+
+  # vue frontend
+  frontend_umg:
+    # Run Vite dev server automatically in-container for one-command startup.
+    image: node:22-alpine
+    container_name: frontend_umg_dev
+    working_dir: /app
+    environment:
+      - VITE_API_PROXY_TARGET=http://backend_umg:8081
+    command: sh -c "corepack enable && pnpm install && pnpm dev --host 0.0.0.0 --port 3000"
+    volumes:
+      - ./web:/app
+      - web_node_modules:/app/node_modules
+    ports:
+      - "${FRONTEND_PORT:-3000}:3000"
+    depends_on:
+      backend_umg:
+        condition: service_started
+    networks:
+      - frontend_net
+      - app_internal
 
 volumes:
   postgres_dev_data:
+  web_node_modules:
+
+networks:
+  frontend_net:
+  app_internal:
+    internal: true

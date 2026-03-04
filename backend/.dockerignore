@@ -1,0 +1,21 @@
+# gradle and build outputs
+build/
+.gradle/
+out/
+
+# git and editor
+.git
+.gitignore
+.vscode/
+.idea/
+
+# env
+.env
+.env.*
+
+# log/temp
+*.log
+*.tmp
+
+# readme
+README.md

@@ -12,6 +12,9 @@ import Vuetify, { transformAssetUrls } from 'vite-plugin-vuetify'
 import { defineConfig } from 'vite'
 import { fileURLToPath, URL } from 'node:url'
 
+// if not set, default to 8081 (i.e., prod port)
+const apiProxyTarget = process.env.VITE_API_PROXY_TARGET ?? 'http://localhost:8081'
+
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [
@@ -83,6 +86,14 @@ export default defineConfig({
     ],
   },
   server: {
+    host: true,
     port: 3000,
+    strictPort: true,
+    proxy: {
+      '/api': {
+        target: apiProxyTarget,
+        changeOrigin: true,
+      },
+    },
   },
 })

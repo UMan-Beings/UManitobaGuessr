@@ -5,13 +5,12 @@ on:
   release:
     types: [published]
 
-permissions:
-  contents: read
-  packages: write
-
 jobs:
-  release-backend:
+  release-backend-image:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
     env:
       VERSION: ${{ github.ref_name }}
     steps:
@@ -40,9 +39,8 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USER }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      # step 4: build and push images to GHCR and Docker Hub
-      # Release tag for the version that is published becomes the docker image tag
-      - name: Build and push images to GHCR and docker hub
+      # step 4: build and push backend image to GHCR and Docker Hub.
+      - name: Build and push backend image to GHCR and docker hub
         uses: docker/build-push-action@v6
         with:
           context: ./backend
@@ -53,3 +51,47 @@ jobs:
             ghcr.io/${{ github.repository_owner }}/springboot-backend:latest
             ${{ secrets.DOCKERHUB_USER }}/springboot-backend:${{ env.VERSION }}
             ${{ secrets.DOCKERHUB_USER }}/springboot-backend:latest
+
+  release-frontend-image:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    env:
+      VERSION: ${{ github.ref_name }}
+    steps:
+      # step 1: checkout repo at release tag
+      - name: Checkout repository
+        uses: actions/checkout@v6
+        with:
+          ref: ${{ env.VERSION }}
+          fetch-depth: 1
+
+      # step 2: login to ghcr
+      - name: Login to github container registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      # step 3: login to docker hub
+      - name: Login to docker hub
+        uses: docker/login-action@v3
+        with:
+          registry: docker.io
+          username: ${{ secrets.DOCKERHUB_USER }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      # step 4: build and push frontend image to GHCR and Docker Hub.
+      - name: Build and push frontend image to GHCR and docker hub
+        uses: docker/build-push-action@v6
+        with:
+          context: ./web
+          file: ./web/Dockerfile
+          push: true
+          tags: |
+            ghcr.io/${{ github.repository_owner }}/vue-frontend:${{ env.VERSION }}
+            ghcr.io/${{ github.repository_owner }}/vue-frontend:latest
+            ${{ secrets.DOCKERHUB_USER }}/vue-frontend:${{ env.VERSION }}
+            ${{ secrets.DOCKERHUB_USER }}/vue-frontend:latest
