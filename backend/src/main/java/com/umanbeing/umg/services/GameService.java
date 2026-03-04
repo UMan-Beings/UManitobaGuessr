@@ -144,7 +144,7 @@ public class GameService {
         Guess guess = currentRound.getGuess();
 
         if (guess != null) {
-            game.setScore(game.getScore() + guess.getScore());
+            game.addScore(guess.getScore());
         }
 
         if (currentRoundNumber == game.getTotalRounds()) {

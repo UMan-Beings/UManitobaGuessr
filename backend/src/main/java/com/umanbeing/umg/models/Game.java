@@ -52,4 +52,8 @@ public class Game {
     public void incrementCurrentRoundNumber() {
         currentRoundNumber++;
     }
+
+    public void addScore(int additionalScore) {
+        score += additionalScore;
+    }
 }
