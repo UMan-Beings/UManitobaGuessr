@@ -41,6 +41,7 @@ public class RoundService {
             .limit(game.getTotalRounds())
             .mapToObj(allLocations::get)
             .toList();
+        
         List<Round> rounds = randomLocations.stream().map(location -> {
             Round round = new Round();
             round.setGame(game); // Ensure proper association
@@ -58,17 +59,5 @@ public class RoundService {
         rounds.forEach(round ->{roundRepo.save(round);});
 
         return rounds;
-    }
-
-    public Round save(Round round) {
-        return roundRepo.save(round);
-    }
-
-    public Round getRoundById(Long roundId) {
-        return roundRepo.findById(roundId).orElse(null);
-    }
-
-    public void deleteRoundById(Long roundId) {
-        roundRepo.deleteById(roundId);
     }
 }

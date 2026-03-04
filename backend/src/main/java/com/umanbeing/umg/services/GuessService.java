@@ -26,10 +26,6 @@ public class GuessService {
         this.guessRepo = guessRepo;
     }
 
-    public Guess save(Guess guess) {
-        return guessRepo.save(guess);
-    }
-
     public Guess createGuess(Round round, BigDecimal guessedX, BigDecimal guessedY, Long guessTimeSeconds) {
         Guess guess = new Guess();
         guess.setRound(round);

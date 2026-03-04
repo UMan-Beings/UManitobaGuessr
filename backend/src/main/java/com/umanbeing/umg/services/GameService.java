@@ -154,11 +154,6 @@ public class GameService {
         return gameRepo.save(game);
     }
 
-    @Transactional
-    public Game save(Game game) {
-        return gameRepo.save(game);
-    }
-
     public Game getGameById(Long gameId) {
         if (gameId == null) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
@@ -172,11 +167,5 @@ public class GameService {
 
         return game;
     }
-
-    public void deleteGameById(Long gameId) {
-        gameRepo.deleteById(gameId);
-    }
-
-
 }
 
