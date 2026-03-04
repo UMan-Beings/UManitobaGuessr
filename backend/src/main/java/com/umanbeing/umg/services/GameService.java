@@ -152,7 +152,7 @@ public class GameService {
             game.setCompleted(true);
         } else {
             game.setGameState(GameState.GUESS);
-            game.setCurrentRoundNumber(currentRoundNumber + 1); 
+            game.incrementCurrentRoundNumber();
         }
 
         return gameRepo.save(game);

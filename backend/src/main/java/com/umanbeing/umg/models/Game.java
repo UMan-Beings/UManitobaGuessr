@@ -48,4 +48,8 @@ public class Game {
     public Round getCurrentRound() {
         return rounds.get(currentRoundNumber - 1);
     }
+
+    public void incrementCurrentRoundNumber() {
+        currentRoundNumber++;
+    }
 }
