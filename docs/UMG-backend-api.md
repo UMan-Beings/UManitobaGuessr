@@ -9,12 +9,13 @@ The server controls the current game phase. The client should only send actions 
 - **FINISHED:** No more actions allowed.
 
 ### Endpoints
-| Method | Endpoint                     | User action                      | Description                             | Send                               | Receive                                               |
-|--------|------------------------------|----------------------------------|-----------------------------------------|------------------------------------|-------------------------------------------------------|
-| POST   | /api/v1/games                | Clicks the 'Start game' button   | Start a new game                        | total rounds, time limit (seconds) | game ID, initial game phase (round 1 GUESS phase)     |
-| GET    | /api/v1/games/{gameId}       | Loads or reloads the game page   | Get current game phase                  | -                                  | current game phase (GUESS, REVEAL, or FINISHED phase) |
-| POST   | /api/v1/games/{gameId}/guess | Clicks the 'Submit guess' button | Submit a guess and reveal location      | lat/lng                            | REVEAL game phase                                     |
-| POST   | /api/v1/games/{gameId}/next  | Clicks the 'Next round' button   | Go to the next round or finish the game | -                                  | GUESS or FINISHED game phase                          |
+| Method | Endpoint | Description | User action | Send | Receive |
+|---|---|---|---|---|---|
+| POST | /api/v1/games | Start a new game. | Clicks the 'Start game' button. | total rounds, time limit (seconds) | game ID, initial game state (round 1 GUESS phase) |
+| GET | /api/v1/games/{gameId} | Get current game state. | Loads or reloads the game page | - | current game state (GUESS, REVEAL, or FINISHED phase) |
+| POST | /api/v1/games/{gameId}/guess | Submit a guess and reveal location. | Clicks the 'Submit guess' button. | lat/lng, guess time (seconds) | REVEAL game state |
+| POST | /api/v1/games/{gameId}/timeout | Reveal location without submitting a guess. | Reaches the configured time limit. | - | REVEAL game state |
+| POST | /api/v1/games/{gameId}/next | Go to the next round or finish the game. | Clicks the 'Next round' button. | - | GUESS or FINISHED game state |
 
 ### Errors
 
@@ -22,8 +23,10 @@ The server controls the current game phase. The client should only send actions 
 - All endpoints that use {gameId} when that gameId does not exist
 
 #### 409 Conflict
-- POST .../guess while game phase is REVEAL or FINISHED
-- POST .../next while game phase is GUESS or FINISHED
+- POST .../guess while game phase is not GUESS
+- POST .../timeout while game phase is not GUESS
+- POST .../timeout when there is no time limit
+- POST .../next while game phase is not REVEAL
 
 #### 400 Bad Request
 - All POST endpoints when there are missing or invalid fields in the request JSON body
@@ -98,7 +101,8 @@ GET /api/v1/games/{gameId}
   "guessLng": 65.4321,
   "actualLat": 12.3456,
   "actualLng": 12.3456,
-  "scoreReceived": 1
+  "scoreReceived": 1,
+  "guessTimeSeconds": 5
 }
 ```
 
@@ -108,7 +112,8 @@ GET /api/v1/games/{gameId}
   "phase": "FINISHED",
   "round": 5,
   "totalRounds": 5,
-  "score": 5432
+  "score": 5432,
+  "timeLimitSeconds": 30
 }
 ```
 
@@ -122,7 +127,8 @@ POST /api/v1/games/{gameId}/guess
 ```
 {
   "guessLat": 65.4321,
-  "guessLng": 65.4321
+  "guessLng": 65.4321,
+  "guessTimeSeconds": 5
 }
 ```
 
@@ -139,7 +145,32 @@ POST /api/v1/games/{gameId}/guess
   "guessLng": 65.4321,
   "actualLat": 12.3456,
   "actualLng": 12.3456,
-  "scoreReceived": 1
+  "scoreReceived": 1,
+  "guessTimeSeconds": 5
+}
+```
+
+## Timeout
+
+### Action
+User runs out of time while guessing.
+
+### Request
+POST /api/v1/games/{gameId}/timeout
+
+### Response
+```
+{
+  "phase": "REVEAL",
+  "round": 2,
+  "totalRounds": 5,
+  "imageUrl": "example.jpeg",
+  "score": 1235,
+  "timeLimitSeconds": 30,
+  "actualLat": 12.3456,
+  "actualLng": 12.3456,
+  "scoreReceived": 1,
+  "guessTimeSeconds": 30
 }
 ```
 
@@ -171,6 +202,7 @@ POST /api/v1/games/{gameId}/next
   "phase": "FINISHED",
   "round": 5,
   "totalRounds": 5,
-  "score": 5432
+  "score": 5432,
+  "timeLimitSeconds": 30
 }
 ```
