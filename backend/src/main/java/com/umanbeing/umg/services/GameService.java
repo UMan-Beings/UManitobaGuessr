@@ -20,16 +20,12 @@ public class GameService {
 
     private static final int MAX_ROUNDS = 20;
     private static final int MAX_TIME_LIMIT_SECONDS = 300;
-    private static final int GUESS_TIME_MAX_SECONDS = 3600;
+    private static final int MAX_GUESS_TIME_SECONDS = 3600;
     
     private final GameRepo gameRepo;
-
     private final RoundService roundService;
-
     private final GuessService guessService;
-
     private final UserService userService;
-
 
     public GameService(GameRepo gameRepo, RoundService roundService, GuessService guessService, UserService userService) {
         this.gameRepo = gameRepo;
@@ -98,7 +94,7 @@ public class GameService {
         if (game.getMaxTimerSeconds() > 0) {
             guessTimeSeconds = Math.min(guessTimeSeconds, game.getMaxTimerSeconds());
         } else {
-            guessTimeSeconds = Math.min(guessTimeSeconds, GUESS_TIME_MAX_SECONDS);
+            guessTimeSeconds = Math.min(guessTimeSeconds, MAX_GUESS_TIME_SECONDS);
         }
         
         Round currentRound = game.getCurrentRound();
