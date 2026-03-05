@@ -22,13 +22,11 @@ public class LocationService {
         if (allLocations.size() < amount) {
             throw new IllegalStateException("Not enough locations.");
         }
-
-        List<Location> randomLocations = random.ints(0, allLocations.size())
+        
+        return random.ints(0, allLocations.size())
             .distinct()
             .limit(amount)
             .mapToObj(allLocations::get)
             .toList();
-        
-        return randomLocations;
     }
 }
