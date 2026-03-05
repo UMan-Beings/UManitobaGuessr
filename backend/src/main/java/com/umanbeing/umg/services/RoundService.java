@@ -22,12 +22,6 @@ public class RoundService {
         this.locationRepo = locationRepo;
     }
 
-    public List<Round> getRoundsForGame(Game game) {
-        return roundRepo.findAll().stream()
-            .filter(round -> round.getGame().getGameId().equals(game.getGameId()))
-            .collect(Collectors.toList());
-    }
-
     @Transactional
     public List<Round> createRoundForGame(Game game) {
         // Fetch all locations and pick random ones
