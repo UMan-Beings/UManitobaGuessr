@@ -371,7 +371,7 @@ class GameServiceTest {
     }
 
     @Test
-    void timeout_whenValid_createsNullGuessThenSetsRevealAndSavesGame() {
+    void timeout_whenValid_createsGuessWithNullCoordinatesThenSetsRevealAndSavesGame() {
         Long gameId = 1L;
 
         Round round = new Round();
