@@ -21,9 +21,9 @@ public class Location {
     @Column(name = "\"imageUrl\"", nullable = false)
     private String imageUrl;
 
-    @Column(name = "\"corX\"", nullable = false, precision = 9, scale = 6)
+    @Column(name = "\"corX\"", nullable = false, precision = 17, scale = 13)
     private BigDecimal corX;
 
-    @Column(name = "\"corY\"", nullable = false, precision = 9, scale = 6)
+    @Column(name = "\"corY\"", nullable = false, precision = 17, scale = 13)
     private BigDecimal corY;
 }

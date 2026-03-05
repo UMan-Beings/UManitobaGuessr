@@ -6,6 +6,8 @@ import lombok.Setter;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.umanbeing.umg.domain.GameState;
+
 @Entity
 @Table(name = "\"GAME\"")
 @Getter
@@ -16,8 +18,8 @@ public class Game {
     @Column(name = "\"gameId\"")
     private Long gameId;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "\"userId\"", nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY, optional = true)
+    @JoinColumn(name = "\"userId\"", nullable = true)
     private User user;
     
     @Column(name = "\"maxTimerSeconds\"", nullable = false)
@@ -29,16 +31,29 @@ public class Game {
     @Column(name = "\"isCompleted\"", nullable = false)
     private boolean isCompleted;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "\"gameState\"", nullable = false)
-    private String gameState;
+    private GameState gameState;
 
     @Column(name = "\"currentRoundNumber\"", nullable = false)
     private Integer currentRoundNumber;
 
     @Column(name = "\"score\"", nullable = false)
-    private Integer score;
+    private Integer score; // cant we just sum the guess scores?
 
     @OneToMany(mappedBy = "game", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     @OrderBy("roundNumber ASC")
     private List<Round> rounds = new ArrayList<>();
+
+    public Round getCurrentRound() {
+        return rounds.get(currentRoundNumber - 1);
+    }
+
+    public void incrementCurrentRoundNumber() {
+        currentRoundNumber++;
+    }
+
+    public void addScore(int additionalScore) {
+        score += additionalScore;
+    }
 }

@@ -18,16 +18,16 @@ public class Guess {
     @JoinColumn(name = "\"roundId\"", nullable = false, unique = true)
     private Round round;
 
-    @Column(name = "\"guessedX\"", nullable = false, precision = 9, scale = 6)
+    @Column(name = "\"guessedX\"", nullable = true, precision = 17, scale = 13)
     private BigDecimal guessedX;
 
-    @Column(name = "\"guessedY\"", nullable = false, precision = 9, scale = 6)
+    @Column(name = "\"guessedY\"", nullable = true, precision = 17, scale = 13)
     private BigDecimal guessedY;
 
     @Column(name = "\"guessTimeSeconds\"", nullable = false)
     private Long guessTimeSeconds;
 
-    @Column(name = "\"distanceMeters\"", nullable = false)
+    @Column(name = "\"distanceMeters\"", nullable = true)
     private Integer distanceMeters;
 
     @Column(name = "\"score\"", nullable = false)
