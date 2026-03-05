@@ -92,15 +92,14 @@ class GuessServiceTest {
     void createGuess_whenDistanceWithinScaledScoreRange_awardsPartialScore() {
         when(guessRepo.save(any(Guess.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
-        // full score value = 1000
-
         // full score range: 0-50px
         // partial score range: 50-350px (300px)
         
         // guess distance: 200px
         // distance from the full score range: 200-50 = 150px
-
-        // so the guess is in the middle of the partial score range: 1 - (150 / 300) = 0.5
+        // so the guess is halfway through the partial score range: 1 - (150 / 300) = 0.5
+        
+        // full score value: 1000
         // guess score: 1000 * 0.5 = 500
 
         Location location = new Location();
@@ -123,7 +122,7 @@ class GuessServiceTest {
     }
 
     @Test
-    void createGuess_whenCoordinatesOutsideScoreRange_awardsZeroScore() {
+    void createGuess_whenDistanceOutsideScoreRange_awardsZeroScore() {
         when(guessRepo.save(any(Guess.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
         Location location = new Location();
