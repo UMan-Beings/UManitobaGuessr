@@ -12,6 +12,6 @@
 <script lang="ts" setup>
   defineProps<{
     label: string
-    value: string
+    value: string | number
   }>()
 </script>
