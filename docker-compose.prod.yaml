@@ -47,7 +47,7 @@ services:
       - app_internal
 
   # vue frontend
-  frontend-umg:
+  frontend_umg:
     build:
       context: ./web
       dockerfile: Dockerfile
