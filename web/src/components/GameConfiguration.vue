@@ -50,13 +50,21 @@
 
     <v-spacer />
 
-    <v-btn color="primary" size="x-large">Start Game</v-btn>
+    <v-btn color="primary" size="x-large" @click="startGame">Start Game</v-btn>
   </v-sheet>
 </template>
 
 <script lang="ts" setup>
-  const rounds = ref<number>(5)
-  const timer = ref<number>(0)
+  const rounds = ref(5)
+  const timer = ref(0)
+
+  const emits = defineEmits<{
+    (e: 'start', totalRounds: number, maxTimerSeconds: number): void
+  }>()
+
+  function startGame () {
+    emits('start', rounds.value, timer.value)
+  }
 </script>
 
 <style scoped>
