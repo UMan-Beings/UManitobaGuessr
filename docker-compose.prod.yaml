@@ -14,7 +14,7 @@
 # App URL (frontend + proxied API): http://localhost:7000/game/test
 
 services:
-  db_umg:
+  db-umg:
     image: postgres:18
     container_name: db_umg_prod
     env_file:
@@ -41,13 +41,13 @@ services:
     expose:
       - "8081"
     depends_on:
-      db_umg:
+      db-umg:
         condition: service_healthy
     networks:
       - app_internal
 
   # vue frontend
-  frontend_umg:
+  frontend-umg:
     build:
       context: ./web
       dockerfile: Dockerfile
