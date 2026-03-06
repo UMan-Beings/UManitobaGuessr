@@ -7,9 +7,9 @@ entryspacing 0.6
     Backend->Database:Create game row
     Backend->Database:Create round rows with location details
     loop
-        Frontend<-Backend:Phase(GUESS) and game state for round (first location image, time limit, round#, etc.)
+        Frontend<-Backend:Phase(GUESS), game ID, and game state for round (first location image, time limit, round#, etc.)
         Frontend->Backend:POST /api/v1/games/{gameId}/guess {x, y, guessTimeSeconds}
-        Backend->Database:Add x, y, and time from guess to round row
+        Backend->Database:Link new guess(x, y, and time) to round row
         opt More Rounds Remaining
             Frontend<-Backend:Phase(REVEAL) and round details (score, true lat and long, guess time)
             Frontend->Backend:POST /api/v1/games/{gameId}/next
