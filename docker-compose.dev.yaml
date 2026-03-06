@@ -32,7 +32,7 @@ services:
       - app_internal
 
   # spring boot backend
-  backend_umg:
+  backend-umg:
     build:
       context: ./backend
       dockerfile: Dockerfile
@@ -55,7 +55,7 @@ services:
     container_name: frontend_umg_dev
     working_dir: /app
     environment:
-      - VITE_API_PROXY_TARGET=http://backend_umg:8081
+      - VITE_API_PROXY_TARGET=http://backend-umg:8081
     command: sh -c "corepack enable && pnpm install && pnpm dev --host 0.0.0.0 --port 3000"
     volumes:
       - ./web:/app
@@ -63,7 +63,7 @@ services:
     ports:
       - "${FRONTEND_PORT:-3000}:3000"
     depends_on:
-      backend_umg:
+      backend-umg:
         condition: service_started
     networks:
       - frontend_net

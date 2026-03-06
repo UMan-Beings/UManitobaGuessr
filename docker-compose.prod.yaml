@@ -30,7 +30,7 @@ services:
       - app_internal
 
   # spring boot backend
-  backend_umg:
+  backend-umg:
     build:
       context: ./backend
       dockerfile: Dockerfile
@@ -55,7 +55,7 @@ services:
     ports:
       - "${FRONTEND_PORT:-7000}:8081"
     depends_on:
-      backend_umg:
+      backend-umg:
         condition: service_started
     networks:
       - frontend_net
