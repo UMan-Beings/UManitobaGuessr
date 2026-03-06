@@ -30,7 +30,7 @@ services:
       - app_internal
 
   # spring boot backend
-  backend_umg:
+  backend-umg:
     build:
       context: ./backend
       dockerfile: Dockerfile
