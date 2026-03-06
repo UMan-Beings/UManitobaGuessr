@@ -22,6 +22,7 @@
   import { useLeafletImageMap } from '@/map/useLeafletImageMap'
 
   const emits = defineEmits<{
+    (e: 'map-clicked', lat: number, lng: number): void,
     (e: 'guess', lat: number, lng: number): void
   }>()
 
@@ -30,8 +31,10 @@
   const guessMarker = ref<L.Marker | null>(null)
 
   watch(map, (mapInstance, _, onCleanup) => {
-    if (!mapInstance) return
-    
+    if (!mapInstance) {
+      return
+    }
+
     const minZoom = -1.9
     mapInstance.setMinZoom(minZoom)
     mapInstance.setMaxZoom(0)
@@ -47,6 +50,8 @@
         mapInstance.addLayer(marker)
         guessMarker.value = marker
       }
+
+      emits('map-clicked', latLng.lat, latLng.lng)
     }
 
     mapInstance.on('click', onMapClick)

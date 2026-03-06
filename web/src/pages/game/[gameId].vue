@@ -31,6 +31,7 @@
       />
       <GuessMap
         class="position-absolute bottom-0 right-0 ma-4"
+        @map-clicked="updateGuessCoordinates"
         @guess="submitGuess"
       />
     </div>
@@ -99,7 +100,11 @@
         timer.value++
 
         if (timeLimitSeconds > 0 && timer.value == timeLimitSeconds) {
-          timeout()
+          if (guessLat.value && guessLng.value) {
+            submitGuess(guessLat.value, guessLng.value)
+          } else {
+            timeout()
+          }
         }
       }
     }, 1000)
