@@ -1,25 +1,19 @@
 title Game Configuration & Location Guessing
 entryspacing 0.6
-loop 
-==Game Configuration==
-
-participant Frontend
-participant Backend
-participant Database
-
-Frontend->Backend:POST /api/v1/games {maxTimerSeconds, totalRounds}
-
-==Location Guessing==
-
-loop 
-Backend->Database:Get Random Image
-Backend<-Database:Image URL, Image ID, latitude, longitude
-Frontend<-Backend:Game State (GUESS), Image URL, Image ID, Game ID
-Frontend->Backend:POST /api/v1/games/:gameId/guess {latitude, longitude}
-Frontend<-Backend:Game State (REVEAL), Score, True Latitude, True Longitude, Guess Time
-Frontend->Backend:POST /api/v1/games/:gameId/next
-end
-Frontend<-Backend:Game State (FINISHED), Total Score, Average Guess Time
-Backend->Database:Save Results to Account
-
-end
+    participant Frontend
+    participant Backend
+    participant Database
+    Frontend->Backend:POST /api/v1/games {totalRounds, maxTimerSeconds, userId}
+    Backend->Database:Create game row
+    Backend->Database:Create round rows with location details
+    loop
+        Frontend<-Backend:Phase(GUESS) and game state for round (first location image, time limit, round#, etc.)
+        Frontend->Backend:POST /api/v1/games/{gameId}/guess {x, y, guessTimeSeconds}
+        Backend->Database:Add x, y, and time from guess to round row
+        alt More Rounds Remaining
+            Frontend<-Backend:Phase(REVEAL) and round details (score, true lat and long, guess time)
+            Frontend->Backend:POST /api/v1/games/{gameId}/next
+        else Game finished
+            Frontend<-Backend:Phase(FINISHED), and final cumulative score
+        end
+    end
