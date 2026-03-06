@@ -19,7 +19,7 @@
 <script lang="ts" setup>
   import L from 'leaflet'
   import { UMANITOBA_MAP_CONFIG } from '@/map/imageMapConfig'
-  import { useLeafletImageMap } from '@/map/useLeafletImageMap'
+  import { GUESS_MARKER_ICON, useLeafletImageMap } from '@/map/useLeafletImageMap'
 
   const emits = defineEmits<{
     (e: 'guess', lat: number, lng: number): void
@@ -43,7 +43,7 @@
       if (guessMarker.value) {
         guessMarker.value.setLatLng(latLng)
       } else {
-        const marker = L.marker(latLng)
+        const marker = L.marker(latLng, { icon: GUESS_MARKER_ICON })
         mapInstance.addLayer(marker)
         guessMarker.value = marker
       }

@@ -14,7 +14,7 @@
 # App URL (frontend + proxied API): http://localhost:3000
 
 services:
-  db-umg:
+  db_umg:
     image: postgres:18
     container_name: db_umg_dev
     env_file:
@@ -49,7 +49,7 @@ services:
       - app_internal
 
   # vue frontend
-  frontend-umg:
+  frontend_umg:
     # Run Vite dev server automatically in-container for one-command startup.
     image: node:22-alpine
     container_name: frontend_umg_dev

@@ -16,7 +16,7 @@
 <script lang="ts" setup>
   import L from 'leaflet'
   import { UMANITOBA_MAP_CONFIG } from '@/map/imageMapConfig'
-  import { useLeafletImageMap } from '@/map/useLeafletImageMap'
+  import { GUESS_MARKER_ICON, useLeafletImageMap } from '@/map/useLeafletImageMap'
 
   const props = defineProps<{
     guessLat?: number
@@ -39,12 +39,12 @@
     mapInstance.setMaxZoom(0)
 
     const actualLatLng = L.latLng([props.actualLat, props.actualLng])
-    const actualMarker = L.marker(actualLatLng)
+    const actualMarker = L.marker(actualLatLng, { icon: GUESS_MARKER_ICON })
     mapInstance.addLayer(actualMarker)
 
     if (props.guessLat != null && props.guessLng != null) {
       const guessLatLng = L.latLng([props.guessLat, props.guessLng])
-      const guessMarker = L.marker(guessLatLng)
+      const guessMarker = L.marker(guessLatLng, { icon: GUESS_MARKER_ICON })
       mapInstance.addLayer(guessMarker)
 
       const polyline = L.polyline([guessLatLng, actualLatLng])
