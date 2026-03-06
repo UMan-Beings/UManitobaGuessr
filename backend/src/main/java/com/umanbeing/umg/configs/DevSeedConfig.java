@@ -12,7 +12,7 @@ import com.umanbeing.umg.models.Location;
 import com.umanbeing.umg.repos.LocationRepo;
 
 @Configuration
-@Profile("dev")
+@Profile({"dev", "prod"})
 public class DevSeedConfig {
 
   @Bean
