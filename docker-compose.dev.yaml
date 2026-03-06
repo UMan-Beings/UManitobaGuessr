@@ -11,7 +11,7 @@
 # Remove dev containers, network, and volumes
 # docker-compose -f docker-compose.dev.yaml -p umg_dev down -v
 
-# App URL (frontend + proxied API): http://localhost:3000/game/test
+# App URL (frontend + proxied API): http://localhost:3000
 
 services:
   db_umg:

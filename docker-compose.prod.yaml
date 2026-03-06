@@ -11,7 +11,7 @@
 # Remove prod containers, network, and volumes
 # docker-compose -f docker-compose.prod.yaml -p umg_prod down -v
 
-# App URL (frontend + proxied API): http://localhost:7000/game/test
+# App URL (frontend + proxied API): http://localhost:7000
 
 services:
   db_umg:
