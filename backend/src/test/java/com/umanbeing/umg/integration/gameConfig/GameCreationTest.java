@@ -9,7 +9,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
-class GameCreationTests extends PostgresIntegrationTestBase {
+class GameCreationTest extends PostgresIntegrationTestBase {
 
     @Test
     void seededLocationsExist() {
@@ -22,7 +22,7 @@ class GameCreationTests extends PostgresIntegrationTestBase {
     }
 
     @Test
-    void createGame_Returns_GameId() throws Exception {
+    void createGame_returns_gameId() throws Exception {
         CreateGameRequest request = new CreateGameRequest();
         request.setTotalRounds(5);
         request.setMaxTimerSeconds(60);
@@ -52,7 +52,7 @@ class GameCreationTests extends PostgresIntegrationTestBase {
     }
 
     @Test
-    void getGameById_ReturnsGuessPhase() throws Exception {
+    void getGameById_returnsGuessPhase() throws Exception {
         CreateGameRequest request = new CreateGameRequest();
         request.setTotalRounds(5);
         request.setMaxTimerSeconds(60);
