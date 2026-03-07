@@ -6,10 +6,12 @@ import com.umanbeing.umg.controllers.dto.CreateGameRequest;
 import com.umanbeing.umg.controllers.dto.MakeGuessRequest;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.math.BigDecimal;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
@@ -17,11 +19,14 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.DynamicPropertyRegistry;
+import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.testcontainers.containers.PostgreSQLContainer;
 
 @Import(TestSecurityConfig.class)
 @SpringBootTest
@@ -29,7 +34,27 @@ import org.springframework.jdbc.core.JdbcTemplate;
 @AutoConfigureMockMvc
 @Sql(scripts = {"classpath:db/data.sql"}, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_CLASS)
 @TestMethodOrder(org.junit.jupiter.api.MethodOrderer.OrderAnnotation.class)
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class UmgApplicationTests {
+
+    static final PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>("postgres:18-alpine")
+            .withDatabaseName("umg_test")
+            .withUsername("test_user")
+            .withPassword("mypassword");
+
+    static {
+        postgres.start();
+    }
+
+    @DynamicPropertySource
+    static void registerDataSourceProperties(DynamicPropertyRegistry registry) {
+        registry.add("spring.datasource.url", postgres::getJdbcUrl);
+        registry.add("spring.datasource.username", postgres::getUsername);
+        registry.add("spring.datasource.password", postgres::getPassword);
+        registry.add("spring.flyway.url", postgres::getJdbcUrl);
+        registry.add("spring.flyway.user", postgres::getUsername);
+        registry.add("spring.flyway.password", postgres::getPassword);
+    }
 
     @Autowired
     private MockMvc mockMvc;
@@ -40,7 +65,7 @@ class UmgApplicationTests {
     @Autowired
     private JdbcTemplate jdbcTemplate;
 
-    private Long gameId = 1L; // Replace with actual user ID from authentication context
+    private Long gameId;
 
     @Test
     void contextLoads() {
@@ -49,21 +74,12 @@ class UmgApplicationTests {
     @Test
     @org.junit.jupiter.api.Order(1)
     void testDatabaseInitialization() {
-        // Verify that the game created in the first test exists in the database with the correct values
-        // Return everything in round table
-        jdbcTemplate.query("SELECT * FROM \"ROUND\"", (rs) -> {
-            Long roundId = rs.getLong("roundId");
-            Long gameId = rs.getLong("gameId");
-            Long locationId = rs.getLong("locationId");
-            Integer roundNumber = rs.getInt("roundNumber");
-            System.out.println("Round ID: " + roundId + ", Game ID: " + gameId + ", Location ID: " + locationId + ", Round Number: " + roundNumber);
-        });
-
-        System.out.println("Verifying game data in the database...");
-        jdbcTemplate.query("SELECT * FROM \"GAME\"", (rs) -> {
-            Long gameId = rs.getLong("gameId");
-            System.out.println("Game ID: " + gameId);
-        });
+        Long locationCount = jdbcTemplate.queryForObject(
+            "SELECT COUNT(*) FROM \"LOCATION\"",
+            Long.class
+        );
+        assertNotNull(locationCount, "Location count should not be null.");
+        assertEquals(true, locationCount > 0, "Seeded locations should exist.");
     }
 
 
@@ -92,6 +108,8 @@ class UmgApplicationTests {
                 .getContentAsString();
 
         this.gameId = objectMapper.readTree(responseContent).get("gameId").asLong();
+        assertNotNull(this.gameId, "A created game should return a non-null gameId.");
+
         // Verify that gameId is in database
         Long count = jdbcTemplate.queryForObject(
             "SELECT COUNT(*) FROM \"GAME\" WHERE \"gameId\" = ?",
@@ -135,6 +153,22 @@ class UmgApplicationTests {
 
     @Test
     @org.junit.jupiter.api.Order(5)
+    void testMakeGuessTwiceReturnsConflict() throws Exception {
+        MakeGuessRequest request = new MakeGuessRequest();
+        request.setCorX(BigDecimal.valueOf(100));
+        request.setCorY(BigDecimal.valueOf(200));
+        request.setGuessTimeSeconds(25L);
+
+        String requestJson = objectMapper.writeValueAsString(request);
+
+        mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/games/{gameId}/guess", gameId)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(requestJson))
+                .andExpect(MockMvcResultMatchers.status().isConflict());
+    }
+
+    @Test
+    @org.junit.jupiter.api.Order(6)
     void testRequestNextRound() throws Exception {
 
         mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/games/{gameId}/next", gameId))
@@ -145,22 +179,51 @@ class UmgApplicationTests {
     }
 
     @Test
-    @org.junit.jupiter.api.Order(6)
-    void testDatabaseContent() {
-        // Verify that the game created in the first test exists in the database with the correct values
-        // Return everything in round table
-        jdbcTemplate.query("SELECT * FROM \"ROUND\"", (rs) -> {
-            Long roundId = rs.getLong("roundId");
-            Long gameId = rs.getLong("gameId");
-            Long locationId = rs.getLong("locationId");
-            Integer roundNumber = rs.getInt("roundNumber");
-            System.out.println("Round ID: " + roundId + ", Game ID: " + gameId + ", Location ID: " + locationId + ", Round Number: " + roundNumber);
-        });
+    @org.junit.jupiter.api.Order(7)
+    void testRequestNextRoundWithoutRevealReturnsConflict() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/games/{gameId}/next", gameId))
+                .andExpect(MockMvcResultMatchers.status().isConflict());
+    }
 
-        System.out.println("Verifying game data in the database...");
-        jdbcTemplate.query("SELECT * FROM \"GAME\"", (rs) -> {
-            Long gameId = rs.getLong("gameId");
-            System.out.println("Game ID: " + gameId);
-        });
+    @Test
+    @org.junit.jupiter.api.Order(8)
+    void testGetNonexistentGameReturnsNotFound() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/games/{gameId}", Long.MAX_VALUE))
+                .andExpect(MockMvcResultMatchers.status().isNotFound());
+    }
+
+    @Test
+    @org.junit.jupiter.api.Order(9)
+    void testMakeGuessWithMissingCoordinatesReturnsBadRequest() throws Exception {
+        MakeGuessRequest request = new MakeGuessRequest();
+        request.setCorX(null);
+        request.setCorY(BigDecimal.valueOf(200));
+        request.setGuessTimeSeconds(10L);
+
+        String requestJson = objectMapper.writeValueAsString(request);
+
+        mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/games/{gameId}/guess", gameId)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(requestJson))
+                .andExpect(MockMvcResultMatchers.status().isBadRequest());
+    }
+
+    @Test
+    @org.junit.jupiter.api.Order(10)
+    void testDatabaseContent() {
+        Long gameCount = jdbcTemplate.queryForObject(
+            "SELECT COUNT(*) FROM \"GAME\" WHERE \"gameId\" = ?",
+            Long.class,
+            gameId
+        );
+        assertEquals(1, gameCount, "Created game should still exist in the database.");
+
+        Long roundCount = jdbcTemplate.queryForObject(
+            "SELECT COUNT(*) FROM \"ROUND\" WHERE \"gameId\" = ?",
+            Long.class,
+            gameId
+        );
+        assertNotNull(roundCount, "Round count should not be null.");
+        assertEquals(true, roundCount > 0, "Created game should have at least one round.");
     }
 }
