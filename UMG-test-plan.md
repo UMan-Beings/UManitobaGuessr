@@ -55,7 +55,8 @@ Role expectations:
 - System Architect:
   - Create system design documents and sequence diagrams
   - Planned software structure
-  - Planned APIs for frontend to backend communication
+  - Planned and coded APIs for frontend to backend communication
+  - Setup database tables
 - Backend Developer:
   - Setup up Spring Boot backend
   - Connected controller logic to service layers
@@ -77,11 +78,11 @@ Sprint 2 status summary:
 - Frontend automated tests may be planned for future sprints
 
 
-Total baseline tests: 35.
+Total unit tests: 35.
 
 | Test Level | Scope and Requirement | Methodology (How will you do this?) |
 |------------|-----------------------|-------------------------------------|
-| Unit Testing | Minimum 10 tests per core feature. Sprint 2 baseline: 35 tests | We use JUnit 5 with Mockito to isolate and test service logic. Integration tests using Spring Boot testing tools will be added later to verify interactions between controllers, services, and repositories |
+| Unit Testing | Minimum 10 tests per core feature. Sprint 2 unit tests: 35 | We use JUnit 5 with Mockito to isolate and test service logic. Integration tests using Spring Boot testing tools will be added later to verify interactions between controllers, services, and repositories |
 | Integration Testing | Minimum 10 tests total across core feature interactions. Sprint 2 baseline: partial (currently limited integration coverage). | Add Spring Boot integration tests using test profile + H2/Postgres test setup to validate controller-service-repository flow and database interactions. |
 | Acceptance Testing | End-user testing for every user story. | Team members will perform manual walkthroughs based on user story criteria. |
 | Regression Testing | Unit + Integration tests must run on every push to `main` (and PRs). | Use GitHub Actions CI to run backend build/tests on push and PR. Merges are blocked by required status checks when configured in repository branch protection. |
