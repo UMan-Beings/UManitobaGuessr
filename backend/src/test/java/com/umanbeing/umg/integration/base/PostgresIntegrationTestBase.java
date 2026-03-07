@@ -21,6 +21,7 @@ import org.testcontainers.containers.PostgreSQLContainer;
 @Sql(scripts = {"classpath:db/data.sql"}, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
 public abstract class PostgresIntegrationTestBase {
 
+    @SuppressWarnings("resource")
     static final PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>("postgres:18-alpine")
             .withDatabaseName("umg_test")
             .withUsername("test_user")
