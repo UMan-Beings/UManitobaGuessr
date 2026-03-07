@@ -55,10 +55,7 @@ dependencies {
 	testImplementation 'org.springframework.boot:spring-boot-starter-webmvc-test'
 	testImplementation 'org.springframework.security:spring-security-test'
 	testImplementation 'com.fasterxml.jackson.core:jackson-databind'
-	testImplementation "org.testcontainers:junit-jupiter:${testcontainersVersion}"
 	testImplementation "org.testcontainers:postgresql:${testcontainersVersion}"
-	testRuntimeOnly "org.testcontainers:junit-jupiter:${testcontainersVersion}"
-	testRuntimeOnly "org.testcontainers:postgresql:${testcontainersVersion}"
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 	testImplementation 'org.postgresql:postgresql:42.3.1'
 }
