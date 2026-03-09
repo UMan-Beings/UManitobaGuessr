@@ -41,7 +41,7 @@ public class DevSeedConfig {
         new Location("", "https://uman-beings.github.io/UMG-Pictures/IMG_3673.jpg", new BigDecimal("3228"), new BigDecimal("1694")),
         new Location("", "https://uman-beings.github.io/UMG-Pictures/IMG_3675.jpg", new BigDecimal("2728"), new BigDecimal("1928")),
 
-        new Location("", "https://uman-beings.github.io/UMG-Pictures/IMG_3675.jpg",new BigDecimal("2719"), new BigDecimal("1942")),
+        new Location("", "https://uman-beings.github.io/UMG-Pictures/IMG_3712.jpg",new BigDecimal("3438"), new BigDecimal("815")),
         new Location("", "https://uman-beings.github.io/UMG-Pictures/IMG_3676.jpeg", new BigDecimal("2688"), new BigDecimal("1992")),
         new Location("", "https://uman-beings.github.io/UMG-Pictures/IMG_3678.jpg", new BigDecimal("2301"), new BigDecimal("2303")),
         new Location("", "https://uman-beings.github.io/UMG-Pictures/IMG_3680.jpeg", new BigDecimal("2068"), new BigDecimal("2109")),
@@ -52,8 +52,6 @@ public class DevSeedConfig {
         new Location("", "https://uman-beings.github.io/UMG-Pictures/IMG_3698.jpg", new BigDecimal("2387"), new BigDecimal("1787")),
         new Location("", "https://uman-beings.github.io/UMG-Pictures/IMG_3702.jpg", new BigDecimal("2722"), new BigDecimal("1070")),
         new Location("", "https://uman-beings.github.io/UMG-Pictures/IMG_3706.jpeg", new BigDecimal("2955"), new BigDecimal("923")),
-
-        new Location("", "https://uman-beings.github.io/UMG-Pictures/IMG_3712.jpg",new BigDecimal("3438"), new BigDecimal("815")),
         new Location("", "https://uman-beings.github.io/UMG-Pictures/lol-v0-lf22qalq7ryf1.jpeg", new BigDecimal("811"), new BigDecimal("963"))
       ));
     };
