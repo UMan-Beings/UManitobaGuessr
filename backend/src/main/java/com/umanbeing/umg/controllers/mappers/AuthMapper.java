@@ -25,8 +25,8 @@ public class AuthMapper {
     return new UsernamePasswordAuthenticationToken(loginRequest.email(), loginRequest.password());
   }
 
-  public static LoginResponse toDto(final User user) {
-    return new LoginResponse(user.getUserId(), user.getUsername(), user.getEmail(), user.getRole());
+  public static LoginResponse toDto(String token, String name) {
+    return new LoginResponse(token, name);
   }
 
 }
