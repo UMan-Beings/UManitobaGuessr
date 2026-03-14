@@ -168,14 +168,18 @@ public class GameService {
         return game;
     }
 
-    public Long getUserTotalScore(Integer userId){
+    public Long getUserTotalScore(Long userId){
         Long totalScore = gameRepo.getTotalScoreByUserId(userId);
         return (totalScore == null) ? 0 : totalScore;
     }
 
-    public Long getUserTotalGames(Integer userId){
-        Long totalGames = gameRepo.getTotalRoundsByUserId(userId);
+    public Long getUserTotalRounds(Long userId){
+        Long totalRounds = gameRepo.getTotalRoundsByUserId(userId);
+        return (totalRounds == null) ? 0 : totalRounds;
+    }
+
+    public Long getUserTotalGames(Long userId){
+        Long totalGames = gameRepo.getTotalGamesByUserId(userId);
         return (totalGames == null) ? 0 : totalGames;
     }
 }
-

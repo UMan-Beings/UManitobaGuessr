@@ -14,9 +14,12 @@ public interface GameRepo extends JpaRepository<Game, Long> {
 
     List<Game> findByGameId(Long gameId);
 
-    @Query("SELECT SUM(g.score) FROM Game g WHERE g.userId = ?1")
-    Long getTotalScoreByUserId(Integer UserId);
+    @Query("SELECT SUM(g.score) FROM Game g WHERE g.user.userId = ?1")
+    Long getTotalScoreByUserId(Long UserId);
 
-    @Query("SELECT COUNT(r) FROM Game g JOIN g.rounds r WHERE g.userId = ?1")
-    Long getTotalRoundsByUserId(Integer userId);
+    @Query("SELECT COUNT(r) FROM Game g JOIN g.rounds r WHERE g.user.userId = ?1")
+    Long getTotalRoundsByUserId(Long userId);
+
+    @Query("SELECT COUNT(g) FROM Game g WHERE g.user.userId = ?1")
+    Long getTotalGamesByUserId(Long userId);
 }
