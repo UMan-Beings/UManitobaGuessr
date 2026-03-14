@@ -3,20 +3,67 @@ package com.umanbeing.umg.configs;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+
+import com.umanbeing.umg.filters.JwtFilter;
+import com.umanbeing.umg.domain.Role;
 
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig{
+    @Autowired
+    private JwtFilter filter;
+
+    public SecurityConfig(JwtFilter jwtAuthFilter) {
+        this.filter = jwtAuthFilter;
+    }
     
     @Bean
     @Profile("!test") // Apply this security configuration to all profiles except "test"
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
             .csrf(csrf -> csrf.disable()) // Disable CSRF protection since our API is stateless
-            .authorizeHttpRequests(auth -> auth.anyRequest().permitAll()); // Allow all requests without authentication
-        return http.build();
+            
+            .authorizeHttpRequests(auth -> auth
+                // Public endpoints
+                //.requestMatchers("/auth/welcome", "/auth/addNewUser", "/auth/generateToken").permitAll()
+                
+                .requestMatchers("/api/v1/auth/**").permitAll()
+                
+                // All other endpoints require authentication
+                .anyRequest().authenticated()
+            )
+
+            // Stateless session (required for JWT)
+            .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+            
+            // Add JWT filter before Spring Security's default filter
+            .addFilterBefore(filter, UsernamePasswordAuthenticationFilter.class);
+            
+            return http.build();
+    }
+
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
+
+
+    /* 
+     * Authentication manager bean
+     * Required for programmatic authentication (e.g., in /generateToken)
+     */
+    @Bean
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
+        return config.getAuthenticationManager();
     }
 }

@@ -22,6 +22,7 @@ public class JwtService {
                 .withSubject("User Details")
                 .withClaim("username", username)
                 .withIssuedAt(new Date())
+                .withExpiresAt(new Date(System.currentTimeMillis() + 60 * 60 * 1000)) // 1 hour expiration
                 .sign(Algorithm.HMAC256(secret));
 
     }
@@ -34,4 +35,32 @@ public class JwtService {
         DecodedJWT jwt = verifier.verify(token);
         return jwt.getClaim("username").asString();
     }
+
+    public String refreshToken(String token) throws JWTVerificationException, IllegalArgumentException, JWTCreationException {
+        String username = validateTokenAndRetrieveSubject(token);
+        return generateToken(username);
+    }
+
+    public boolean isTokenExpired(String token) throws JWTVerificationException {
+        return extractExpiration(token).before(new Date());
+    }
+
+    private Date extractExpiration(String token) throws JWTVerificationException {
+        JWTVerifier verifier = JWT.require(Algorithm.HMAC256(secret))
+                .withSubject("User Details")
+                .build();
+
+        DecodedJWT jwt = verifier.verify(token);
+        return jwt.getExpiresAt();
+    }
+
+    public boolean validateToken(String token) {
+        try {
+            validateTokenAndRetrieveSubject(token);
+            return true;
+        } catch (JWTVerificationException e) {
+            return false;
+        }
+    }
+
 }
