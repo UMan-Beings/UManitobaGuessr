@@ -500,4 +500,68 @@ class GameServiceTest {
         assertEquals(1, result.getCurrentRoundNumber());
         verify(gameRepo).save(game);
     }
+
+    @Test
+    void getUserTotalScore_returnsScore_orZeroIfNull() {
+        Long userId = 1L;
+
+        // Test normal value
+        when(gameRepo.getTotalScoreByUserId(userId)).thenReturn(500L);
+        assertEquals(500L, gameService.getUserTotalScore(userId));
+
+        // Test null handling
+        when(gameRepo.getTotalScoreByUserId(userId)).thenReturn(null);
+        assertEquals(0L, gameService.getUserTotalScore(userId));
+        
+        verify(gameRepo, times(2)).getTotalScoreByUserId(userId);
+    }
+
+    @Test
+    void getUserTotalRounds_returnsRounds_orZeroIfNull() {
+        Long userId = 1L;
+
+        // Test normal value
+        when(gameRepo.getTotalRoundsByUserId(userId)).thenReturn(15L);
+        assertEquals(15L, gameService.getUserTotalRounds(userId));
+
+        // Test null handling
+        when(gameRepo.getTotalRoundsByUserId(userId)).thenReturn(null);
+        assertEquals(0L, gameService.getUserTotalRounds(userId));
+
+        verify(gameRepo, times(2)).getTotalRoundsByUserId(userId);
+    }
+
+    @Test
+    void getUserTotalGames_returnsGames_orZeroIfNull() {
+        Long userId = 1L;
+
+        // Test normal value
+        when(gameRepo.getTotalGamesByUserId(userId)).thenReturn(3L);
+        assertEquals(3L, gameService.getUserTotalGames(userId));
+
+        // Test null handling
+        when(gameRepo.getTotalGamesByUserId(userId)).thenReturn(null);
+        assertEquals(0L, gameService.getUserTotalGames(userId));
+
+        verify(gameRepo, times(2)).getTotalGamesByUserId(userId);
+    }
+
+    @Test
+    void getUserAverageScore_roundsResult_orReturnsZeroIfNull() {
+        Long userId = 1L;
+
+        // Test rounding up (e.g., 85.6 -> 86)
+        when(gameRepo.getAverageScoreByUserId(userId)).thenReturn(85.6);
+        assertEquals(86L, gameService.getUserAverageScore(userId));
+
+        // Test rounding down (e.g., 85.4 -> 85)
+        when(gameRepo.getAverageScoreByUserId(userId)).thenReturn(85.4);
+        assertEquals(85L, gameService.getUserAverageScore(userId));
+
+        // Test null handling
+        when(gameRepo.getAverageScoreByUserId(userId)).thenReturn(null);
+        assertEquals(0L, gameService.getUserAverageScore(userId));
+
+        verify(gameRepo, times(3)).getAverageScoreByUserId(userId);
+    }
 }
