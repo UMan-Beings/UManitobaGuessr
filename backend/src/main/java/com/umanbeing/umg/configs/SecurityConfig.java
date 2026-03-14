@@ -7,7 +7,9 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.hibernate.validator.internal.util.stereotypes.Lazy;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.webmvc.autoconfigure.WebMvcProperties.Apiversion.Use;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.ProviderManager;
@@ -16,18 +18,25 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+import com.umanbeing.umg.services.JwtService;
 import com.umanbeing.umg.filters.JwtFilter;
 
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig{
-    @Autowired
-    private JwtFilter filter;
 
-    public SecurityConfig(JwtFilter jwtAuthFilter) {
-        this.filter = jwtAuthFilter;
-    }
+    @Autowired
+    private UserDetailsService userDetailsService;
+
+    @Autowired
+    private JwtService jwtService;
     
+    @Bean
+    public JwtFilter jwtFilter(UserDetailsService userDetailsService, JwtService jwtService) {
+        return new JwtFilter(userDetailsService, jwtService);
+    }
+
+
     @Bean
     @Profile("!test") // Apply this security configuration to all profiles except "test"
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -39,7 +48,7 @@ public class SecurityConfig{
                 //.requestMatchers("/auth/welcome", "/auth/addNewUser", "/auth/generateToken").permitAll()
                 
                 .requestMatchers("/api/v1/auth/**").permitAll()
-                
+                .requestMatchers("/api/v1/games/**").permitAll()
                 // All other endpoints require authentication
                 .anyRequest().authenticated()
             )
@@ -48,7 +57,7 @@ public class SecurityConfig{
             .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             
             // Add JWT filter before Spring Security's default filter
-            .addFilterBefore(filter, UsernamePasswordAuthenticationFilter.class);
+            .addFilterBefore(jwtFilter(userDetailsService, jwtService), UsernamePasswordAuthenticationFilter.class);
             
             return http.build();
     }

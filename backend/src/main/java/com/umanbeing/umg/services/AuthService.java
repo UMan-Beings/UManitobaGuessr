@@ -9,7 +9,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Component;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.core.Authentication;
-
+import org.springframework.context.annotation.Lazy;
 import com.umanbeing.umg.models.User;
 import com.umanbeing.umg.repos.UserRepo;
 import com.umanbeing.umg.controllers.dto.CreateAccountRequest;
@@ -26,9 +26,15 @@ public class AuthService implements UserDetailsService{
 
 
     @Autowired private UserRepo userRepo;
-    @Autowired private AuthenticationManager authenticationManager;
+
+    @Autowired 
+    @Lazy
+    private AuthenticationManager authenticationManager;
+
     @Autowired private JwtService tokenService;
-    @Autowired private PasswordEncoder passwordEncoder;
+
+
+    @Autowired @Lazy private PasswordEncoder passwordEncoder;
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
