@@ -1,7 +1,6 @@
 package com.umanbeing.umg.integration.base;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.umanbeing.umg.TestSecurityConfig;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
@@ -14,10 +13,9 @@ import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.web.servlet.MockMvc;
 import org.testcontainers.containers.PostgreSQLContainer;
 
-@SpringBootTest
+@SpringBootTest(properties = "JWT_SECRET=test-secret-for-tests-do-not-use-in-production-change-this-value-before-deploying")
 @ActiveProfiles("test")
 @AutoConfigureMockMvc
-@Import(TestSecurityConfig.class)
 @Sql(scripts = {"classpath:db/data.sql"}, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
 public abstract class PostgresIntegrationTestBase {
 

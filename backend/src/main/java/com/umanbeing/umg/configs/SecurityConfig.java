@@ -1,7 +1,6 @@
 package com.umanbeing.umg.configs;
 
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Profile;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -36,14 +35,11 @@ public class SecurityConfig{
 
 
     @Bean
-    @Profile("!test") // Apply this security configuration to all profiles except "test"
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
             .csrf(csrf -> csrf.disable()) // Disable CSRF protection since our API is stateless
             
             .authorizeHttpRequests(auth -> auth
-                // Public endpoints
-                //.requestMatchers("/auth/welcome", "/auth/addNewUser", "/auth/generateToken").permitAll()
                 
                 .requestMatchers("/api/v1/auth/**").permitAll()
                 .requestMatchers("/api/v1/games/**").permitAll()

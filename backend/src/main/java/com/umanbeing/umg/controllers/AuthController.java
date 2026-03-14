@@ -16,7 +16,6 @@ import com.umanbeing.umg.controllers.dto.SignUpResponse;
 
 @RestController
 @RequestMapping("/api/v1/auth")
-@CrossOrigin(origins = "*")
 public class AuthController {
     
     @Autowired
