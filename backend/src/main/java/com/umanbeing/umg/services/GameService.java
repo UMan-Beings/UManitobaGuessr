@@ -182,4 +182,9 @@ public class GameService {
         Long totalGames = gameRepo.getTotalGamesByUserId(userId);
         return (totalGames == null) ? 0 : totalGames;
     }
+
+    public Long getUserAverageScore(Long userId){
+        Double averageScoreDouble = gameRepo.getAverageScoreByUserId(userId);
+        return(averageScoreDouble == null) ? 0 : Math.round(averageScoreDouble);
+    }
 }
