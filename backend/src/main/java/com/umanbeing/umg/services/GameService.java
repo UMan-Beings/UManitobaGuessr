@@ -172,5 +172,10 @@ public class GameService {
         Long totalScore = gameRepo.getTotalScoreByUserId(userId);
         return (totalScore == null) ? 0 : totalScore;
     }
+
+    public Long getUserTotalGames(Integer userId){
+        Long totalGames = gameRepo.getTotalRoundsByUserId(userId);
+        return (totalGames == null) ? 0 : totalGames;
+    }
 }
 
