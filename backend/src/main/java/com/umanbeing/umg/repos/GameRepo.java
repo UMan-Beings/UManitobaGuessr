@@ -22,4 +22,7 @@ public interface GameRepo extends JpaRepository<Game, Long> {
 
     @Query("SELECT COUNT(g) FROM Game g WHERE g.user.userId = ?1")
     Long getTotalGamesByUserId(Long userId);
+
+    @Query("SELECT AVG(g.score) FROM Game g WHERE g.user.userId = ?1")
+    Double getAverageScoreByUserId(Long userId);
 }
