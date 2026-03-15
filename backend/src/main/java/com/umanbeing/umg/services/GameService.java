@@ -173,7 +173,7 @@ public class GameService {
 
     public UserStatsResponse getUserStats(Long userId) {
         if (userId == null) {
-            return new UserStatsResponse(0L, 0L, 0L, 0.0, 0L, 0.0);
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
         }
 
         UserGameStatsProjection gameStats = gameRepo.getUserGameStats(userId);
