@@ -9,5 +9,7 @@ public class UserStatsResponse {
     private Long totalScore;
     private Long totalRounds;
     private Long totalGames;
-    private Long averageScore;
+    private Double averageScore;
+    private Long totalGuessTimeSeconds;
+    private Double averageGuessTimeSeconds;
 }

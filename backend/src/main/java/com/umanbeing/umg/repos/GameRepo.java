@@ -7,7 +7,8 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import com.umanbeing.umg.models.Game;
-import com.umanbeing.umg.repos.projections.UserStatsProjection;
+import com.umanbeing.umg.repos.projections.UserGameStatsProjection;
+import com.umanbeing.umg.repos.projections.UserRoundStatsProjection;
 
 @Repository
 public interface GameRepo extends JpaRepository<Game, Long> {
@@ -21,5 +22,13 @@ public interface GameRepo extends JpaRepository<Game, Long> {
         "AVG(g.score) AS averageScore " +
         "FROM Game g " + 
         "WHERE g.user.userId = ?1")
-    UserStatsProjection getUserStats(Long userId);
+    UserGameStatsProjection getUserGameStats(Long userId);
+
+    @Query("SELECT SUM(gu.guessTimeSeconds) AS totalGuessTimeSeconds, " +
+       "AVG(gu.guessTimeSeconds) AS averageGuessTimeSeconds " +
+       "FROM Game g " +
+       "JOIN g.rounds r " +
+       "JOIN r.guess gu " +
+       "WHERE g.user.userId = ?1")
+    UserRoundStatsProjection getUserRoundStats(Long userId);
 }
