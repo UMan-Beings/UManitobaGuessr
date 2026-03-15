@@ -17,11 +17,11 @@ public interface GameRepo extends JpaRepository<Game, Long> {
     List<Game> findByGameId(Long gameId);
 
     @Query("SELECT SUM(g.score) AS totalScore, " +
-        "SUM(g.currentRoundNumber) AS totalRounds, " +
+        "SUM(g.totalRounds) AS totalRounds, " +
         "COUNT(g) AS totalGames, " +
         "AVG(g.score) AS averageScore " +
         "FROM Game g " + 
-        "WHERE g.user.userId = ?1")
+        "WHERE g.user.userId = ?1 AND g.isCompleted = true")
     UserGameStatsProjection getUserGameStats(Long userId);
 
     @Query("SELECT SUM(gu.guessTimeSeconds) AS totalGuessTimeSeconds, " +
