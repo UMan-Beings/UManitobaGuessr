@@ -1,19 +1,21 @@
 package com.umanbeing.umg.services;
 
+import java.math.BigDecimal;
+import java.util.List;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
+import com.umanbeing.umg.controllers.dto.UserStatsResponse;
 import com.umanbeing.umg.domain.GameState;
 import com.umanbeing.umg.models.Game;
 import com.umanbeing.umg.models.Guess;
-import com.umanbeing.umg.repos.GameRepo;
-import com.umanbeing.umg.models.User;
 import com.umanbeing.umg.models.Round;
-
-import java.math.BigDecimal;
-import java.util.List;
+import com.umanbeing.umg.models.User;
+import com.umanbeing.umg.repos.GameRepo;
+import com.umanbeing.umg.repos.projections.UserStatsProjection;
 
 @Service
 public class GameService {
@@ -168,23 +170,19 @@ public class GameService {
         return game;
     }
 
-    public Long getUserTotalScore(Long userId){
-        Long totalScore = gameRepo.getTotalScoreByUserId(userId);
-        return (totalScore == null) ? 0 : totalScore;
-    }
+    public UserStatsResponse getUserStats(Long userId) {
+        UserStatsProjection stats = gameRepo.getUserStats(userId);
+        
+        // If missing data, return zeros
+        if (stats == null || stats.getTotalGames() == null || stats.getTotalGames() == 0) {
+            return new UserStatsResponse(0L, 0L, 0L, 0L);
+        }
 
-    public Long getUserTotalRounds(Long userId){
-        Long totalRounds = gameRepo.getTotalRoundsByUserId(userId);
-        return (totalRounds == null) ? 0 : totalRounds;
-    }
-
-    public Long getUserTotalGames(Long userId){
-        Long totalGames = gameRepo.getTotalGamesByUserId(userId);
-        return (totalGames == null) ? 0 : totalGames;
-    }
-
-    public Long getUserAverageScore(Long userId){
-        Double averageScoreDouble = gameRepo.getAverageScoreByUserId(userId);
-        return(averageScoreDouble == null) ? 0 : Math.round(averageScoreDouble);
+        return new UserStatsResponse(
+            stats.getTotalScore(),
+            stats.getTotalRounds(),
+            stats.getTotalGames(),
+            Math.round(stats.getAverageScore())
+        );
     }
 }
