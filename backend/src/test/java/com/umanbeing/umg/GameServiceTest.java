@@ -10,6 +10,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.ArgumentMatchers.isNull;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -28,12 +29,14 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.server.ResponseStatusException;
 
+import com.umanbeing.umg.controllers.dto.UserStatsResponse;
 import com.umanbeing.umg.domain.GameState;
 import com.umanbeing.umg.models.Game;
 import com.umanbeing.umg.models.Guess;
 import com.umanbeing.umg.models.Round;
 import com.umanbeing.umg.models.User;
 import com.umanbeing.umg.repos.GameRepo;
+import com.umanbeing.umg.repos.projections.UserStatsProjection;
 import com.umanbeing.umg.services.GameService;
 import com.umanbeing.umg.services.GuessService;
 import com.umanbeing.umg.services.RoundService;
@@ -502,66 +505,78 @@ class GameServiceTest {
     }
 
     @Test
-    void getUserTotalScore_returnsScore_orZeroIfNull() {
+    void getUserStats_returnsCorrectData_andHandlesRounding() {
         Long userId = 1L;
-
-        // Test normal value
-        when(gameRepo.getTotalScoreByUserId(userId)).thenReturn(500L);
-        assertEquals(500L, gameService.getUserTotalScore(userId));
-
-        // Test null handling
-        when(gameRepo.getTotalScoreByUserId(userId)).thenReturn(null);
-        assertEquals(0L, gameService.getUserTotalScore(userId));
         
-        verify(gameRepo, times(2)).getTotalScoreByUserId(userId);
+        UserStatsProjection mockProjection = mock(UserStatsProjection.class);
+        when(mockProjection.getTotalScore()).thenReturn(500L);
+        when(mockProjection.getTotalRounds()).thenReturn(15L);
+        when(mockProjection.getTotalGames()).thenReturn(3L);
+        when(mockProjection.getAverageScore()).thenReturn(85.6); // Should round to 86
+
+        when(gameRepo.getUserStats(userId)).thenReturn(mockProjection);
+
+        UserStatsResponse result = gameService.getUserStats(userId);
+
+        assertNotNull(result);
+        assertEquals(500L, result.getTotalScore());
+        assertEquals(15L, result.getTotalRounds());
+        assertEquals(3L, result.getTotalGames());
+        assertEquals(86L, result.getAverageScore()); // Check rounding logic here
+
+        verify(gameRepo, times(1)).getUserStats(userId);
     }
 
     @Test
-    void getUserTotalRounds_returnsRounds_orZeroIfNull() {
-        Long userId = 1L;
+    void getUserStats_returnsZeros_whenNoDataFound() {
+        Long userId = 999L;
+        
+        when(gameRepo.getUserStats(userId)).thenReturn(null);
 
-        // Test normal value
-        when(gameRepo.getTotalRoundsByUserId(userId)).thenReturn(15L);
-        assertEquals(15L, gameService.getUserTotalRounds(userId));
+        UserStatsResponse result = gameService.getUserStats(userId);
 
-        // Test null handling
-        when(gameRepo.getTotalRoundsByUserId(userId)).thenReturn(null);
-        assertEquals(0L, gameService.getUserTotalRounds(userId));
+        assertEquals(0L, result.getTotalScore());
+        assertEquals(0L, result.getTotalRounds());
+        assertEquals(0L, result.getTotalGames());
+        assertEquals(0L, result.getAverageScore());
 
-        verify(gameRepo, times(2)).getTotalRoundsByUserId(userId);
+        verify(gameRepo, times(1)).getUserStats(userId);
     }
 
     @Test
-    void getUserTotalGames_returnsGames_orZeroIfNull() {
-        Long userId = 1L;
+    void getUserStats_returnsZeros_whenNoGamesFound() {
+        Long userId = 999L;
+        
+        UserStatsProjection mockProjection = mock(UserStatsProjection.class);
+        when(mockProjection.getTotalGames()).thenReturn(null); //No Games Found
+        when(gameRepo.getUserStats(userId)).thenReturn(mockProjection);
 
-        // Test normal value
-        when(gameRepo.getTotalGamesByUserId(userId)).thenReturn(3L);
-        assertEquals(3L, gameService.getUserTotalGames(userId));
+        UserStatsResponse result = gameService.getUserStats(userId);
 
-        // Test null handling
-        when(gameRepo.getTotalGamesByUserId(userId)).thenReturn(null);
-        assertEquals(0L, gameService.getUserTotalGames(userId));
+        assertEquals(0L, result.getTotalScore());
+        assertEquals(0L, result.getTotalRounds());
+        assertEquals(0L, result.getTotalGames());
+        assertEquals(0L, result.getAverageScore());
 
-        verify(gameRepo, times(2)).getTotalGamesByUserId(userId);
+        verify(gameRepo, times(1)).getUserStats(userId);
     }
 
     @Test
-    void getUserAverageScore_roundsResult_orReturnsZeroIfNull() {
-        Long userId = 1L;
+    void getUserStats_returnsZeros_whenNoGamesPlayed() {
+        Long userId = 999L;
+        
+        UserStatsProjection mockProjection = mock(UserStatsProjection.class);
+        when(mockProjection.getTotalGames()).thenReturn(0L); //No Games Played
+        when(gameRepo.getUserStats(userId)).thenReturn(mockProjection);
 
-        // Test rounding up (e.g., 85.6 -> 86)
-        when(gameRepo.getAverageScoreByUserId(userId)).thenReturn(85.6);
-        assertEquals(86L, gameService.getUserAverageScore(userId));
+        UserStatsResponse result = gameService.getUserStats(userId);
 
-        // Test rounding down (e.g., 85.4 -> 85)
-        when(gameRepo.getAverageScoreByUserId(userId)).thenReturn(85.4);
-        assertEquals(85L, gameService.getUserAverageScore(userId));
+        assertEquals(0L, result.getTotalScore());
+        assertEquals(0L, result.getTotalRounds());
+        assertEquals(0L, result.getTotalGames());
+        assertEquals(0L, result.getAverageScore());
 
-        // Test null handling
-        when(gameRepo.getAverageScoreByUserId(userId)).thenReturn(null);
-        assertEquals(0L, gameService.getUserAverageScore(userId));
-
-        verify(gameRepo, times(3)).getAverageScoreByUserId(userId);
+        verify(gameRepo, times(1)).getUserStats(userId);
     }
+
 }
