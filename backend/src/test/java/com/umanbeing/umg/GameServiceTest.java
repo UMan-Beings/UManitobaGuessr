@@ -506,16 +506,13 @@ class GameServiceTest {
     }
 
     @Test
-    void getUserStats_whenUserIdNull_returnsAllZeros_andSkipsRepoCalls() {
-        UserStatsResponse result = gameService.getUserStats(null);
+    void getUserStats_whenUserIdNull_throwsBadRequest_andSkipsRepoCalls() {
+        ResponseStatusException exception = assertThrows(
+            ResponseStatusException.class,
+            () -> gameService.getUserStats(null)
+        );
 
-        assertEquals(0L, result.getTotalScore());
-        assertEquals(0L, result.getTotalRounds());
-        assertEquals(0L, result.getTotalGames());
-        assertEquals(0.0, result.getAverageScore());
-        assertEquals(0L, result.getTotalGuessTimeSeconds());
-        assertEquals(0.0, result.getAverageGuessTimeSeconds());
-
+        assertEquals(HttpStatus.BAD_REQUEST, exception.getStatusCode());
         verifyNoInteractions(gameRepo);
     }
 
