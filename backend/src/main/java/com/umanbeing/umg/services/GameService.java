@@ -178,12 +178,13 @@ public class GameService {
         }
 
         UserGameStatsProjection gameStats = gameRepo.getUserGameStats(userId);
-        UserRoundStatsProjection roundStats = gameRepo.getUserRoundStats(userId);
-        
+
         // If missing game data, return all zeros
         if (gameStats == null || gameStats.getTotalGames() == null || gameStats.getTotalGames() == 0) {
             return new UserStatsResponse(0L, 0L, 0L, 0.0, 0L, 0.0);
         }
+
+        UserRoundStatsProjection roundStats = gameRepo.getUserRoundStats(userId);
 
         //if missing round data, return zeros for times
         if(roundStats == null || roundStats.getTotalGuessTimeSeconds() == null || roundStats.getTotalGuessTimeSeconds() == 0){
