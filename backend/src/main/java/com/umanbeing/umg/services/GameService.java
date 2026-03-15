@@ -1,19 +1,22 @@
 package com.umanbeing.umg.services;
 
+import java.math.BigDecimal;
+import java.util.List;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
+import com.umanbeing.umg.controllers.dto.UserStatsResponse;
 import com.umanbeing.umg.domain.GameState;
 import com.umanbeing.umg.models.Game;
 import com.umanbeing.umg.models.Guess;
-import com.umanbeing.umg.repos.GameRepo;
-import com.umanbeing.umg.models.User;
 import com.umanbeing.umg.models.Round;
-
-import java.math.BigDecimal;
-import java.util.List;
+import com.umanbeing.umg.models.User;
+import com.umanbeing.umg.repos.GameRepo;
+import com.umanbeing.umg.repos.projections.UserGameStatsProjection;
+import com.umanbeing.umg.repos.projections.UserRoundStatsProjection;
 
 @Service
 public class GameService {
@@ -167,5 +170,22 @@ public class GameService {
 
         return game;
     }
-}
 
+    public UserStatsResponse getUserStats(Long userId) {
+        if (userId == null) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+        }
+
+        UserGameStatsProjection gameStats = gameRepo.getUserGameStats(userId);
+        UserRoundStatsProjection roundStats = gameRepo.getUserRoundStats(userId);
+
+        return new UserStatsResponse(
+            gameStats.getTotalScore(),
+            gameStats.getTotalRounds(),
+            gameStats.getTotalGames(),
+            gameStats.getAverageScore(),
+            roundStats.getTotalGuessTimeSeconds(),
+            roundStats.getAverageGuessTimeSeconds()
+        );
+    }
+}
