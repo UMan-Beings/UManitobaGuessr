@@ -29,6 +29,6 @@ public interface GameRepo extends JpaRepository<Game, Long> {
        "FROM Game g " +
        "JOIN g.rounds r " +
        "JOIN r.guess gu " +
-       "WHERE g.user.userId = ?1")
+       "WHERE g.user.userId = ?1 AND g.isCompleted = true")
     UserRoundStatsProjection getUserRoundStats(Long userId);
 }
