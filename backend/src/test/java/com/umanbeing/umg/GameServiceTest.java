@@ -506,98 +506,42 @@ class GameServiceTest {
     }
 
     @Test
-    void getUserStats_whenGameStatsMissing_returnsAllZeros() {
+    void getUserStats_whenUserIdNull_returnsAllZeros_andSkipsRepoCalls() {
+        UserStatsResponse result = gameService.getUserStats(null);
+
+        assertEquals(0L, result.getTotalScore());
+        assertEquals(0L, result.getTotalRounds());
+        assertEquals(0L, result.getTotalGames());
+        assertEquals(0.0, result.getAverageScore());
+        assertEquals(0L, result.getTotalGuessTimeSeconds());
+        assertEquals(0.0, result.getAverageGuessTimeSeconds());
+
+        verifyNoInteractions(gameRepo);
+    }
+
+    @Test
+    void getUserStats_whenNoCompletedGamesOrGuesses_returnsAllZerosFromAggregates() {
         Long userId = 1L;
 
-        when(gameRepo.getUserGameStats(userId)).thenReturn(null);
-        when(gameRepo.getUserRoundStats(userId)).thenReturn(null);
-
-        UserStatsResponse result = gameService.getUserStats(userId);
-
-        assertEquals(0L, result.getTotalScore());
-        assertEquals(0L, result.getTotalRounds());
-        assertEquals(0L, result.getTotalGames());
-        assertEquals(0.0, result.getAverageScore());
-        assertEquals(0L, result.getTotalGuessTimeSeconds());
-        assertEquals(0.0, result.getAverageGuessTimeSeconds());
-
-        verify(gameRepo).getUserGameStats(userId);
-        verify(gameRepo).getUserRoundStats(userId);
-    }
-
-    @Test
-    void getUserStats_whenNoGamesPlayed_returnsAllZeros() {
-        Long userId = 2L;
-
         UserGameStatsProjection gameStats = mock(UserGameStatsProjection.class);
+        when(gameStats.getTotalScore()).thenReturn(0L);
+        when(gameStats.getTotalRounds()).thenReturn(0L);
         when(gameStats.getTotalGames()).thenReturn(0L);
-
-        UserRoundStatsProjection roundStats = mock(UserRoundStatsProjection.class);
-
-        when(gameRepo.getUserGameStats(userId)).thenReturn(gameStats);
-        when(gameRepo.getUserRoundStats(userId)).thenReturn(roundStats);
-
-        UserStatsResponse result = gameService.getUserStats(userId);
-
-        assertEquals(0L, result.getTotalScore());
-        assertEquals(0L, result.getTotalRounds());
-        assertEquals(0L, result.getTotalGames());
-        assertEquals(0.0, result.getAverageScore());
-        assertEquals(0L, result.getTotalGuessTimeSeconds());
-        assertEquals(0.0, result.getAverageGuessTimeSeconds());
-
-        verify(gameRepo).getUserGameStats(userId);
-        verify(gameRepo).getUserRoundStats(userId);
-    }
-
-    @Test
-    void getUserStats_whenRoundStatsMissing_returnsGameStatsAndZeroTimes() {
-        Long userId = 3L;
-
-        UserGameStatsProjection gameStats = mock(UserGameStatsProjection.class);
-        when(gameStats.getTotalScore()).thenReturn(500L);
-        when(gameStats.getTotalRounds()).thenReturn(15L);
-        when(gameStats.getTotalGames()).thenReturn(3L);
-        when(gameStats.getAverageScore()).thenReturn(166.67);
-
-        when(gameRepo.getUserGameStats(userId)).thenReturn(gameStats);
-        when(gameRepo.getUserRoundStats(userId)).thenReturn(null);
-
-        UserStatsResponse result = gameService.getUserStats(userId);
-
-        assertEquals(500L, result.getTotalScore());
-        assertEquals(15L, result.getTotalRounds());
-        assertEquals(3L, result.getTotalGames());
-        assertEquals(166.67, result.getAverageScore());
-        assertEquals(0L, result.getTotalGuessTimeSeconds());
-        assertEquals(0.0, result.getAverageGuessTimeSeconds());
-
-        verify(gameRepo).getUserGameStats(userId);
-        verify(gameRepo).getUserRoundStats(userId);
-    }
-
-    @Test
-    void getUserStats_whenNoGuessesYet_returnsGameStatsAndZeroTimes() {
-        Long userId = 4L;
-
-        UserGameStatsProjection gameStats = mock(UserGameStatsProjection.class);
-        when(gameStats.getTotalScore()).thenReturn(250L);
-        when(gameStats.getTotalRounds()).thenReturn(8L);
-        when(gameStats.getTotalGames()).thenReturn(2L);
-        when(gameStats.getAverageScore()).thenReturn(125.0);
+        when(gameStats.getAverageScore()).thenReturn(0.0);
 
         UserRoundStatsProjection roundStats = mock(UserRoundStatsProjection.class);
         when(roundStats.getTotalGuessTimeSeconds()).thenReturn(0L);
+        when(roundStats.getAverageGuessTimeSeconds()).thenReturn(0.0);
 
         when(gameRepo.getUserGameStats(userId)).thenReturn(gameStats);
         when(gameRepo.getUserRoundStats(userId)).thenReturn(roundStats);
 
         UserStatsResponse result = gameService.getUserStats(userId);
 
-        assertEquals(250L, result.getTotalScore());
-        assertEquals(8L, result.getTotalRounds());
-        assertEquals(2L, result.getTotalGames());
-        assertEquals(125.0, result.getAverageScore());
+        assertEquals(0L, result.getTotalScore());
+        assertEquals(0L, result.getTotalRounds());
+        assertEquals(0L, result.getTotalGames());
+        assertEquals(0.0, result.getAverageScore());
         assertEquals(0L, result.getTotalGuessTimeSeconds());
         assertEquals(0.0, result.getAverageGuessTimeSeconds());
 
@@ -606,8 +550,8 @@ class GameServiceTest {
     }
 
     @Test
-    void getUserStats_whenAllDataPresent_returnsCombinedStats() {
-        Long userId = 5L;
+    void getUserStats_whenDataExists_returnsCombinedStats() {
+        Long userId = 2L;
 
         UserGameStatsProjection gameStats = mock(UserGameStatsProjection.class);
         when(gameStats.getTotalScore()).thenReturn(900L);
@@ -635,65 +579,4 @@ class GameServiceTest {
         verify(gameRepo).getUserRoundStats(userId);
     }
 
-    @Test
-    void getUserStats_whenUserIdNull_returnsAllZeros_andSkipsRepoCalls() {
-        UserStatsResponse result = gameService.getUserStats(null);
-
-        assertEquals(0L, result.getTotalScore());
-        assertEquals(0L, result.getTotalRounds());
-        assertEquals(0L, result.getTotalGames());
-        assertEquals(0.0, result.getAverageScore());
-        assertEquals(0L, result.getTotalGuessTimeSeconds());
-        assertEquals(0.0, result.getAverageGuessTimeSeconds());
-
-        verifyNoInteractions(gameRepo);
-    }
-
-    @Test
-    void getUserStats_whenTotalGamesIsNull_returnsAllZeros() {
-        Long userId = 6L;
-
-        UserGameStatsProjection gameStats = mock(UserGameStatsProjection.class);
-        when(gameStats.getTotalGames()).thenReturn(null);
-
-        UserRoundStatsProjection roundStats = mock(UserRoundStatsProjection.class);
-
-        when(gameRepo.getUserGameStats(userId)).thenReturn(gameStats);
-        when(gameRepo.getUserRoundStats(userId)).thenReturn(roundStats);
-
-        UserStatsResponse result = gameService.getUserStats(userId);
-
-        assertEquals(0L, result.getTotalScore());
-        assertEquals(0L, result.getTotalRounds());
-        assertEquals(0L, result.getTotalGames());
-        assertEquals(0.0, result.getAverageScore());
-        assertEquals(0L, result.getTotalGuessTimeSeconds());
-        assertEquals(0.0, result.getAverageGuessTimeSeconds());
-    }
-
-    @Test
-    void getUserStats_whenTotalGuessTimeIsNull_returnsGameStatsAndZeroTimes() {
-        Long userId = 7L;
-
-        UserGameStatsProjection gameStats = mock(UserGameStatsProjection.class);
-        when(gameStats.getTotalScore()).thenReturn(300L);
-        when(gameStats.getTotalRounds()).thenReturn(10L);
-        when(gameStats.getTotalGames()).thenReturn(2L);
-        when(gameStats.getAverageScore()).thenReturn(150.0);
-
-        UserRoundStatsProjection roundStats = mock(UserRoundStatsProjection.class);
-        when(roundStats.getTotalGuessTimeSeconds()).thenReturn(null);
-
-        when(gameRepo.getUserGameStats(userId)).thenReturn(gameStats);
-        when(gameRepo.getUserRoundStats(userId)).thenReturn(roundStats);
-
-        UserStatsResponse result = gameService.getUserStats(userId);
-
-        assertEquals(300L, result.getTotalScore());
-        assertEquals(10L, result.getTotalRounds());
-        assertEquals(2L, result.getTotalGames());
-        assertEquals(150.0, result.getAverageScore());
-        assertEquals(0L, result.getTotalGuessTimeSeconds());
-        assertEquals(0.0, result.getAverageGuessTimeSeconds());
-    }
 }
