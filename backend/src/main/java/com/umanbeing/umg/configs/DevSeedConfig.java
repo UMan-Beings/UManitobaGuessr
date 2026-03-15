@@ -66,7 +66,17 @@ public class DevSeedConfig {
         new Location("", "https://uman-beings.github.io/UMG-Pictures/IMG_3740.jpg", new BigDecimal("2801"), new BigDecimal("1751")),
         new Location("", "https://uman-beings.github.io/UMG-Pictures/IMG_3744.jpg", new BigDecimal("2904"), new BigDecimal("1741")),
         new Location("", "https://uman-beings.github.io/UMG-Pictures/IMG_3745.jpg", new BigDecimal("2906"), new BigDecimal("1676")),
-        new Location("", "https://uman-beings.github.io/UMG-Pictures/IMG_3748.jpg", new BigDecimal("2882"), new BigDecimal("1001"))
+        new Location("", "https://uman-beings.github.io/UMG-Pictures/IMG_3748.jpg", new BigDecimal("2882"), new BigDecimal("1001")),
+
+        new Location("", "https://uman-beings.github.io/UMG-Pictures/IMG20260305154756.jpg", new BigDecimal("2250"), new BigDecimal("1642")),
+        new Location("", "https://uman-beings.github.io/UMG-Pictures/IMG20260305161029.jpg", new BigDecimal("2815"), new BigDecimal("1465")),
+        new Location("", "https://uman-beings.github.io/UMG-Pictures/IMG20260305161918.jpg", new BigDecimal("2614"), new BigDecimal("2237")),
+        new Location("", "https://uman-beings.github.io/UMG-Pictures/IMG20260305162045.jpg", new BigDecimal("2614"), new BigDecimal("2237")),
+        new Location("", "https://uman-beings.github.io/UMG-Pictures/IMG20260305162917.jpg", new BigDecimal("2791"), new BigDecimal("1824")),
+        new Location("", "https://uman-beings.github.io/UMG-Pictures/IMG20260305165418.jpg", new BigDecimal("1067"), new BigDecimal("1459")),
+        new Location("", "https://uman-beings.github.io/UMG-Pictures/IMG_20260305_154339.jpg", new BigDecimal("2246"), new BigDecimal("1687")),
+        new Location("", "https://uman-beings.github.io/UMG-Pictures/IMG_20260305_160422.jpg", new BigDecimal("2871"), new BigDecimal("1477")),
+        new Location("", "https://uman-beings.github.io/UMG-Pictures/hughim.jpg", new BigDecimal("1976"), new BigDecimal("1648"))
       ));
     };
   }
