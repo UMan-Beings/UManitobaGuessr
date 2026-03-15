@@ -16,16 +16,16 @@ public interface GameRepo extends JpaRepository<Game, Long> {
 
     List<Game> findByGameId(Long gameId);
 
-    @Query("SELECT SUM(g.score) AS totalScore, " +
-        "SUM(g.totalRounds) AS totalRounds, " +
+    @Query("SELECT COALESCE(SUM(g.score), 0) AS totalScore, " +
+        "COALESCE(SUM(g.totalRounds), 0) AS totalRounds, " +
         "COUNT(g) AS totalGames, " +
-        "AVG(g.score) AS averageScore " +
+        "COALESCE(AVG(g.score), 0.0) AS averageScore " +
         "FROM Game g " + 
         "WHERE g.user.userId = ?1 AND g.isCompleted = true")
     UserGameStatsProjection getUserGameStats(Long userId);
 
-    @Query("SELECT SUM(gu.guessTimeSeconds) AS totalGuessTimeSeconds, " +
-       "AVG(gu.guessTimeSeconds) AS averageGuessTimeSeconds " +
+    @Query("SELECT COALESCE(SUM(gu.guessTimeSeconds), 0) AS totalGuessTimeSeconds, " +
+       "COALESCE(AVG(gu.guessTimeSeconds), 0.0) AS averageGuessTimeSeconds " +
        "FROM Game g " +
        "JOIN g.rounds r " +
        "JOIN r.guess gu " +
