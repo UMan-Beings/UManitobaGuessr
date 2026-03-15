@@ -15,7 +15,8 @@ import com.umanbeing.umg.models.Guess;
 import com.umanbeing.umg.models.Round;
 import com.umanbeing.umg.models.User;
 import com.umanbeing.umg.repos.GameRepo;
-import com.umanbeing.umg.repos.projections.UserStatsProjection;
+import com.umanbeing.umg.repos.projections.UserGameStatsProjection;
+import com.umanbeing.umg.repos.projections.UserRoundStatsProjection;
 
 @Service
 public class GameService {
@@ -171,18 +172,38 @@ public class GameService {
     }
 
     public UserStatsResponse getUserStats(Long userId) {
-        UserStatsProjection stats = gameRepo.getUserStats(userId);
+        //If missing user ID, return all zeros
+        if(userId == null){
+            return new UserStatsResponse(0L, 0L, 0L, 0.0, 0L, 0.0);
+        }
+
+        UserGameStatsProjection gameStats = gameRepo.getUserGameStats(userId);
+        UserRoundStatsProjection roundStats = gameRepo.getUserRoundStats(userId);
         
-        // If missing data, return zeros
-        if (stats == null || stats.getTotalGames() == null || stats.getTotalGames() == 0) {
-            return new UserStatsResponse(0L, 0L, 0L, 0L);
+        // If missing game data, return all zeros
+        if (gameStats == null || gameStats.getTotalGames() == null || gameStats.getTotalGames() == 0) {
+            return new UserStatsResponse(0L, 0L, 0L, 0.0, 0L, 0.0);
+        }
+
+        //if missing round data, return zeros for times
+        if(roundStats == null || roundStats.getTotalGuessTimeSeconds() == null || roundStats.getTotalGuessTimeSeconds() == 0){
+            return new UserStatsResponse(
+                gameStats.getTotalScore(),
+                gameStats.getTotalRounds(),
+                gameStats.getTotalGames(),
+                gameStats.getAverageScore(),
+                0L,
+                0.0
+            );
         }
 
         return new UserStatsResponse(
-            stats.getTotalScore(),
-            stats.getTotalRounds(),
-            stats.getTotalGames(),
-            Math.round(stats.getAverageScore())
+            gameStats.getTotalScore(),
+            gameStats.getTotalRounds(),
+            gameStats.getTotalGames(),
+            gameStats.getAverageScore(),
+            roundStats.getTotalGuessTimeSeconds(),
+            roundStats.getAverageGuessTimeSeconds()
         );
     }
 }
