@@ -1,13 +1,9 @@
 package com.umanbeing.umg;
 
-import com.auth0.jwt.exceptions.JWTCreationException;
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.umanbeing.umg.services.JwtService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Value;
-
-import java.util.Date;
 
 import static org.junit.jupiter.api.Assertions.*;
 

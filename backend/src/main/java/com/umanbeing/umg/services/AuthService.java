@@ -10,6 +10,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.core.Authentication;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.security.authentication.BadCredentialsException;
 import com.umanbeing.umg.models.User;
 import com.umanbeing.umg.repos.UserRepo;
 import com.umanbeing.umg.controllers.dto.CreateAccountRequest;
@@ -37,15 +38,15 @@ public class AuthService implements UserDetailsService{
     @Autowired @Lazy private PasswordEncoder passwordEncoder;
 
     @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        Optional<User> userRes = userRepo.findByUsername(username);
+    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+        Optional<User> userRes = userRepo.findByEmail(email);
 
         if(userRes.isEmpty())
-            throw new UsernameNotFoundException("No user found with this username "+username);
+            throw new UsernameNotFoundException("No user found with this email "+email);
         User user = userRes.get();
         return new
                 org.springframework.security.core.userdetails.User(
-                        username,
+                        email,
                         user.getPassword(),
                         Collections.singletonList(
                                 new SimpleGrantedAuthority("ROLE_USER")
@@ -88,9 +89,9 @@ public class AuthService implements UserDetailsService{
             String token = tokenService.generateToken(loginRequest.email());
             return AuthMapper.toDto(token, auth.getName());
         } catch (UsernameNotFoundException e) {
-            throw new IllegalArgumentException("Invalid username or password", e);
+            throw new BadCredentialsException("Invalid username or password", e);
         } catch (Exception e) {
-            throw new IllegalArgumentException("Error while trying to login", e);
+            throw new BadCredentialsException("Error while trying to login", e);
         }
     }
 

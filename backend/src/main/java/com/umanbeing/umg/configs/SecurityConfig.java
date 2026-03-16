@@ -16,6 +16,9 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import com.umanbeing.umg.services.JwtService;
+
+import jakarta.servlet.http.HttpServletResponse;
+
 import com.umanbeing.umg.filters.JwtFilter;
 
 @Configuration
@@ -51,8 +54,12 @@ public class SecurityConfig{
             .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             
             // Add JWT filter before Spring Security's default filter
-            .addFilterBefore(jwtFilter(userDetailsService, jwtService), UsernamePasswordAuthenticationFilter.class);
-            
+            .addFilterBefore(jwtFilter(userDetailsService, jwtService), UsernamePasswordAuthenticationFilter.class)
+            .exceptionHandling(exh -> exh.authenticationEntryPoint(
+            (request, response, ex) -> {
+                response.sendError(HttpServletResponse.SC_UNAUTHORIZED, ex.getMessage());
+            }
+        ));
             return http.build();
     }
 

@@ -59,16 +59,5 @@ class AuthTest extends PostgresIntegrationTestBase {
                 .andExpect(status().isUnauthorized());
     }
 
-    // @Test
-    // void testTokenValidation() throws Exception {
-    //     String token = "sample-valid-token"; // Replace with a valid token for testing
 
-        
-
-    //     mockMvc.perform(post("/api/v1/auth/validate")
-    //             .contentType(MediaType.APPLICATION_JSON)
-    //             .header("Authorization", "Bearer " + token))
-    //             .andExpect(status().isOk())
-    //             .andExpect(jsonPath("$.valid").value(true));
-    // }
 }
