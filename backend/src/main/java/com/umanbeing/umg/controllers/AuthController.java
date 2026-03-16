@@ -12,6 +12,7 @@ import com.umanbeing.umg.controllers.dto.LoginRequest;
 import com.umanbeing.umg.controllers.dto.LoginResponse;
 import com.umanbeing.umg.controllers.dto.CreateAccountRequest;
 import com.umanbeing.umg.controllers.dto.SignUpResponse;
+import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/api/v1/auth")
@@ -27,7 +28,7 @@ public class AuthController {
     }
 
     @PostMapping("/signup")
-    public ResponseEntity<SignUpResponse> signup(@RequestBody CreateAccountRequest createAccountRequest) {
+    public ResponseEntity<SignUpResponse> signup(@Valid @RequestBody CreateAccountRequest createAccountRequest) {
         return ResponseEntity.ok(authService.registerUser(createAccountRequest));
     }
 
