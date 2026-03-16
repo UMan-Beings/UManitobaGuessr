@@ -28,7 +28,7 @@ const formattedAverageGuessTime = computed(
 )
 
 const formattedTotalGuessTime = computed(
-  () => `${props.totalGuessTimeSeconds.toFixed(1)} Seconds`,
+  () => `${props.totalGuessTimeSeconds} Seconds`,
 )
 </script>
 
