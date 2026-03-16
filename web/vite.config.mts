@@ -95,5 +95,13 @@ export default defineConfig({
         changeOrigin: true,
       },
     },
+    watch: {
+      // Enable polling (needed for Docker volumes)
+      usePolling: true,
+      interval: 400, // adjust for speed
+      // watch only src and public for hot reload.
+      // public can be ignored too if nothing important is going to be put there,
+      ignored: ['**/*', '!**/src/**', '!**/public/**'], 
+    },
   },
 })
