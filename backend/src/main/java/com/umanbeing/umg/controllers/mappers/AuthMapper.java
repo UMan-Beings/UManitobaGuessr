@@ -14,14 +14,14 @@ public class AuthMapper {
     throw new UnsupportedOperationException("This class should never be instantiated");
   }
 
-  public static User fromDto(final CreateAccountRequest createUserDto) {
+  public static User fromDtoSignUp(final CreateAccountRequest createUserDto) {
     return User.builder()
       .email(createUserDto.email())
       .username(createUserDto.username())
       .build();
   }
 
-  public static Authentication fromDto(final LoginRequest loginRequest) {
+  public static Authentication fromDtoLogin(final LoginRequest loginRequest) {
     return new UsernamePasswordAuthenticationToken(loginRequest.email(), loginRequest.password());
   }
 

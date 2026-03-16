@@ -18,7 +18,6 @@ import com.umanbeing.umg.controllers.dto.LoginRequest;
 import com.umanbeing.umg.controllers.dto.LoginResponse;
 import com.umanbeing.umg.controllers.dto.SignUpResponse;
 import com.umanbeing.umg.controllers.mappers.AuthMapper;
-import com.umanbeing.umg.domain.Role;
 import java.util.Collections;
 import java.util.Optional;
 
@@ -55,22 +54,17 @@ public class AuthService implements UserDetailsService{
     }
 
     public SignUpResponse registerUser(CreateAccountRequest createAccountRequest) throws IllegalArgumentException {
-        String username = createAccountRequest.username();
-        String email = createAccountRequest.email();
-        String passwordHash = passwordEncoder.encode(createAccountRequest.password());
 
-        if (userRepo.findByUsername(username).isPresent()) {
+        User newUser = AuthMapper.fromDtoSignUp(createAccountRequest);
+        newUser.setPasswordHash(passwordEncoder.encode(createAccountRequest.password()));
+
+        if (userRepo.findByUsername(newUser.getUsername()).isPresent()) {
             throw new IllegalArgumentException("Username already exists");
         }
-        if (userRepo.findByEmail(email).isPresent()) {
+        if (userRepo.findByEmail(newUser.getEmail()).isPresent()) {
             throw new IllegalArgumentException("Email already exists");
         }
-        User newUser = User.builder()
-                .username(username)
-                .email(email)
-                .passwordHash(passwordHash)
-                .role(Role.USER)
-                .build();
+
         User savedUser = userRepo.save(newUser);
         return new SignUpResponse(
                 "User registered successfully",
@@ -82,7 +76,7 @@ public class AuthService implements UserDetailsService{
         try {
             // Authenticate the user
             Authentication auth = authenticationManager.authenticate(
-                AuthMapper.fromDto(loginRequest)
+                AuthMapper.fromDtoLogin(loginRequest)
             );
 
             // Generate JWT token
