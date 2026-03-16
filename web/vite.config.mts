@@ -102,8 +102,19 @@ export default defineConfig({
     watch: {
       // Enable polling (needed for Docker volumes)
       usePolling: true,
-      interval: 400, // adjust for speed
-      ignored: ['**/*', '!**/src/**', '!**/public/**'], // watch only src and public
+      interval: 200,
+      ignored: [
+        '**/node_modules/**',
+        '**/dist/**',
+        '**/.git/**',
+        '**/.pnpm-store/**',
+        '**/.vite/**',
+        '**/coverage/**',
+        '**/tmp/**',
+        '**/logs/**',
+        '**/*.log',
+        '**/.DS_Store',
+      ],
     },
   },
 })
