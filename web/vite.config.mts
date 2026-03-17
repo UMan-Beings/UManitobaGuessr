@@ -62,6 +62,10 @@ export default defineConfig({
     }),
   ],
   optimizeDeps: {
+    // first submit press for game config setup caused page to reload, second worked fine, so added this to avoid the issue in the future. See
+    include: [
+      'leaflet',
+    ],
     exclude: [
       'vuetify',
       'vue-router',
@@ -94,6 +98,23 @@ export default defineConfig({
         target: apiProxyTarget,
         changeOrigin: true,
       },
+    },
+    watch: {
+      // Enable polling (needed for Docker volumes)
+      usePolling: true,
+      interval: 200,
+      ignored: [
+        '**/node_modules/**',
+        '**/dist/**',
+        '**/.git/**',
+        '**/.pnpm-store/**',
+        '**/.vite/**',
+        '**/coverage/**',
+        '**/tmp/**',
+        '**/logs/**',
+        '**/*.log',
+        '**/.DS_Store',
+      ],
     },
   },
 })

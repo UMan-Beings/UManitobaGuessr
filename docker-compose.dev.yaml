@@ -42,6 +42,8 @@ services:
     # keep backend internal, frontend nginx proxies /api requests to this service.
     expose:
       - "8081"
+    volumes:
+      - gradle_cache:/home/gradle/.gradle
     depends_on:
       db_umg:
         condition: service_healthy
@@ -56,10 +58,18 @@ services:
     working_dir: /app
     environment:
       - VITE_API_PROXY_TARGET=http://backend-umg:8081
-    command: sh -c "corepack enable && pnpm install && pnpm dev --host 0.0.0.0 --port 3000"
+    command: >
+      sh -c "
+      corepack enable &&
+      if [ ! -f node_modules/.bin/vite ]; then
+        pnpm install --frozen-lockfile --store-dir /pnpm/store;
+      fi &&
+      exec pnpm dev --host 0.0.0.0 --port 3000
+      "
     volumes:
-      - ./web:/app
-      - web_node_modules:/app/node_modules
+    - ./web:/app:cached                     # Mount frontend source code for live reload
+    - web_node_modules:/app/node_modules    # Persist installed node_modules across container restarts
+    - pnpm_store:/pnpm/store                 # Persist pnpm store to speed up installs
     ports:
       - "${FRONTEND_PORT:-3000}:3000"
     depends_on:
@@ -72,7 +82,8 @@ services:
 volumes:
   postgres_dev_data:
   web_node_modules:
-
+  gradle_cache:
+  pnpm_store:
 networks:
   frontend_net:
   app_internal:
