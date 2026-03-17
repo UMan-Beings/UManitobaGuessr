@@ -1,10 +1,27 @@
 <template>
-  <div class="fill-height d-flex align-center justify-center">
+  <v-container class="h-100 d-flex flex-column justify-center align-center ga-6" max-width="900">
+    <HeroBanner class="rounded-lg"></HeroBanner>
+    
     <GameConfiguration @start="startGame" />
-  </div>
+
+    <UserStats
+      :total-score="totalScore"
+      :total-games="totalGames"
+      :total-guess-time-seconds="totalGuessTimeSeconds"
+      :total-rounds="totalRounds"
+      :average-guess-time-seconds="totalGuessTimeSeconds"
+      :average-score="totalScore"
+    />
+  </v-container>
 </template>
 
 <script lang="ts" setup>
+  // remove when accounts are fully implemented
+  const totalScore=50000
+  const totalGames=10
+  const totalRounds=50
+  const totalGuessTimeSeconds=300
+
   const router = useRouter()
 
   async function startGame (totalRounds: number, maxTimerSeconds: number) {
