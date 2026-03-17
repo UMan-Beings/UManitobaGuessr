@@ -15,9 +15,6 @@ COPY gradle /app/gradle
 # Make Gradle wrapper executable
 RUN chmod +x ./gradlew
 
-# Use a persistent volume for Gradle cache
-VOLUME /root/.gradle
-
 # Download dependencies (Gradle will store them in the volume)
 RUN ./gradlew dependencies --no-daemon
 
