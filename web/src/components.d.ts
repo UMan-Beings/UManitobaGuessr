@@ -16,6 +16,7 @@ declare module 'vue' {
     GuessMap: typeof import('./components/GuessMap.vue')['default']
     GuessResult: typeof import('./components/GuessResult.vue')['default']
     HelloWorld: typeof import('./src/components/HelloWorld.vue')['default']
+    HeroBanner: typeof import('./components/HeroBanner.vue')['default']
     HomeLinkLogo: typeof import('./components/HomeLinkLogo.vue')['default']
     RevealMap: typeof import('./components/RevealMap.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
