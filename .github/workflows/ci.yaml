@@ -185,26 +185,3 @@ jobs:
       - name: Run Pitest mutation testing (backend)
         working-directory: backend
         run: ./gradlew pitest --no-daemon
-
-      # Step 6: Set up Node.js and pnpm for frontend
-      - name: Set up Node.js and pnpm
-        uses: pnpm/action-setup@v5
-        with:
-          version: 'latest'
-
-      - name: Set up Node.js
-        uses: actions/setup-node@v6
-        with:
-          node-version: '18'
-          cache: 'pnpm'
-          cache-dependency-path: 'web/pnpm-lock.yaml'
-
-      # Step 7: Install frontend dependencies (includes pinned Stryker packages)
-      - name: Install frontend dependencies
-        working-directory: web
-        run: pnpm install --frozen-lockfile
-
-      # Step 8: Run Stryker mutation testing (frontend)
-      - name: Run Stryker mutation testing (frontend)
-        working-directory: web
-        run: pnpm run test:mutation

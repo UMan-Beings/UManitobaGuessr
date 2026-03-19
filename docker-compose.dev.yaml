@@ -13,6 +13,12 @@
 
 # App URL (frontend + proxied API): http://localhost:3000
 
+# ---------------------------------------------------------
+# Pitest mutation testing commands
+# --------------------------------------------------------
+# Run Pitest mutation testing for backend (cd backend)
+#   ./gradlew pitest
+
 services:
   db_umg:
     image: postgres:18
