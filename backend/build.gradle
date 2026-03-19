@@ -1,6 +1,7 @@
 plugins {
 	id 'java'
     id 'jacoco'
+	id 'org.pitest' version '1.23.0'
 	id 'org.springframework.boot' version '4.0.2'
 	id 'io.spring.dependency-management' version '1.1.7'
 }
@@ -67,7 +68,7 @@ tasks.named('test') {
 }
 
 jacoco {
-	toolVersion = '0.8.10'
+	toolVersion = '0.8.14'
 }
 
 tasks.named('jacocoTestReport', JacocoReport) {
@@ -81,4 +82,37 @@ tasks.named('jacocoTestReport', JacocoReport) {
 
 tasks.named('check') {
 	dependsOn tasks.named('jacocoTestReport')
+}
+
+pitest {
+	testPlugin = 'junit5'
+	pitestVersion = '1.23.0'
+	targetClasses = [
+		'com.umanbeing.umg.services.*',
+		'com.umanbeing.umg.controllers.*',
+		'com.umanbeing.umg.controllers.dto.*'
+	]
+	targetTests = [
+		'com.umanbeing.umg.integration.*',
+		'com.umanbeing.umg.*Test'
+	]
+	mutators = [
+		'CONDITIONALS_BOUNDARY',
+		'NEGATE_CONDITIONALS',
+		'MATH',
+		'INLINE_CONSTS',
+		'TRUE_RETURNS',
+		'FALSE_RETURNS',
+		'PRIMITIVE_RETURNS',
+		'EMPTY_RETURNS',
+		'NULL_RETURNS',
+		'VOID_METHOD_CALLS',
+		'REMOVE_CONDITIONALS',
+		'INCREMENTS',
+		'INVERT_NEGS'
+	]
+	threads = 4
+	outputFormats = ['XML', 'HTML']
+	timestampedReports = false
+	useClasspathFile = true
 }
