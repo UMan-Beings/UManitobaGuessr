@@ -36,6 +36,13 @@ public class GuessService {
             setGuessAndScore(guess, round, guessedX, guessedY);
         }
 
+        return saveGuess(round, guess);
+    }
+
+// =========================== Helper Methods ===========================
+
+    // Save guess to the database with associated round
+    private Guess saveGuess(Round round, Guess guess) {
         try {
             Guess savedGuess = guessRepo.save(guess);
             round.setGuess(savedGuess);
