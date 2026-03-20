@@ -31,16 +31,9 @@ public class GuessService {
         guess.setGuessTimeSeconds(guessTimeSeconds);
 
         if (guessedX == null || guessedY == null) {
-            guess.setDistanceMeters(null);
-            guess.setScore(0);
+            markGuessAsInvalid(guess);
         } else {
-            Location location = round.getLocation();
-            Integer distance = calculateDistance(guessedX, guessedY, location.getCorX(), location.getCorY());
-
-            guess.setGuessedX(guessedX);
-            guess.setGuessedY(guessedY);
-            guess.setDistanceMeters(distance);
-            guess.setScore(calculateScore(distance));
+            setGuessAndScore(guess, round, guessedX, guessedY);
         }
 
         try {
@@ -72,6 +65,21 @@ public class GuessService {
         }
 
         return calculatedScore;
+    }
+
+    private void markGuessAsInvalid(Guess guess) {
+        guess.setDistanceMeters(null);
+        guess.setScore(0);
+    }
+
+    private void setGuessAndScore(Guess guess, Round round, BigDecimal guessedX, BigDecimal guessedY) {
+        Location location = round.getLocation();
+        Integer distance = calculateDistance(guessedX, guessedY, location.getCorX(), location.getCorY());
+
+        guess.setGuessedX(guessedX);
+        guess.setGuessedY(guessedY);
+        guess.setDistanceMeters(distance);
+        guess.setScore(calculateScore(distance));
     }
 
 }

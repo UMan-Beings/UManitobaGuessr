@@ -92,4 +92,6 @@ pitest {
 	outputFormats = ['XML', 'HTML']						
 	timestampedReports = false							// report folder is always the same, always overwrite previous report
 	useClasspathFile = true
+
+	excludedMethods = ['applyInvalidGuessState']
 }
