@@ -40,6 +40,21 @@ public class GuessService {
     }
 
 // =========================== Helper Methods ===========================
+    
+    private void markGuessAsInvalid(Guess guess) {
+        guess.setDistanceMeters(null);
+        guess.setScore(0);
+    }
+
+    private void setGuessAndScore(Guess guess, Round round, BigDecimal guessedX, BigDecimal guessedY) {
+        Location location = round.getLocation();
+        Integer distance = calculateDistance(guessedX, guessedY, location.getCorX(), location.getCorY());
+
+        guess.setGuessedX(guessedX);
+        guess.setGuessedY(guessedY);
+        guess.setDistanceMeters(distance);
+        guess.setScore(calculateScore(distance));
+    }
 
     // Save guess to the database with associated round
     private Guess saveGuess(Round round, Guess guess) {
@@ -72,21 +87,6 @@ public class GuessService {
         }
 
         return calculatedScore;
-    }
-
-    private void markGuessAsInvalid(Guess guess) {
-        guess.setDistanceMeters(null);
-        guess.setScore(0);
-    }
-
-    private void setGuessAndScore(Guess guess, Round round, BigDecimal guessedX, BigDecimal guessedY) {
-        Location location = round.getLocation();
-        Integer distance = calculateDistance(guessedX, guessedY, location.getCorX(), location.getCorY());
-
-        guess.setGuessedX(guessedX);
-        guess.setGuessedY(guessedY);
-        guess.setDistanceMeters(distance);
-        guess.setScore(calculateScore(distance));
     }
 
 }

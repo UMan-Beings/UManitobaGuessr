@@ -182,6 +182,7 @@ jobs:
           done
 
       # Step 5: Run backend mutation testing with Pitest
-      - name: Run Pitest mutation testing (backend)
+      - name: Run PIT mutation testing
+        if: github.event_name == 'pull_request'
         working-directory: backend
         run: ./gradlew pitest --no-daemon

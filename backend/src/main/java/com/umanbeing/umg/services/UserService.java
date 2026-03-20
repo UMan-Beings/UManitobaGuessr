@@ -1,6 +1,9 @@
 package com.umanbeing.umg.services;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
+
 import com.umanbeing.umg.models.User;
 import com.umanbeing.umg.repos.UserRepo;
 
@@ -13,10 +16,7 @@ public class UserService {
     }
 
     public User getUserById(Long userId) {
-        return userRepo.findById(userId).orElse(null);
-    }
-
-    public User getUserByEmail(String email) {
-        return userRepo.findByEmail(email).orElse(null);
-    }
+        return userRepo.findById(userId).orElseThrow(
+            () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found with id " + userId));
+}
 }

@@ -93,5 +93,5 @@ pitest {
 	timestampedReports = false							// report folder is always the same, always overwrite previous report
 	useClasspathFile = true
 
-	excludedMethods = ['applyInvalidGuessState']
+	excludedMethods = ['markGuessAsInvalid']			// exclude method, equivalent mutant occurs here that can't be killed by a test
 }

@@ -63,8 +63,6 @@ public class GameService {
         game.setTotalRounds(totalRounds);
         game.setMaxTimerSeconds(maxTimerSeconds);
 
-        // TODO: Should we delete game.setCompleted(false) since the default value of boolean is false?
-        // It produces an equivalent mutant (when removed by Pitest) since the default value of boolean is false, and unable to kill it with a test.
         game.setCompleted(false);
 
         game.setCurrentRoundNumber(1);
