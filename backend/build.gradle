@@ -85,7 +85,6 @@ tasks.named('check') {
 }
 
 pitest {
-	testPlugin = 'junit6'
 	targetClasses = ['com.umanbeing.umg.services.*']	// where to inject mutations
 	targetTests = ['com.umanbeing.umg.*Test']			// run only tests ending with "Test"
 	mutators = ['DEFAULTS']								// mutators to use, https://pitest.org/quickstart/mutators/

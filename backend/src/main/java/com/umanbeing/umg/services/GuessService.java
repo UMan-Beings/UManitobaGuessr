@@ -11,14 +11,13 @@ import com.umanbeing.umg.models.Guess;
 import com.umanbeing.umg.models.Location;
 import com.umanbeing.umg.repos.GuessRepo;
 import com.umanbeing.umg.models.Round;
-import java.lang.Math;
 
 @Service
 public class GuessService {
 
-    private static final double FULL_SCORE_DISTANCE = 50;
-    private static final double MAX_DISTANCE = 350;
-    private static final int MAX_SCORE = 1000;
+    public static final double FULL_SCORE_DISTANCE = 50;
+    public static final double MAX_DISTANCE = 350;
+    public static final int MAX_SCORE = 1000;
 
     private final GuessRepo guessRepo;
 
