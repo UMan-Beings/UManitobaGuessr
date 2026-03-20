@@ -21,9 +21,9 @@ import com.umanbeing.umg.repos.projections.UserRoundStatsProjection;
 @Service
 public class GameService {
 
-    private static final int MAX_ROUNDS = 20;
-    private static final int MAX_TIME_LIMIT_SECONDS = 300;
-    private static final int MAX_GUESS_TIME_SECONDS = 3600;
+    public static final int MAX_ROUNDS = 20;
+    public static final int MAX_TIME_LIMIT_SECONDS = 300;
+    public static final int MAX_GUESS_TIME_SECONDS = 3600;
     
     private final GameRepo gameRepo;
     private final RoundService roundService;
@@ -62,7 +62,11 @@ public class GameService {
 
         game.setTotalRounds(totalRounds);
         game.setMaxTimerSeconds(maxTimerSeconds);
+
+        // TODO: Should we delete game.setCompleted(false) since the default value of boolean is false?
+        // It produces an equivalent mutant (when removed by Pitest) since the default value of boolean is false, and unable to kill it with a test.
         game.setCompleted(false);
+
         game.setCurrentRoundNumber(1);
         game.setGameState(GameState.GUESS);
         game.setScore(0);

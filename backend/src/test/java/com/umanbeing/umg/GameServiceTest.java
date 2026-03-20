@@ -52,6 +52,8 @@ class GameServiceTest {
 
     @InjectMocks GameService gameService;
 
+
+// ======================================= Round Number/Limit Tests =======================================
     @Test
     void createNewGame_whenTotalRoundsNonPositive_throwsBadRequest() {
         ResponseStatusException ex = assertThrows(
@@ -75,6 +77,29 @@ class GameServiceTest {
     }
 
     @Test
+    void createNewGame_whenTotalRoundsAtLimit_isValid() {
+        int roundLimit = GameService.MAX_ROUNDS;
+
+        when(gameRepo.save(any(Game.class))).thenAnswer(invocation -> invocation.getArgument(0));
+        when(roundService.createRoundForGame(any(Game.class))).thenReturn(List.of(new Round()));
+
+        Game result = gameService.createNewGame(roundLimit, 30, null);
+        assertEquals(roundLimit, result.getTotalRounds());
+    }
+
+    @Test
+    void createNewGame_whenTotalRoundsAboveLimit_throwsBadRequest() {
+        int roundLimit = GameService.MAX_ROUNDS + 1;
+
+        ResponseStatusException ex = assertThrows(
+            ResponseStatusException.class,
+            () -> gameService.createNewGame(roundLimit, 30, null)
+        );
+        assertEquals(HttpStatus.BAD_REQUEST, ex.getStatusCode());
+    }
+
+// ======================================= Max Timer Tests =======================================
+    @Test
     void createNewGame_whenMaxTimerSecondsNegative_throwsBadRequest() {
         ResponseStatusException ex = assertThrows(
             ResponseStatusException.class,
@@ -96,6 +121,27 @@ class GameServiceTest {
         verifyNoInteractions(gameRepo, roundService, userService);
     }
 
+    @Test
+    void createNewGame_whenMaxTimerSecondsZero_isValid() {
+        when(gameRepo.save(any(Game.class))).thenAnswer(invocation -> invocation.getArgument(0));
+        when(roundService.createRoundForGame(any(Game.class))).thenReturn(List.of(new Round(), new Round()));
+
+        Game result = gameService.createNewGame(2, 0, null);
+
+        assertEquals(0, result.getMaxTimerSeconds());
+    }
+
+    @Test
+    void createNewGame_whenMaxTimerSecondsAtMaxLimit_isValid() {
+        when(gameRepo.save(any(Game.class))).thenAnswer(invocation -> invocation.getArgument(0));
+        when(roundService.createRoundForGame(any(Game.class))).thenReturn(List.of(new Round(), new Round()));
+
+        Game result = gameService.createNewGame(2, GameService.MAX_TIME_LIMIT_SECONDS, null);
+
+        assertEquals(GameService.MAX_TIME_LIMIT_SECONDS, result.getMaxTimerSeconds());
+    }
+
+// ======================================= User Tests =======================================
     @Test
     void createNewGame_whenUserIdNull_createsGameAndRounds() {
         when(gameRepo.save(any(Game.class))).thenAnswer(invocation -> invocation.getArgument(0));
@@ -151,6 +197,7 @@ class GameServiceTest {
         verify(gameRepo, times(2)).save(result);
     }
 
+// ======================================= Game ID Tests =======================================
     @Test
     void getGameById_whenMissingGameId_throwsBadRequest() {
         Long gameId = null;
@@ -192,6 +239,7 @@ class GameServiceTest {
         verify(gameRepo).findById(gameId);
     }
 
+// ======================================= Submit Guess Phase Tests =======================================
     @Test
     void submitGuess_whenNotGuessPhase_throwsConflict() {
         Long gameId = 1L;
@@ -210,6 +258,7 @@ class GameServiceTest {
         verifyNoInteractions(guessService);
     }
 
+// ======================================= Submit Guess Coordinate/Time Tests =======================================
     @Test
     void submitGuess_whenMissingCoordinateX_throwsBadRequest() {
         Long gameId = 1L;
@@ -336,6 +385,7 @@ class GameServiceTest {
         verify(guessService).createGuess(eq(round), eq(BigDecimal.ONE), eq(BigDecimal.ONE), eq(3600L));
     }
 
+// ======================================= Timeout Tests =======================================
     @Test
     void timeout_whenTimerDisabled_throwsConflict() {
         Long gameId = 1L;
@@ -396,6 +446,7 @@ class GameServiceTest {
         verify(gameRepo).save(game);
     }
 
+// ======================================= Next Round Tests =======================================
     @Test
     void nextRound_whenNotRevealPhase_throwsConflict() {
         Long gameId = 1L;
@@ -505,6 +556,20 @@ class GameServiceTest {
         verify(gameRepo).save(game);
     }
 
+// ===================================== Game Completion Tests =====================================
+    @Test
+    void createNewGame_setsCompleted_FalseInitially() {
+        // Arrange: stub saving and rounds creation
+        when(gameRepo.save(any(Game.class))).thenAnswer(invocation -> invocation.getArgument(0));
+        when(roundService.createRoundForGame(any(Game.class))).thenReturn(List.of(new Round(), new Round()));
+
+        // Act: create a new game
+        Game result = gameService.createNewGame(2, 30, null);
+
+        assertFalse(result.isCompleted(), "Newly created game should not be completed");
+    }
+
+// ======================================= User Stats Tests =======================================
     @Test
     void getUserStats_whenUserIdNull_throwsBadRequest_andSkipsRepoCalls() {
         ResponseStatusException exception = assertThrows(
