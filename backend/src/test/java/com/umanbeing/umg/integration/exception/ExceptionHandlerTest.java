@@ -2,18 +2,30 @@ package com.umanbeing.umg.integration.exception;
 
 import com.umanbeing.umg.controllers.dto.CreateGameRequest;
 import com.umanbeing.umg.integration.base.PostgresIntegrationTestBase;
+import com.umanbeing.umg.repos.UserRepo;
+import com.umanbeing.umg.models.User;
+
 import org.junit.jupiter.api.Test;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.security.access.AccessDeniedException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 
 public class ExceptionHandlerTest extends PostgresIntegrationTestBase{
 
     @Autowired
     private MockMvc mockMvc;
+
+    @Autowired
+    private UserRepo userRepo;
     
     @Test
     void testMethodNotAllowed() throws Exception {
@@ -30,6 +42,41 @@ public class ExceptionHandlerTest extends PostgresIntegrationTestBase{
                 .andExpect(MockMvcResultMatchers.jsonPath("$.status").value("Not Found"))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.message").value(""));
     }
+
+    @Test
+    void testNotFoundAfterLogin() throws Exception {
+        // First, perform a successful login to get a valid token
+        String requestJson = "{\"username\":\"newuser1\",\"password\":\"newpassword123\",\"email\":\"newuser1@example.com\"}";
+        mockMvc.perform(post("/api/v1/auth/signup")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(requestJson))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.message").value("User registered successfully"));
+
+        User user = userRepo.findByUsername("newuser1").orElseThrow(() -> new AssertionError("User not found in database"));
+        assertEquals("newuser1@example.com", user.getEmail());
+
+        // Store only the token field from the login response
+        String token = mockMvc.perform(post("/api/v1/auth/login")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{\"password\":\"newpassword123\",\"email\":\"newuser1@example.com\"}"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.token").exists())
+                .andReturn()
+                .getResponse()
+                .getContentAsString();
+
+        // Extract the token field from the JSON response
+        token = objectMapper.readTree(token).get("token").asText();
+
+        // Access a non-existing API endpoint with the token
+        mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/nonexistent")
+                .header("Authorization", "Bearer " + token))
+                .andExpect(MockMvcResultMatchers.status().isNotFound())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.status").value("Not Found"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.message").exists());
+    }
+
 
     @Test
     void testInternalServerErrorLogin() throws Exception {

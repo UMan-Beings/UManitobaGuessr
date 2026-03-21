@@ -11,6 +11,7 @@ import org.springframework.web.servlet.NoHandlerFoundException;
 //import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.web.server.ResponseStatusException;
+import org.springframework.web.servlet.resource.NoResourceFoundException;
 import jakarta.servlet.http.HttpServletRequest;
 
 import com.umanbeing.umg.domain.HttpRes;
@@ -42,6 +43,14 @@ public class GlobalExceptionHandler {
         String requestUri = request.getRequestURI();
         logger.error("No handler found for {}: {}", requestUri, e.getMessage());
         HttpRes<Void> response = HttpRes.fail(HttpStatus.NOT_FOUND);
+        return ResponseEntity.status(HttpStatus.NOT_FOUND.value()).body(response);
+    }
+
+    @ExceptionHandler(NoResourceFoundException.class)
+    public ResponseEntity<HttpRes<Void>> handleNoResourceFoundException(NoResourceFoundException e, HttpServletRequest request) {
+        String requestUri = request.getRequestURI();
+        logger.error("No resource found for {}: {}", requestUri, e.getMessage());
+        HttpRes<Void> response = HttpRes.fail(HttpStatus.NOT_FOUND, e.getMessage());
         return ResponseEntity.status(HttpStatus.NOT_FOUND.value()).body(response);
     }
 

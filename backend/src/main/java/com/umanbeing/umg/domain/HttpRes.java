@@ -49,7 +49,7 @@ public class HttpRes<T> {
     // }
 
     public static <T> HttpRes<T> fail() {
-        return response(HttpStatus.INTERNAL_SERVER_ERROR.value(), HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase(), "");
+        return response(HttpStatus.INTERNAL_SERVER_ERROR.value(), HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase(), "The server encountered an unexpected error");
     }
 
     public static <T> HttpRes<T> fail(HttpStatus httpStatus) {
