@@ -8,6 +8,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.servlet.NoHandlerFoundException;
+//import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.web.server.ResponseStatusException;
 import jakarta.servlet.http.HttpServletRequest;
 
 import com.umanbeing.umg.domain.HttpRes;
@@ -42,11 +45,37 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.NOT_FOUND.value()).body(response);
     }
 
+    @ExceptionHandler(ResponseStatusException.class)
+    public ResponseEntity<HttpRes<Void>> handleResponseStatusException(ResponseStatusException e, HttpServletRequest request) {
+        String requestUri = request.getRequestURI();
+        logger.error("Response status exception for {}: {}", requestUri, e.getMessage());
+        HttpRes<Void> response = HttpRes.fail(HttpStatus.valueOf(e.getMessage()), e.getReason());
+        return ResponseEntity.status(HttpStatus.valueOf(e.getMessage()).value()).body(response);
+    }
+
+    // Spring security defaults to throw BadCredentialsException for authentication failures to prevent user enumeration,
+    // so we won't handle UsernameNotFoundException separately unless we want to change this behavior.
+    // @ExceptionHandler(UsernameNotFoundException.class)
+    // public ResponseEntity<HttpRes<Void>> handleUsernameNotFoundException(UsernameNotFoundException e, HttpServletRequest request) {
+    //     String requestUri = request.getRequestURI();
+    //     logger.error("User not found for {}: {}", requestUri, e.getMessage());
+    //     HttpRes<Void> response = HttpRes.fail(HttpStatus.NOT_FOUND);
+    //     return ResponseEntity.status(HttpStatus.NOT_FOUND.value()).body(response);
+    // }
+
+    @ExceptionHandler(BadCredentialsException.class)
+    public ResponseEntity<HttpRes<Void>> handleBadCredentialsException(BadCredentialsException e, HttpServletRequest request) {
+        String requestUri = request.getRequestURI();
+        logger.error("Authentication failed for {}: {}", requestUri, e.getMessage());
+        HttpRes<Void> response = HttpRes.fail(HttpStatus.UNAUTHORIZED, "Invalid email or password");
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED.value()).body(response);
+    }
+
     @ExceptionHandler(Exception.class)
     public ResponseEntity<HttpRes<Void>> handleGenericException(Exception e, HttpServletRequest request) {
         String requestUri = request.getRequestURI();
         logger.error("An error occurred while processing {}: {}", requestUri, e.getMessage());
-        HttpRes<Void> response = HttpRes.fail(HttpStatus.INTERNAL_SERVER_ERROR);
+        HttpRes<Void> response = HttpRes.fail(HttpStatus.INTERNAL_SERVER_ERROR, "An unexpected error occurred");
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR.value()).body(response);
     }
 }

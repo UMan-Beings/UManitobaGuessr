@@ -1,5 +1,6 @@
 package com.umanbeing.umg.integration.exception;
 
+import com.umanbeing.umg.controllers.dto.CreateGameRequest;
 import com.umanbeing.umg.integration.base.PostgresIntegrationTestBase;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -7,6 +8,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.security.access.AccessDeniedException;
 
 public class ExceptionHandlerTest extends PostgresIntegrationTestBase{
 
@@ -36,9 +38,9 @@ public class ExceptionHandlerTest extends PostgresIntegrationTestBase{
         mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/auth/login")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(malformedJson))
-                .andExpect(MockMvcResultMatchers.status().isInternalServerError())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.status").value("Internal Server Error"))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.message").value(""));
+                .andExpect(MockMvcResultMatchers.status().isUnauthorized())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.status").value("Unauthorized"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.message").value("Invalid email or password"));
 
     }
 
@@ -51,7 +53,7 @@ public class ExceptionHandlerTest extends PostgresIntegrationTestBase{
                 .content(malformedJson))
                 .andExpect(MockMvcResultMatchers.status().isInternalServerError())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.status").value("Internal Server Error"))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.message").value(""));
+                .andExpect(MockMvcResultMatchers.jsonPath("$.message").value("An unexpected error occurred"));
 
     }
 
@@ -64,7 +66,24 @@ public class ExceptionHandlerTest extends PostgresIntegrationTestBase{
                 .content(malformedJson))
                 .andExpect(MockMvcResultMatchers.status().isInternalServerError())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.status").value("Internal Server Error"))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.message").value(""));
+                .andExpect(MockMvcResultMatchers.jsonPath("$.message").value("An unexpected error occurred"));
+
+    }
+
+    @Test
+    void testBadRequestGameCreation() throws Exception {
+        // Trigger a bad request error by sending an invalid game setting
+        CreateGameRequest request = new CreateGameRequest();
+        request.setTotalRounds(0); // Invalid total rounds
+        request.setMaxTimerSeconds(60);
+
+        String requestJson = objectMapper.writeValueAsString(request);
+
+        mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/games")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(requestJson))
+                .andExpect(MockMvcResultMatchers.status().isBadRequest())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.message").doesNotExist());
 
     }
 }

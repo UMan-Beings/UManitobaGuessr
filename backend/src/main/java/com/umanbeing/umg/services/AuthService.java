@@ -83,7 +83,7 @@ public class AuthService implements UserDetailsService{
             String token = tokenService.generateToken(loginRequest.email());
             return AuthMapper.toDto(token, auth.getName());
         } catch (UsernameNotFoundException e) {
-            throw new BadCredentialsException("Invalid username or password", e);
+            throw new UsernameNotFoundException("User not found", e);
         } catch (Exception e) {
             throw new BadCredentialsException("Error while trying to login", e);
         }
