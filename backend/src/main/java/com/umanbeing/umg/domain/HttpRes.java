@@ -37,11 +37,11 @@ public class HttpRes<T> {
 
     // TODO: Discuss if we need to customize HTTP status.
     public static <T> HttpRes<T> success() {
-        return response(HttpStatus.OK.value(), HttpStatus.OK.getReasonPhrase(), null);
+        return response(HttpStatus.OK.value(), HttpStatus.OK.getReasonPhrase(), "");
     }
 
     public static <T> HttpRes<T> success(HttpStatus httpStatus) {
-        return response(httpStatus.value(), httpStatus.getReasonPhrase(), null);
+        return response(httpStatus.value(), httpStatus.getReasonPhrase(), "");
     }
 
     public static <T> HttpRes<T> success(String message, T data) {
@@ -49,11 +49,11 @@ public class HttpRes<T> {
     }
 
     public static <T> HttpRes<T> fail() {
-        return response(HttpStatus.INTERNAL_SERVER_ERROR.value(), HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase(), null);
+        return response(HttpStatus.INTERNAL_SERVER_ERROR.value(), HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase(), "");
     }
 
     public static <T> HttpRes<T> fail(HttpStatus httpStatus) {
-        return response(httpStatus.value(), httpStatus.getReasonPhrase(), null);
+        return response(httpStatus.value(), httpStatus.getReasonPhrase(), "");
     }
 
     public static <T> HttpRes<T> fail(String message) {

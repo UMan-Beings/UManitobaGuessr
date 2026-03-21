@@ -11,42 +11,42 @@ import org.springframework.web.servlet.NoHandlerFoundException;
 import jakarta.servlet.http.HttpServletRequest;
 
 import com.umanbeing.umg.domain.HttpRes;
+import org.springframework.http.ResponseEntity;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
-    
+
     private static final Logger logger = LoggerFactory.getLogger(GlobalExceptionHandler.class);
 
-    // Enumerate all exceptions that we want to handle globally here, and return appropriate HTTP responses.
-
-    // Authentication exceptions
     @ExceptionHandler(AccessDeniedException.class)
-    public HttpRes<Void> handleAccessDeniedException(AccessDeniedException e, HttpServletRequest request) {
+    public ResponseEntity<HttpRes<Void>> handleAccessDeniedException(AccessDeniedException e, HttpServletRequest request) {
         String requestUri = request.getRequestURI();
         logger.error("Access denied to {}: {}", requestUri, e.getMessage());
-        return HttpRes.fail(HttpStatus.FORBIDDEN);
+        HttpRes<Void> response = HttpRes.fail(HttpStatus.FORBIDDEN);
+        return ResponseEntity.status(HttpStatus.FORBIDDEN.value()).body(response);
     }
 
     @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
-    public HttpRes<Void> handleHttpRequestMethodNotSupportedException(HttpRequestMethodNotSupportedException e, HttpServletRequest request) {
+    public ResponseEntity<HttpRes<Void>> handleHttpRequestMethodNotSupportedException(HttpRequestMethodNotSupportedException e, HttpServletRequest request) {
         String requestUri = request.getRequestURI();
         logger.error("Method not allowed for {}: {}", requestUri, e.getMessage());
-        return HttpRes.fail(HttpStatus.METHOD_NOT_ALLOWED);
+        HttpRes<Void> response = HttpRes.fail(HttpStatus.METHOD_NOT_ALLOWED);
+        return ResponseEntity.status(HttpStatus.METHOD_NOT_ALLOWED.value()).body(response);
     }
 
     @ExceptionHandler(NoHandlerFoundException.class)
-    public HttpRes<Void> handleNoHandlerFoundException(NoHandlerFoundException e, HttpServletRequest request) {
+    public ResponseEntity<HttpRes<Void>> handleNoHandlerFoundException(NoHandlerFoundException e, HttpServletRequest request) {
         String requestUri = request.getRequestURI();
         logger.error("No handler found for {}: {}", requestUri, e.getMessage());
-        return HttpRes.fail(HttpStatus.NOT_FOUND);
+        HttpRes<Void> response = HttpRes.fail(HttpStatus.NOT_FOUND);
+        return ResponseEntity.status(HttpStatus.NOT_FOUND.value()).body(response);
     }
 
     @ExceptionHandler(Exception.class)
-    public HttpRes<Void> handleGenericException(Exception e, HttpServletRequest request) {
+    public ResponseEntity<HttpRes<Void>> handleGenericException(Exception e, HttpServletRequest request) {
         String requestUri = request.getRequestURI();
         logger.error("An error occurred while processing {}: {}", requestUri, e.getMessage());
-        return HttpRes.fail(HttpStatus.INTERNAL_SERVER_ERROR);
+        HttpRes<Void> response = HttpRes.fail(HttpStatus.INTERNAL_SERVER_ERROR);
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR.value()).body(response);
     }
-
-
 }
