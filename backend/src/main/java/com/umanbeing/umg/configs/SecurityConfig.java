@@ -56,9 +56,9 @@ public class SecurityConfig{
             // Add JWT filter before Spring Security's default filter
             .addFilterBefore(jwtFilter(userDetailsService, jwtService), UsernamePasswordAuthenticationFilter.class)
             .exceptionHandling(exh -> exh.authenticationEntryPoint(
-            (request, response, ex) -> {
-                response.sendError(HttpServletResponse.SC_UNAUTHORIZED, ex.getMessage());
-            }
+            (request, response, ex) -> 
+                response.sendError(HttpServletResponse.SC_UNAUTHORIZED, ex.getMessage())
+            
         ));
             return http.build();
     }
