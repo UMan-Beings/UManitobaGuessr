@@ -39,6 +39,7 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-webmvc'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	implementation 'org.flywaydb:flyway-database-postgresql'
+	implementation 'com.auth0:java-jwt:4.4.0'
 	compileOnly 'org.projectlombok:lombok'
 	developmentOnly 'org.springframework.boot:spring-boot-devtools'
 	developmentOnly 'org.springframework.boot:spring-boot-docker-compose'
@@ -58,6 +59,7 @@ dependencies {
 	testImplementation "org.testcontainers:postgresql:${testcontainersVersion}"
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 	testImplementation 'org.postgresql:postgresql:42.3.1'
+	
 }
 
 tasks.named('test') {

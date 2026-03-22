@@ -3,8 +3,10 @@ package com.umanbeing.umg.repos;
 import com.umanbeing.umg.models.User;
 import org.springframework.stereotype.Repository;
 import org.springframework.data.jpa.repository.JpaRepository;
+import java.util.Optional;
 
 @Repository
 public interface UserRepo extends JpaRepository<User, Long> {
-    
+    Optional<User> findByEmail(String email);
+    Optional<User> findByUsername(String username);
 }
