@@ -76,7 +76,7 @@ public class GlobalExceptionHandler {
     public ResponseEntity<HttpRes<Void>> handleBadCredentialsException(BadCredentialsException e, HttpServletRequest request) {
         String requestUri = request.getRequestURI();
         logger.error("Authentication failed for {}: {}", requestUri, e.getMessage());
-        HttpRes<Void> response = HttpRes.fail(HttpStatus.UNAUTHORIZED, "Invalid email or password");
+        HttpRes<Void> response = HttpRes.fail(HttpStatus.UNAUTHORIZED, "Error while trying to login");
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED.value()).body(response);
     }
 
