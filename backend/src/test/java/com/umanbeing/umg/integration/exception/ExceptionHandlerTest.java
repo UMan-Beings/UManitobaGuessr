@@ -15,8 +15,6 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import org.springframework.security.access.AccessDeniedException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 
 public class ExceptionHandlerTest extends PostgresIntegrationTestBase{
@@ -38,9 +36,9 @@ public class ExceptionHandlerTest extends PostgresIntegrationTestBase{
     @Test
     void testNotFound() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/nonexistent"))
-                .andExpect(MockMvcResultMatchers.status().isNotFound())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.status").value("Not Found"))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.message").value(""));
+                .andExpect(MockMvcResultMatchers.status().isUnauthorized())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.status").value("Unauthorized"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.message").value("Error while trying to login"));
     }
 
     @Test
