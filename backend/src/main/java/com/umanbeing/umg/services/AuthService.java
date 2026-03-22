@@ -82,7 +82,7 @@ public class AuthService implements UserDetailsService{
             // Generate JWT token
             String token = tokenService.generateToken(loginRequest.email());
             return AuthMapper.toDto(token, auth.getName());
-        }catch (Exception e) {
+        } catch (Exception e) {
             throw new BadCredentialsException("Error while trying to login", e);
         }
     }
