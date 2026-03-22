@@ -12,6 +12,7 @@ import org.springframework.web.servlet.NoHandlerFoundException;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.resource.NoResourceFoundException;
+import org.springframework.security.core.AuthenticationException;
 import jakarta.servlet.http.HttpServletRequest;
 
 import com.umanbeing.umg.domain.HttpRes;
@@ -58,8 +59,8 @@ public class GlobalExceptionHandler {
     public ResponseEntity<HttpRes<Void>> handleResponseStatusException(ResponseStatusException e, HttpServletRequest request) {
         String requestUri = request.getRequestURI();
         logger.error("Response status exception for {}: {}", requestUri, e.getMessage());
-        HttpRes<Void> response = HttpRes.fail(HttpStatus.valueOf(e.getMessage()), e.getReason());
-        return ResponseEntity.status(HttpStatus.valueOf(e.getMessage()).value()).body(response);
+        HttpRes<Void> response = HttpRes.fail(HttpStatus.valueOf(e.getStatusCode().value()), e.getReason());
+        return ResponseEntity.status(HttpStatus.valueOf(e.getStatusCode().value()).value()).body(response);
     }
 
     // Spring security defaults to throw BadCredentialsException for authentication failures to prevent user enumeration,
@@ -77,6 +78,14 @@ public class GlobalExceptionHandler {
         String requestUri = request.getRequestURI();
         logger.error("Authentication failed for {}: {}", requestUri, e.getMessage());
         HttpRes<Void> response = HttpRes.fail(HttpStatus.UNAUTHORIZED, "Error while trying to login");
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED.value()).body(response);
+    }
+
+    @ExceptionHandler(AuthenticationException.class)
+    public ResponseEntity<HttpRes<Void>> handleAuthenticationException(AuthenticationException e, HttpServletRequest request) {
+        String requestUri = request.getRequestURI();
+        logger.error("Unauthorized access to {}: {}", requestUri, e.getMessage());
+        HttpRes<Void> response = HttpRes.fail(HttpStatus.UNAUTHORIZED, e.getMessage());
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED.value()).body(response);
     }
 

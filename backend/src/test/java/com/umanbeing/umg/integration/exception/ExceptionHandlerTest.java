@@ -34,12 +34,12 @@ public class ExceptionHandlerTest extends PostgresIntegrationTestBase{
                 .andExpect(MockMvcResultMatchers.jsonPath("$.message").value(""));
     }
 
+
+    // Spring Security will handle this entry point and return 401 without throwing an Exception
     @Test
     void testNotFound() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/nonexistent"))
-                .andExpect(MockMvcResultMatchers.status().isUnauthorized())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.status").value("Unauthorized"))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.message").value("Error while trying to login"));
+                .andExpect(MockMvcResultMatchers.status().isUnauthorized());
     }
 
     @Test
@@ -86,7 +86,7 @@ public class ExceptionHandlerTest extends PostgresIntegrationTestBase{
                 .content(malformedJson))
                 .andExpect(MockMvcResultMatchers.status().isUnauthorized())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.status").value("Unauthorized"))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.message").value("Invalid email or password"));
+                .andExpect(MockMvcResultMatchers.jsonPath("$.message").value("Error while trying to login"));
 
     }
 
@@ -110,9 +110,9 @@ public class ExceptionHandlerTest extends PostgresIntegrationTestBase{
         mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/games")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(malformedJson))
-                .andExpect(MockMvcResultMatchers.status().isInternalServerError())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.status").value("Internal Server Error"))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.message").value("An unexpected error occurred"));
+                .andExpect(MockMvcResultMatchers.status().isBadRequest())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.status").value("Bad Request"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.message").doesNotExist());
 
     }
 
