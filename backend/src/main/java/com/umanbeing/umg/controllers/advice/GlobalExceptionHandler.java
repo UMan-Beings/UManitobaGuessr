@@ -8,7 +8,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.servlet.NoHandlerFoundException;
-//import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.resource.NoResourceFoundException;
@@ -64,15 +63,7 @@ public class GlobalExceptionHandler {
     }
 
     // Spring security defaults to throw BadCredentialsException for authentication failures to prevent user enumeration,
-    // so we won't handle UsernameNotFoundException separately unless we want to change this behavior.
-    // @ExceptionHandler(UsernameNotFoundException.class)
-    // public ResponseEntity<HttpRes<Void>> handleUsernameNotFoundException(UsernameNotFoundException e, HttpServletRequest request) {
-    //     String requestUri = request.getRequestURI();
-    //     logger.error("User not found for {}: {}", requestUri, e.getMessage());
-    //     HttpRes<Void> response = HttpRes.fail(HttpStatus.NOT_FOUND);
-    //     return ResponseEntity.status(HttpStatus.NOT_FOUND.value()).body(response);
-    // }
-
+    // so we won't handle UsernameNotFoundException separately unless we want to change this behavior
     @ExceptionHandler(BadCredentialsException.class)
     public ResponseEntity<HttpRes<Void>> handleBadCredentialsException(BadCredentialsException e, HttpServletRequest request) {
         String requestUri = request.getRequestURI();

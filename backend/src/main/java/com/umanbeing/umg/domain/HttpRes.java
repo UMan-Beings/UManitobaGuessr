@@ -35,19 +35,6 @@ public class HttpRes<T> {
         return res;
     }
 
-    // TODO: Discuss if we need to customize HTTP status.
-    // public static <T> HttpRes<T> success() {
-    //     return response(HttpStatus.OK.value(), HttpStatus.OK.getReasonPhrase(), "");
-    // }
-
-    // public static <T> HttpRes<T> success(HttpStatus httpStatus) {
-    //     return response(httpStatus.value(), httpStatus.getReasonPhrase(), "");
-    // }
-
-    // public static <T> HttpRes<T> success(String message, T data) {
-    //     return response(HttpStatus.OK.value(), HttpStatus.OK.getReasonPhrase(), message, data);
-    // }
-
     public static <T> HttpRes<T> fail() {
         return response(HttpStatus.INTERNAL_SERVER_ERROR.value(), HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase(), "The server encountered an unexpected error");
     }
@@ -64,7 +51,6 @@ public class HttpRes<T> {
         return response(httpStatus.value(), httpStatus.getReasonPhrase(), message);
     }
 
-    // TODO: Discuss if we want to modify specific error codes for different types of errors (e.g. 400 for bad request, 401 for unauthorized, etc.)
     public static <T> HttpRes<T> fail(HttpStatus httpStatus, String message, T data) {
         return response(httpStatus.value(), httpStatus.getReasonPhrase(), message, data);
     }
