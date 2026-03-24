@@ -15,6 +15,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import static org.hamcrest.core.IsNull.nullValue;
 
 
 public class ExceptionHandlerTest extends PostgresIntegrationTestBase{
@@ -111,7 +112,7 @@ public class ExceptionHandlerTest extends PostgresIntegrationTestBase{
                 .content(malformedJson))
                 .andExpect(MockMvcResultMatchers.status().isBadRequest())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.status").value("Bad Request"))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.message").doesNotExist());
+                .andExpect(MockMvcResultMatchers.jsonPath("$.message").value(nullValue()));
 
     }
 
@@ -128,7 +129,7 @@ public class ExceptionHandlerTest extends PostgresIntegrationTestBase{
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(requestJson))
                 .andExpect(MockMvcResultMatchers.status().isBadRequest())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.message").doesNotExist());
+                .andExpect(MockMvcResultMatchers.jsonPath("$.message").value(nullValue()));
 
     }
 }
