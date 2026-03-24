@@ -58,8 +58,14 @@ public class GlobalExceptionHandler {
     public ResponseEntity<HttpRes<Void>> handleResponseStatusException(ResponseStatusException e, HttpServletRequest request) {
         String requestUri = request.getRequestURI();
         logger.error("Response status exception for {}: {}", requestUri, e.getMessage());
-        HttpRes<Void> response = HttpRes.fail(HttpStatus.valueOf(e.getStatusCode().value()), e.getReason());
-        return ResponseEntity.status(HttpStatus.valueOf(e.getStatusCode().value()).value()).body(response);
+        int statusCodeValue = e.getStatusCode().value();
+        HttpStatus httpStatus = HttpStatus.resolve(statusCodeValue);
+        if (httpStatus == null) {
+            logger.warn("Received non-standard HTTP status code {} for {}: {}", statusCodeValue, requestUri, e.getMessage());
+            httpStatus = HttpStatus.INTERNAL_SERVER_ERROR;
+        }
+        HttpRes<Void> response = HttpRes.fail(httpStatus, e.getReason());
+        return ResponseEntity.status(statusCodeValue).body(response);
     }
 
     // Spring security defaults to throw BadCredentialsException for authentication failures to prevent user enumeration,
