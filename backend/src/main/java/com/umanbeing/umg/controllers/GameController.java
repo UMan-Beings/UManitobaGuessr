@@ -4,6 +4,7 @@ import java.util.Map;
 
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.bind.annotation.RequestMethod;
 import com.umanbeing.umg.services.GameService;
 import com.umanbeing.umg.services.UserService;
@@ -16,6 +17,7 @@ import com.umanbeing.umg.models.User;
 
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 
@@ -58,8 +60,9 @@ public class GameController {
     //Implement the game update logic here
     //Return the current game state (GUESS phase, REVEAL phase, or FINISHED)
     @RequestMapping(value = "/games/{gameId}", method = RequestMethod.GET)
-    public ResponseEntity<Map<String, Object>> getGameById(@PathVariable Long gameId) {
+    public ResponseEntity<Map<String, Object>> getGameById(@PathVariable Long gameId, Authentication authentication) {
         Game game = gameService.getGameById(gameId);
+        checkGameOwnership(game, authentication);
 
         GameState phase = game.getGameState();
         Round currentRound = game.getCurrentRound();
@@ -93,7 +96,9 @@ public class GameController {
     //Implement the guess submission logic here
     //Return the result of the guess (actual location, score for the round, and updated game state)
     @RequestMapping(value = "/games/{gameId}/guess", method = RequestMethod.POST)
-    public ResponseEntity<Map<String, Object>> makeGuess(@PathVariable Long gameId, @RequestBody MakeGuessRequest request) {
+    public ResponseEntity<Map<String, Object>> makeGuess(@PathVariable Long gameId, @RequestBody MakeGuessRequest request, Authentication authentication) {
+        checkGameOwnership(gameService.getGameById(gameId), authentication);
+
         Game game = gameService.submitGuess(gameId, request.getCorX(), request.getCorY(), request.getGuessTimeSeconds());
         Round currentRound = game.getCurrentRound();
         Guess guess = currentRound.getGuess();
@@ -116,7 +121,9 @@ public class GameController {
     }
 
     @RequestMapping(value = "/games/{gameId}/timeout", method=RequestMethod.POST)
-    public ResponseEntity<Map<String, Object>> timeout(@PathVariable Long gameId) {
+    public ResponseEntity<Map<String, Object>> timeout(@PathVariable Long gameId, Authentication authentication) {
+        checkGameOwnership(gameService.getGameById(gameId), authentication);
+
         Game game = gameService.timeout(gameId);
         Round currentRound = game.getCurrentRound();
         Guess guess = currentRound.getGuess();
@@ -139,7 +146,9 @@ public class GameController {
     //Implement the logic to move to the next round here
     //Return the new game state (GUESS phase for the next round, or FINISHED if it was the last round)
     @RequestMapping(value = "/games/{gameId}/next", method=RequestMethod.POST)
-    public ResponseEntity<Map<String, Object>> requestNextRound(@PathVariable Long gameId) {
+    public ResponseEntity<Map<String, Object>> requestNextRound(@PathVariable Long gameId, Authentication authentication) {
+        checkGameOwnership(gameService.getGameById(gameId), authentication);
+
         Game game = gameService.nextRound(gameId);
 
         Map<String, Object> response = new HashMap<>();
@@ -161,6 +170,14 @@ public class GameController {
 
     private User getAuthenticatedUserOrNull(Authentication authentication) {
         return authentication != null ? userService.getUserByEmail(authentication.getName()) : null;
+    }
+
+    private void checkGameOwnership(Game game, Authentication authentication) {
+        User user = getAuthenticatedUserOrNull(authentication);
+        User gameUser = game.getUser();
+        if (gameUser != null && (user == null || !gameUser.getUserId().equals(user.getUserId()))) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN);
+        }
     }
     
 
