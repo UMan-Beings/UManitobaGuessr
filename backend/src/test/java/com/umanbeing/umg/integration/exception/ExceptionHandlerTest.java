@@ -186,4 +186,10 @@ public class ExceptionHandlerTest extends PostgresIntegrationTestBase{
                 .andExpect(MockMvcResultMatchers.jsonPath("$.message").value("Username already exists"));
     }
 
+    @Test
+    void testUnauthorizedAccess() throws Exception {
+        // Try to access a protected endpoint without authentication
+        mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/users/1/stats"))
+                .andExpect(MockMvcResultMatchers.status().isUnauthorized());
+    }
 }

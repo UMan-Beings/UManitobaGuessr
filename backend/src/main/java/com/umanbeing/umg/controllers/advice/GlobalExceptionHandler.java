@@ -11,7 +11,6 @@ import org.springframework.web.servlet.NoHandlerFoundException;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.resource.NoResourceFoundException;
-import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
@@ -96,14 +95,6 @@ public class GlobalExceptionHandler {
         String requestUri = request.getRequestURI();
         logger.error("Authentication failed for {}: {}", requestUri, e.getMessage());
         HttpRes<Void> response = HttpRes.fail(HttpStatus.UNAUTHORIZED, "Error while trying to login");
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED.value()).body(response);
-    }
-
-    @ExceptionHandler(AuthenticationException.class)
-    public ResponseEntity<HttpRes<Void>> handleAuthenticationException(AuthenticationException e, HttpServletRequest request) {
-        String requestUri = request.getRequestURI();
-        logger.error("Unauthorized access to {}: {}", requestUri, e.getMessage());
-        HttpRes<Void> response = HttpRes.fail(HttpStatus.UNAUTHORIZED, e.getMessage());
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED.value()).body(response);
     }
 
