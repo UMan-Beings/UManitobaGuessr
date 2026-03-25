@@ -24,14 +24,23 @@
 
   const router = useRouter()
 
+  const jwt = ref<string | null>(localStorage.getItem('jwt'))
+
   async function startGame (totalRounds: number, maxTimerSeconds: number) {
     try {
+      const startGameHeaders: Record<string, string> = {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+      }
+
+      jwt.value = localStorage.getItem('jwt')
+      if (jwt.value) {
+        startGameHeaders['Authorization'] = `Bearer ${localStorage.getItem('jwt')}`
+      }
+
       const response = await fetch('/api/v1/games', {
         method: 'POST',
-        headers: {
-          'Accept': 'application/json',
-          'Content-Type': 'application/json',
-        },
+        headers: startGameHeaders,
         body: JSON.stringify({
           totalRounds,
           maxTimerSeconds,
