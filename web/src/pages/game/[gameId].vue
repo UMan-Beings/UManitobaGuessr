@@ -141,7 +141,7 @@
     }
   }
 
-  async function callApi (doFetch: () => Promise<Response>) {
+  async function callApi (url: string, options: RequestInit = {}) {
     if (loading.value) {
       return
     }
@@ -150,7 +150,18 @@
       loading.value = true
       error.value = null
 
-      const response = await doFetch()
+      const headers: Record<string, string> = {
+        'Accept': 'application/json',
+        'Content-Type': options.body ? 'application/json' : '',
+        ...(options.headers as Record<string, string>),
+      }
+
+      const jwt = localStorage.getItem('jwt')
+      if (jwt) {
+        headers['Authorization'] = `Bearer ${jwt}`
+      }
+
+      const response = await fetch(url, { ...options, headers })
 
       if (!response.ok) {
         throw new Error(`Request failed (${response.status} ${response.statusText})`)
@@ -166,50 +177,29 @@
   }
 
   async function getGameState () {
-    await callApi(() =>
-      fetch(`/api/v1/games/${gameId}`, {
-        method: 'GET',
-        headers: { Accept: 'application/json' },
-      }),
-    )
+    await callApi(`/api/v1/games/${gameId}`, { method: 'GET' })
   }
 
   async function submitGuess (lat: number, lng: number) {
     console.log(`${imageUrl.value}`)
     console.log(`lat/lng (y/x): [${lat}, ${lng}]`)
 
-    await callApi(() =>
-      fetch(`/api/v1/games/${gameId}/guess`, {
-        method: 'POST',
-        headers: {
-          'Accept': 'application/json',
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          corY: lat,
-          corX: lng,
-          guessTimeSeconds: timer.value,
-        }),
+    await callApi(`/api/v1/games/${gameId}/guess`, {
+      method: 'POST',
+      body: JSON.stringify({
+        corY: lat,
+        corX: lng,
+        guessTimeSeconds: timer.value,
       }),
-    )
+    })
   }
 
   async function timeout () {
-    await callApi(() =>
-      fetch(`/api/v1/games/${gameId}/timeout`, {
-        method: 'POST',
-        headers: { Accept: 'application/json' },
-      }),
-    )
+    await callApi(`/api/v1/games/${gameId}/timeout`, { method: 'POST' })
   }
 
   async function nextRound () {
-    await callApi(() =>
-      fetch(`/api/v1/games/${gameId}/next`, {
-        method: 'POST',
-        headers: { Accept: 'application/json' },
-      }),
-    )
+    await callApi(`/api/v1/games/${gameId}/next`, { method: 'POST' })
   }
 </script>
 
