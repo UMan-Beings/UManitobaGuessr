@@ -32,6 +32,19 @@ public class GameController {
     @Autowired
     private GameService gameService;
 
+    private static final String JSON_GAME_ID = "gameId";
+    private static final String JSON_PHASE = "phase";
+    private static final String JSON_ROUND = "round";
+    private static final String JSON_TOTAL_ROUNDS = "totalRounds";
+    private static final String JSON_IMAGE_URL = "imageUrl";
+    private static final String JSON_SCORE = "score";
+    private static final String JSON_TIME_LIMIT_SECONDS = "timeLimitSeconds";
+    private static final String JSON_ACTUAL_X = "actualX";
+    private static final String JSON_ACTUAL_Y = "actualY";
+    private static final String JSON_GUESSED_X = "guessedX";
+    private static final String JSON_GUESSED_Y = "guessedY";
+    private static final String JSON_SCORE_RECEIVED = "scoreReceived";
+    private static final String JSON_GUESS_TIME_SECONDS = "guessTimeSeconds";
     @Autowired
     private UserService userService;
 
@@ -46,13 +59,13 @@ public class GameController {
         Game game = gameService.createNewGame(request.getTotalRounds(), request.getMaxTimerSeconds(), userId);
 
         Map<String, Object> response = new HashMap<>();
-        response.put("gameId", game.getGameId());
-        response.put("phase", game.getGameState());
-        response.put("round", game.getCurrentRoundNumber());
-        response.put("totalRounds", game.getTotalRounds());
-        response.put("imageUrl", game.getCurrentRound().getLocation().getImageUrl());
-        response.put("score", game.getScore());
-        response.put("timeLimitSeconds", game.getMaxTimerSeconds());
+        response.put(JSON_GAME_ID, game.getGameId());
+        response.put(JSON_PHASE, game.getGameState());
+        response.put(JSON_ROUND, game.getCurrentRoundNumber());
+        response.put(JSON_TOTAL_ROUNDS, game.getTotalRounds());
+        response.put(JSON_IMAGE_URL, game.getCurrentRound().getLocation().getImageUrl());
+        response.put(JSON_SCORE, game.getScore());
+        response.put(JSON_TIME_LIMIT_SECONDS, game.getMaxTimerSeconds());
 
         return ResponseEntity.ok(response);
     }
@@ -69,24 +82,24 @@ public class GameController {
         Guess guess = currentRound.getGuess();
         
         Map<String, Object> response = new HashMap<>();
-        response.put("phase", phase);
-        response.put("score", game.getScore());
-        response.put("totalRounds", game.getTotalRounds());
-        response.put("round", game.getCurrentRoundNumber());
-        response.put("timeLimitSeconds", game.getMaxTimerSeconds());
+        response.put(JSON_PHASE, phase);
+        response.put(JSON_SCORE, game.getScore());
+        response.put(JSON_TOTAL_ROUNDS, game.getTotalRounds());
+        response.put(JSON_ROUND, game.getCurrentRoundNumber());
+        response.put(JSON_TIME_LIMIT_SECONDS, game.getMaxTimerSeconds());
 
         if (GameState.GUESS == phase) {
-            response.put("imageUrl", currentRound.getLocation().getImageUrl());
+            response.put(JSON_IMAGE_URL, currentRound.getLocation().getImageUrl());
         }
         else if (GameState.REVEAL == phase) {
-            response.put("actualX", currentRound.getLocation().getCorX());
-            response.put("actualY", currentRound.getLocation().getCorY());
+            response.put(JSON_ACTUAL_X, currentRound.getLocation().getCorX());
+            response.put(JSON_ACTUAL_Y, currentRound.getLocation().getCorY());
 
             if (guess != null) {
-                response.put("guessedX", guess.getGuessedX());
-                response.put("guessedY", guess.getGuessedY());
-                response.put("scoreReceived", guess.getScore());
-                response.put("guessTimeSeconds", guess.getGuessTimeSeconds());
+                response.put(JSON_GUESSED_X, guess.getGuessedX());
+                response.put(JSON_GUESSED_Y, guess.getGuessedY());
+                response.put(JSON_SCORE_RECEIVED, guess.getScore());
+                response.put(JSON_GUESS_TIME_SECONDS, guess.getGuessTimeSeconds());
             }
         }
 
@@ -104,18 +117,18 @@ public class GameController {
         Guess guess = currentRound.getGuess();
 
         Map<String, Object> response = new HashMap<>();
-        response.put("phase", game.getGameState());
-        response.put("round", game.getCurrentRoundNumber());
-        response.put("totalRounds", game.getTotalRounds());
-        response.put("imageUrl", currentRound.getLocation().getImageUrl());
-        response.put("timeLimitSeconds", game.getMaxTimerSeconds());
-        response.put("guessedX", guess.getGuessedX());
-        response.put("guessedY", guess.getGuessedY());
-        response.put("actualX", currentRound.getLocation().getCorX());
-        response.put("actualY", currentRound.getLocation().getCorY());
-        response.put("score", game.getScore());
-        response.put("scoreReceived", guess.getScore());
-        response.put("guessTimeSeconds", guess.getGuessTimeSeconds());
+        response.put(JSON_PHASE, game.getGameState());
+        response.put(JSON_ROUND, game.getCurrentRoundNumber());
+        response.put(JSON_TOTAL_ROUNDS, game.getTotalRounds());
+        response.put(JSON_IMAGE_URL, currentRound.getLocation().getImageUrl());
+        response.put(JSON_TIME_LIMIT_SECONDS, game.getMaxTimerSeconds());
+        response.put(JSON_GUESSED_X, guess.getGuessedX());
+        response.put(JSON_GUESSED_Y, guess.getGuessedY());
+        response.put(JSON_ACTUAL_X, currentRound.getLocation().getCorX());
+        response.put(JSON_ACTUAL_Y, currentRound.getLocation().getCorY());
+        response.put(JSON_SCORE, game.getScore());
+        response.put(JSON_SCORE_RECEIVED, guess.getScore());
+        response.put(JSON_GUESS_TIME_SECONDS, guess.getGuessTimeSeconds());
 
         return ResponseEntity.ok(response);
     }
@@ -129,16 +142,16 @@ public class GameController {
         Guess guess = currentRound.getGuess();
 
         Map<String, Object> response = new HashMap<>();
-        response.put("phase", game.getGameState());
-        response.put("round", game.getCurrentRoundNumber());
-        response.put("totalRounds", game.getTotalRounds());
-        response.put("imageUrl", currentRound.getLocation().getImageUrl());
-        response.put("timeLimitSeconds", game.getMaxTimerSeconds());
-        response.put("actualX", currentRound.getLocation().getCorX());
-        response.put("actualY", currentRound.getLocation().getCorY());
-        response.put("score", game.getScore());
-        response.put("scoreReceived", guess.getScore());
-        response.put("guessTimeSeconds", guess.getGuessTimeSeconds());
+        response.put(JSON_PHASE, game.getGameState());
+        response.put(JSON_ROUND, game.getCurrentRoundNumber());
+        response.put(JSON_TOTAL_ROUNDS, game.getTotalRounds());
+        response.put(JSON_IMAGE_URL, currentRound.getLocation().getImageUrl());
+        response.put(JSON_TIME_LIMIT_SECONDS, game.getMaxTimerSeconds());
+        response.put(JSON_ACTUAL_X, currentRound.getLocation().getCorX());
+        response.put(JSON_ACTUAL_Y, currentRound.getLocation().getCorY());
+        response.put(JSON_SCORE, game.getScore());
+        response.put(JSON_SCORE_RECEIVED, guess.getScore());
+        response.put(JSON_GUESS_TIME_SECONDS, guess.getGuessTimeSeconds());
 
         return ResponseEntity.ok(response);
     }
@@ -152,15 +165,15 @@ public class GameController {
         Game game = gameService.nextRound(gameId);
 
         Map<String, Object> response = new HashMap<>();
-        response.put("phase", game.getGameState());
-        response.put("score", game.getScore());
-        response.put("totalRounds", game.getTotalRounds());
-        response.put("round", game.getCurrentRoundNumber());
-        response.put("timeLimitSeconds", game.getMaxTimerSeconds());
+        response.put(JSON_PHASE, game.getGameState());
+        response.put(JSON_SCORE, game.getScore());
+        response.put(JSON_TOTAL_ROUNDS, game.getTotalRounds());
+        response.put(JSON_ROUND, game.getCurrentRoundNumber());
+        response.put(JSON_TIME_LIMIT_SECONDS, game.getMaxTimerSeconds());
 
         if (!game.isCompleted()) {
             response.put(
-                "imageUrl",
+                JSON_IMAGE_URL,
                 game.getCurrentRound().getLocation().getImageUrl()
             );
         }
