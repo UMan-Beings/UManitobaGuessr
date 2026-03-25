@@ -13,8 +13,8 @@ import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.resource.NoResourceFoundException;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
-import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import jakarta.servlet.http.HttpServletRequest;
 
 import com.umanbeing.umg.domain.HttpRes;
@@ -67,14 +67,6 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST.value()).body(response);
     }
 
-    @ExceptionHandler(MissingServletRequestParameterException.class)
-    public ResponseEntity<HttpRes<Void>> handleMissingServletRequestParameterException(MissingServletRequestParameterException e, HttpServletRequest request) {
-        String requestUri = request.getRequestURI();
-        logger.error("Missing request parameter for {}: {}", requestUri, e.getMessage());
-        HttpRes<Void> response = HttpRes.fail(HttpStatus.BAD_REQUEST, "Missing request parameter");
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST.value()).body(response);
-    }
-
     @ExceptionHandler(HttpMessageNotReadableException.class)
     public ResponseEntity<HttpRes<Void>> handleHttpMessageNotReadableException(HttpMessageNotReadableException e, HttpServletRequest request) {
         String requestUri = request.getRequestURI();
@@ -113,6 +105,22 @@ public class GlobalExceptionHandler {
         logger.error("Unauthorized access to {}: {}", requestUri, e.getMessage());
         HttpRes<Void> response = HttpRes.fail(HttpStatus.UNAUTHORIZED, e.getMessage());
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED.value()).body(response);
+    }
+
+    @ExceptionHandler(MethodArgumentTypeMismatchException.class)
+    public ResponseEntity<HttpRes<Void>> handleTypeMismatchException(MethodArgumentTypeMismatchException e, HttpServletRequest request) {
+        String requestUri = request.getRequestURI();
+        logger.error("Type mismatch for {}: {}", requestUri, e.getMessage());
+        HttpRes<Void> response = HttpRes.fail(HttpStatus.BAD_REQUEST, "Wrong data type provided in request");
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST.value()).body(response);
+    }
+
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<HttpRes<Void>> handleIllegalArgumentException(IllegalArgumentException e, HttpServletRequest request) {
+        String requestUri = request.getRequestURI();
+        logger.error("Illegal argument for {}: {}", requestUri, e.getMessage());
+        HttpRes<Void> response = HttpRes.fail(HttpStatus.BAD_REQUEST, e.getMessage());
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST.value()).body(response);
     }
 
     @ExceptionHandler(Exception.class)

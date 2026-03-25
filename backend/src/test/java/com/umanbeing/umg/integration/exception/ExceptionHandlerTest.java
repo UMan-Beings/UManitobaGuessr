@@ -145,4 +145,46 @@ public class ExceptionHandlerTest extends PostgresIntegrationTestBase{
                 .andExpect(MockMvcResultMatchers.jsonPath("$.message").value(nullValue()));
 
     }
+
+    @Test
+    void testBadRequestGetGameById() throws Exception {
+        // Trigger a bad request error by sending a non-numeric game ID
+        mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/games/invalid_id"))
+                .andExpect(MockMvcResultMatchers.status().isBadRequest())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.status").value("Bad Request"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.message").value("Wrong data type provided in request"));
+
+    }
+
+    @Test
+    void testNotReadable() throws Exception {
+        // Trigger a not readable error by sending malformed JSON
+        String malformedJson = "{\"totalRounds\":5, \"maxTimerSeconds\":30"; // Missing closing brace
+        mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/games")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(malformedJson))
+                .andExpect(MockMvcResultMatchers.status().isBadRequest())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.status").value("Bad Request"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.message").value("Malformed JSON request"));
+
+    }
+
+    @Test
+    void testUsernameAlreadyExists() throws Exception {
+        // First, create a user
+        String requestJson = "{\"username\":\"existinguser\",\"password\":\"password123\",\"email\":\"existinguser@example.com\"}";
+        mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/auth/signup")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(requestJson))
+                .andExpect(MockMvcResultMatchers.status().isOk());
+
+        // Try to create the same user again
+        mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/auth/signup")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(requestJson))
+                .andExpect(MockMvcResultMatchers.status().isBadRequest())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.status").value("Bad Request"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.message").value("Username already exists"));
+    }
+
 }
