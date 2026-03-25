@@ -56,6 +56,24 @@ public class AuthService implements UserDetailsService{
     public SignUpResponse registerUser(CreateAccountRequest createAccountRequest) throws IllegalArgumentException {
 
         User newUser = AuthMapper.fromDtoSignUp(createAccountRequest);
+        // Information in DTO was already checked for null/blank values
+        // We still need to check for length, complexity, etc. for password
+        if(createAccountRequest.password().length() < 8) {
+            throw new IllegalArgumentException("Password must be at least 8 characters long");
+        }
+
+        if(createAccountRequest.password().length() > 20) {
+            throw new IllegalArgumentException("Password must be less than 20 characters long");
+        }
+
+        if(createAccountRequest.username().length() < 3) {
+            throw new IllegalArgumentException("Username must be at least 3 characters long");
+        }
+
+        if(createAccountRequest.username().length() > 20) {
+            throw new IllegalArgumentException("Username must be less than 20 characters long");
+        }
+
         newUser.setPasswordHash(passwordEncoder.encode(createAccountRequest.password()));
 
         if (userRepo.findByUsername(newUser.getUsername()).isPresent()) {
