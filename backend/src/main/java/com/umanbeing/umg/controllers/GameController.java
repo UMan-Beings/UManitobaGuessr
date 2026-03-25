@@ -6,14 +6,18 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.RequestMethod;
 import com.umanbeing.umg.services.GameService;
+import com.umanbeing.umg.services.UserService;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import com.umanbeing.umg.models.Game;
 import com.umanbeing.umg.models.Guess;
 import com.umanbeing.umg.models.Round;
+import com.umanbeing.umg.models.User;
 
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 
 import com.umanbeing.umg.controllers.dto.CreateGameRequest;
 import com.umanbeing.umg.controllers.dto.MakeGuessRequest;
@@ -26,12 +30,18 @@ public class GameController {
     @Autowired
     private GameService gameService;
 
+    @Autowired
+    private UserService userService;
+
     //Implement the game creation logic here
     //Return game ID, initial game state (GUESS phase)
     //Receive total rouns, count down seconds, and user ID as parameters
     @RequestMapping(value = "/games", method = RequestMethod.POST)
-    public ResponseEntity<Map<String, Object>> createNewGame(@RequestBody CreateGameRequest request) {
-        Game game = gameService.createNewGame(request.getTotalRounds(), request.getMaxTimerSeconds(), request.getUserId());
+    public ResponseEntity<Map<String, Object>> createNewGame(@RequestBody CreateGameRequest request, Authentication authentication) {
+        User user = getAuthenticatedUserOrNull(authentication);
+        Long userId = user != null ? user.getUserId() : null;
+
+        Game game = gameService.createNewGame(request.getTotalRounds(), request.getMaxTimerSeconds(), userId);
 
         Map<String, Object> response = new HashMap<>();
         response.put("gameId", game.getGameId());
@@ -147,6 +157,10 @@ public class GameController {
         }
 
         return ResponseEntity.ok(response);
+    }
+
+    private User getAuthenticatedUserOrNull(Authentication authentication) {
+        return authentication != null ? userService.getUserByEmail(authentication.getName()) : null;
     }
     
 
