@@ -91,21 +91,34 @@ public class ExceptionHandlerTest extends PostgresIntegrationTestBase{
     }
 
     @Test
-    void testInternalServerErrorSignup() throws Exception {
-        // Trigger an internal server error by sending a malformed JSON
+    void testBadRequestSignupBadEmail() throws Exception {
+        // Trigger a bad request error by sending an incorrect email format
         String malformedJson = "{\"email\":\"invalid_email\"}";
         mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/auth/signup")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(malformedJson))
-                .andExpect(MockMvcResultMatchers.status().isInternalServerError())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.status").value("Internal Server Error"))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.message").value("An unexpected error occurred"));
+                .andExpect(MockMvcResultMatchers.status().isBadRequest())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.status").value("Bad Request"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.message").value("Argument validation failed"));
+
+    }
+
+    @Test
+    void testBadRequestSignupMissingFields() throws Exception {
+        // Trigger a bad request error by sending a request with missing fields
+        String malformedJson = "{\"email\":\"agoodemail@example.com\"}";
+        mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/auth/signup")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(malformedJson))
+                .andExpect(MockMvcResultMatchers.status().isBadRequest())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.status").value("Bad Request"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.message").value("Argument validation failed"));
 
     }
 
     @Test
     void testInternalServerErrorGameCreation() throws Exception {
-        // Trigger an internal server error by sending a malformed JSON
+        // Trigger an internal server error by sending a JSON with wrong data types
         String malformedJson = "{\"totalRounds\":\"100000\",\"maxTimerSeconds\":3.14}";
         mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/games")
                 .contentType(MediaType.APPLICATION_JSON)

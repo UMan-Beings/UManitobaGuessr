@@ -12,6 +12,9 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.resource.NoResourceFoundException;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.MissingServletRequestParameterException;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import jakarta.servlet.http.HttpServletRequest;
 
 import com.umanbeing.umg.domain.HttpRes;
@@ -52,6 +55,32 @@ public class GlobalExceptionHandler {
         logger.error("No resource found for {}: {}", requestUri, e.getMessage());
         HttpRes<Void> response = HttpRes.fail(HttpStatus.NOT_FOUND, e.getMessage());
         return ResponseEntity.status(HttpStatus.NOT_FOUND.value()).body(response);
+    }
+
+
+    // MethodArgumentNotValidException is thrown when @Valid validation on request body fails
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<HttpRes<Void>> handleMethodArgumentNotValidException(MethodArgumentNotValidException e, HttpServletRequest request) {
+        String requestUri = request.getRequestURI();
+        logger.error("Validation failed for {}: {}", requestUri, e.getMessage());
+        HttpRes<Void> response = HttpRes.fail(HttpStatus.BAD_REQUEST, "Argument validation failed");
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST.value()).body(response);
+    }
+
+    @ExceptionHandler(MissingServletRequestParameterException.class)
+    public ResponseEntity<HttpRes<Void>> handleMissingServletRequestParameterException(MissingServletRequestParameterException e, HttpServletRequest request) {
+        String requestUri = request.getRequestURI();
+        logger.error("Missing request parameter for {}: {}", requestUri, e.getMessage());
+        HttpRes<Void> response = HttpRes.fail(HttpStatus.BAD_REQUEST, "Missing request parameter");
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST.value()).body(response);
+    }
+
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    public ResponseEntity<HttpRes<Void>> handleHttpMessageNotReadableException(HttpMessageNotReadableException e, HttpServletRequest request) {
+        String requestUri = request.getRequestURI();
+        logger.error("Malformed JSON request for {}: {}", requestUri, e.getMessage());
+        HttpRes<Void> response = HttpRes.fail(HttpStatus.BAD_REQUEST, "Malformed JSON request");
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST.value()).body(response);
     }
 
     @ExceptionHandler(ResponseStatusException.class)
