@@ -40,19 +40,19 @@ public class GameService {
     @Transactional
     public Game createNewGame(int totalRounds, int maxTimerSeconds, Long userId) {
         if (totalRounds <= 0) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Total rounds must be greater than 0");
         }
 
         if (totalRounds > MAX_ROUNDS) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Total rounds must not exceed " + MAX_ROUNDS);
         }
 
         if (maxTimerSeconds < 0) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Max timer seconds must be non-negative");
         }
 
         if (maxTimerSeconds > MAX_TIME_LIMIT_SECONDS) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Max timer seconds must not exceed " + MAX_TIME_LIMIT_SECONDS);
         }
         
         Game game = new Game();
@@ -83,15 +83,15 @@ public class GameService {
         Game game = getGameById(gameId);
 
         if (GameState.GUESS != game.getGameState()) {
-            throw new ResponseStatusException(HttpStatus.CONFLICT);
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Game is not in a state to accept guesses");
         }
 
         if (guessedX == null || guessedY == null) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Guessed coordinates must not be null");
         }
 
         if (guessTimeSeconds == null) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Guess time must not be null");
         }
 
         if (game.getMaxTimerSeconds() > 0) {
@@ -113,11 +113,11 @@ public class GameService {
         Game game = getGameById(gameId);
 
         if (game.getMaxTimerSeconds() <= 0) {
-            throw new ResponseStatusException(HttpStatus.CONFLICT);
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Game does not have a timer set");
         }
 
         if (GameState.GUESS != game.getGameState()) {
-            throw new ResponseStatusException(HttpStatus.CONFLICT);
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Game is not in a state to accept guesses");
         }
 
         Round currentRound = game.getCurrentRound();
@@ -135,7 +135,7 @@ public class GameService {
         Game game = getGameById(gameId);
 
         if (GameState.REVEAL != game.getGameState()) {
-            throw new ResponseStatusException(HttpStatus.CONFLICT);
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Game is not in a state to proceed to the next round");
         }
 
         int currentRoundNumber = game.getCurrentRoundNumber();
@@ -159,13 +159,13 @@ public class GameService {
 
     public Game getGameById(Long gameId) {
         if (gameId == null) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Game ID must not be null");
         }
 
         Game game = gameRepo.findById(gameId).orElse(null);
 
         if (game == null) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Game not found");
         }
 
         return game;
@@ -173,10 +173,14 @@ public class GameService {
 
     public UserStatsResponse getUserStats(Long userId) {
         if (userId == null) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "User ID must not be null");
         }
 
         UserGameStatsProjection gameStats = gameRepo.getUserGameStats(userId);
+        if (gameStats == null) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User game stats not found");
+        }
+
         UserRoundStatsProjection roundStats = gameRepo.getUserRoundStats(userId);
 
         return new UserStatsResponse(
