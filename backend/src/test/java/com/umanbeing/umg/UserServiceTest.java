@@ -11,6 +11,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.web.server.ResponseStatusException;
 
 import com.umanbeing.umg.models.User;
 import com.umanbeing.umg.repos.UserRepo;
@@ -18,8 +19,12 @@ import com.umanbeing.umg.services.UserService;
 
 @ExtendWith(MockitoExtension.class)
 class UserServiceTest {
-    @Mock private UserRepo userRepo;
-    @InjectMocks private UserService userService;
+
+    @Mock
+    private UserRepo userRepo;
+
+    @InjectMocks
+    private UserService userService;
 
     private User testUser;
 
@@ -34,6 +39,8 @@ class UserServiceTest {
 
     @Test
     void getUserById_existingUser_returnsUser() {
+        when(userRepo.findById(1L)).thenReturn(Optional.of(testUser));
+        
         User result = userService.getUserById(1L);
 
         assertNotNull(result);

@@ -12,6 +12,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import org.springframework.security.authentication.AuthenticationManager;
@@ -28,7 +29,7 @@ import com.umanbeing.umg.controllers.dto.SignUpResponse;
 import com.umanbeing.umg.controllers.mappers.AuthMapper;
 
 @ExtendWith(MockitoExtension.class)
-public class AuthServiceTest {
+class AuthServiceTest {
     @Mock UserRepo userRepo;
     @Mock AuthenticationManager authenticationManager;
     @Mock JwtService jwtService;
@@ -36,9 +37,9 @@ public class AuthServiceTest {
 
     @InjectMocks AuthService authService;
 
-
+// ====================== Login User Tests ======================
     @Test
-    public void testLoginSuccess() {
+    void loginUser_validCredentials_returnsTokenAndUsername() {
         String email = "test@example.com";
         String password = "password";
         String token = "token";
@@ -64,7 +65,7 @@ public class AuthServiceTest {
     }
 
     @Test
-    public void testLoginFailure_InvalidPassword() {
+    void loginUser_invalidPassword_throwsBadCredentialsException() {
         String email = "test@example.com";
         String password = "password";
         String username = "testuser";
@@ -86,7 +87,7 @@ public class AuthServiceTest {
     }
 
     @Test
-    public void testLoginFailure_InvalidUser() {
+    void loginUser_invalidUser_throwsBadCredentialsException() {
         String email = "test@example.com";
         String password = "password";
         LoginRequest testLoginRequest = new LoginRequest(email, password);
@@ -100,8 +101,9 @@ public class AuthServiceTest {
         assertEquals("Error while trying to login", exception.getMessage());
     }
 
+// ====================== Regiester User Tests ======================
     @Test
-    public void testSignUpSuccess() {
+    void registerUser_validCredentials_returnsSuccessMessage() {
         String email = "test@example.com";
         String password = "password";
         String username = "testuser";
@@ -124,7 +126,7 @@ public class AuthServiceTest {
     }
 
     @Test
-    public void testSignUpFailure_EmailAlreadyExists() {
+    void registerUser_emailAlreadyExists_throwsIllegalArgumentException() {
         String email = "test@example.com";
         String password = "password";
         String username = "testuser";
@@ -142,7 +144,7 @@ public class AuthServiceTest {
     }
 
     @Test
-    public void testSignUpFailure_UsernameAlreadyExists() {
+    void registerUser_usernameAlreadyExists_throwsIllegalArgumentException() {
         String email = "test@example.com";
         String password = "password";
         String username = "testuser";
@@ -160,7 +162,7 @@ public class AuthServiceTest {
     }
 
     @Test
-    public void testSignUpFailure_UsernameNull() {
+    void registerUser_usernameNull_throwsNullPointerException() {
         String email = "test@example.com";
         String password = "password";
         String username = null;
@@ -173,7 +175,7 @@ public class AuthServiceTest {
     }
 
     @Test
-    public void testSignUpFailure_EmailNull() {
+    void registerUser_emailNull_throwsNullPointerException() {
         String email = null;
         String password = "password";
         String username = "testuser";
@@ -186,7 +188,7 @@ public class AuthServiceTest {
     }
 
     @Test
-    public void testSignUpFailure_PasswordNull() {
+    void registerUser_passwordNull_throwsNullPointerException() {
         String email = "test@example.com";
         String password = null;
         String username = "testuser";
@@ -198,4 +200,35 @@ public class AuthServiceTest {
         });
     }
 
+// ====================== Load User By Username Tests ======================
+    @Test
+    void loadUserByUsername_userNotFound_throwsUsernameNotFoundException() {
+        String email = "test@example.com";
+        when(userRepo.findByEmail(email)).thenReturn(java.util.Optional.empty());
+
+        UsernameNotFoundException exception = assertThrows(
+            UsernameNotFoundException.class,
+            () -> authService.loadUserByUsername(email)
+        );
+
+        assertEquals("No user found with this email " + email, exception.getMessage());
+    }
+
+    @Test
+    void loadUserByUsername_userFound_returnsUserDetails() {
+        String email = "test@example.com";
+        String password = "testPassword";
+        User user = new User();
+        user.setEmail(email);
+        user.setPasswordHash(password);
+
+        when(userRepo.findByEmail(email)).thenReturn(java.util.Optional.of(user));
+
+        var result = authService.loadUserByUsername(email);
+
+        assertEquals(email, result.getUsername());
+        assertEquals(password, result.getPassword());
+        assertEquals(1, result.getAuthorities().size());
+        assertEquals("ROLE_USER", result.getAuthorities().iterator().next().getAuthority());
+    }
 }
