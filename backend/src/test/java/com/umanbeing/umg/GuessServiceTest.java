@@ -55,60 +55,60 @@ class GuessServiceTest {
 
 // =========================== Invalid Coordinate Tests =========================== 
     @Test
-    void missingX_setsCoordinatesNull() {
+    void createGuess_missingX_setsCoordinatesNull() {
         Guess guess = guessService.createGuess(round, null, BigDecimal.ONE, arbitraryGuessTime);
         assertNull(guess.getGuessedX(), "Guessed X should be null when X coordinate is missing");
         assertNull(guess.getGuessedY(), "Guessed Y should be null when X coordinate is missing");
     }
 
     @Test
-    void missingX_setsDistanceNull() {
+    void createGuess_missingX_setsDistanceNull() {
         Guess guess = guessService.createGuess(round, null, BigDecimal.ONE, arbitraryGuessTime);
         assertNull(guess.getDistanceMeters(), "Distance should be null when X coordinate is missing");
         verify(guessRepo).save(any(Guess.class));
     }
 
     @Test
-    void missingX_setsScoreZero() {
+    void createGuess_missingX_setsScoreZero() {
         Guess guess = guessService.createGuess(round, null, BigDecimal.ONE, arbitraryGuessTime);
         assertEquals(0, guess.getScore(), "Score should be 0 when X coordinate is missing");
     }
 
     @Test
-    void missingY_setsCoordinatesNull() {
+    void createGuess_missingY_setsCoordinatesNull() {
         Guess guess = guessService.createGuess(round, BigDecimal.ONE, null, arbitraryGuessTime);
         assertNull(guess.getGuessedX(), "Guessed X should be null when Y coordinate is missing");
         assertNull(guess.getGuessedY(), "Guessed Y should be null when Y coordinate is missing");
     }
 
     @Test
-    void missingY_setsDistanceNull() {
+    void createGuess_missingY_setsDistanceNull() {
         Guess guess = guessService.createGuess(round, BigDecimal.ONE, null, arbitraryGuessTime);
         assertNull(guess.getDistanceMeters(), "Distance should be null when Y coordinate is missing");
         verify(guessRepo).save(any(Guess.class));
     }
     
     @Test
-    void missingY_setsScoreZero() {
+    void createGuess_missingY_setsScoreZero() {
         Guess guess = guessService.createGuess(round, BigDecimal.ONE, null, arbitraryGuessTime);
         assertEquals(0, guess.getScore(), "Score should be 0 when Y coordinate is missing");
     }
 
     @Test
-    void missingXY_setsDistanceNull() {
+    void createGuess_missingXY_setsDistanceNull() {
         Guess guess = guessService.createGuess(round, null, null, arbitraryGuessTime);
         assertNull(guess.getDistanceMeters());
     }
 
     @Test
-    void missingXY_setsScoreZero() {
+    void createGuess_missingXY_setsScoreZero() {
         Guess guess = guessService.createGuess(round, null, null, arbitraryGuessTime);
         assertEquals(0, guess.getScore());
     }
 
 // =========================== Round and Repository Tests ===========================
     @Test
-    void guessHasRoundAssigned() {
+    void createGuess_validGuess_assignsRoundToGuess() {
         location.setCorX(BigDecimal.ZERO);
         location.setCorY(BigDecimal.ZERO);
         
@@ -117,7 +117,7 @@ class GuessServiceTest {
     }
 
     @Test
-    void roundReferencesCreatedGuess() {
+    void createGuess_validGuess_roundReferencesCreatedGuess() {
         location.setCorX(BigDecimal.ZERO);
         location.setCorY(BigDecimal.ZERO);
         
@@ -126,7 +126,7 @@ class GuessServiceTest {
     }
 
     @Test
-    void savesGuessToRepository() {
+    void createGuess_validGuess_savesGuessToRepository() {
         location.setCorX(BigDecimal.ZERO);
         location.setCorY(BigDecimal.ZERO);
         
@@ -136,7 +136,7 @@ class GuessServiceTest {
 
 // =========================== Scoring Tests ===========================
     @Test
-    void perfectGuess_awardsFullScore() {
+    void createGuess_perfectGuess_awardsFullScore() {
         location.setCorX(BigDecimal.ONE);
         location.setCorY(BigDecimal.ONE);
 
@@ -146,7 +146,7 @@ class GuessServiceTest {
     }
 
     @Test
-    void guessWithinFullScoreRange_awardsFullScore() {
+    void createGuess_guessWithinFullScoreRange_awardsFullScore() {
         location.setCorX(BigDecimal.ZERO);
         location.setCorY(BigDecimal.ZERO);
 
@@ -155,7 +155,7 @@ class GuessServiceTest {
     }
 
     @Test
-    void guessAtFullScoreDistance_awardsFullScore() {
+    void createGuess_guessAtFullScoreDistance_awardsFullScore() {
         location.setCorX(BigDecimal.ZERO);
         location.setCorY(BigDecimal.ZERO);
         
@@ -164,7 +164,7 @@ class GuessServiceTest {
     }
 
     @Test
-    void guessJustOutsideFullScoreDistance_awardsPartialScore() {
+    void createGuess_guessJustOutsideFullScoreDistance_awardsPartialScore() {
         location.setCorX(BigDecimal.ZERO);
         location.setCorY(BigDecimal.ZERO);
         
@@ -175,7 +175,7 @@ class GuessServiceTest {
     }
 
     @Test
-    void withinScaledScoreRange_awardsCorrectPartialScore() {
+    void createGuess_withinScaledScoreRange_awardsCorrectPartialScore() {
         location.setCorX(BigDecimal.ZERO);
         location.setCorY(BigDecimal.ZERO);
 
@@ -198,7 +198,7 @@ class GuessServiceTest {
     }
 
     @Test
-    void guessBeyondScoreRange_awardsZeroScore() {
+    void createGuess_guessBeyondScoreRange_awardsZeroScore() {
         location.setCorX(BigDecimal.ZERO);
         location.setCorY(BigDecimal.ZERO);
 
@@ -208,7 +208,7 @@ class GuessServiceTest {
 
 // =========================== Repository Exception Tests ===========================
     @Test
-    void repoThrowsDataIntegrityViolationException_throwsConflict() {
+    void createGuess_repoThrowsDataIntegrityViolationException_throwsConflict() {
         when(guessRepo.save(any(Guess.class))).thenThrow(new DataIntegrityViolationException("kablooie"));
 
         location.setCorX(BigDecimal.ZERO);
