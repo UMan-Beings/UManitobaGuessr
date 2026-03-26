@@ -49,7 +49,7 @@ public class GuessService {
             round.setGuess(savedGuess);
             return savedGuess;
         } catch (DataIntegrityViolationException exception) {
-            throw new ResponseStatusException(HttpStatus.CONFLICT);
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Data integrity violation: " + exception.getMessage());
         }
     }
 

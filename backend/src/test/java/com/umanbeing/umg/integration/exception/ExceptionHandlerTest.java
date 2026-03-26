@@ -15,7 +15,6 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import static org.hamcrest.core.IsNull.nullValue;
 
 
 public class ExceptionHandlerTest extends PostgresIntegrationTestBase{
@@ -119,13 +118,13 @@ public class ExceptionHandlerTest extends PostgresIntegrationTestBase{
     @Test
     void testInternalServerErrorGameCreation() throws Exception {
         // Trigger an internal server error by sending a JSON with wrong data types
-        String malformedJson = "{\"totalRounds\":\"100000\",\"maxTimerSeconds\":3.14}";
+        String malformedJson = "{\"totalRounds\":\"10\",\"maxTimerSeconds\":\"abcd\"}";
         mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/games")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(malformedJson))
                 .andExpect(MockMvcResultMatchers.status().isBadRequest())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.status").value("Bad Request"))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.message").value(nullValue()));
+                .andExpect(MockMvcResultMatchers.jsonPath("$.message").value("Malformed JSON request"));
 
     }
 
@@ -142,7 +141,7 @@ public class ExceptionHandlerTest extends PostgresIntegrationTestBase{
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(requestJson))
                 .andExpect(MockMvcResultMatchers.status().isBadRequest())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.message").value(nullValue()));
+                .andExpect(MockMvcResultMatchers.jsonPath("$.message").value("Total rounds must be greater than 0"));
 
     }
 
@@ -187,4 +186,10 @@ public class ExceptionHandlerTest extends PostgresIntegrationTestBase{
                 .andExpect(MockMvcResultMatchers.jsonPath("$.message").value("Username already exists"));
     }
 
+    @Test
+    void testUnauthorizedAccess() throws Exception {
+        // Try to access a protected endpoint without authentication
+        mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/users/1/stats"))
+                .andExpect(MockMvcResultMatchers.status().isUnauthorized());
+    }
 }
