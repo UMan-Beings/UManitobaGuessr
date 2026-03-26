@@ -11,6 +11,10 @@
       :total-guess-time-seconds="totalGuessTimeSeconds"
       :total-rounds="totalRounds"
       :total-score="totalScore"
+      :authenticated="jwt !== null"
+      @login="login"
+      @signup="signup"
+      @logout="logout"
     />
   </v-container>
 </template>
@@ -30,6 +34,20 @@
   onMounted(() => {
     fetchUserStats()
   })
+
+  function logout () {
+    localStorage.removeItem('jwt')
+    jwt.value = null
+    router.push('/')
+  }
+
+  function login () {
+    router.push('/login')
+  }
+
+  function signup () {
+    router.push('/signup')
+  }
 
   async function fetchUserStats () {
     if (!jwt.value) return

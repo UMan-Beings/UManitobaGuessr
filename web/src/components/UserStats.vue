@@ -1,6 +1,6 @@
 <template>
-  <v-sheet width="100%" class="pt-4 pa-6" rounded="lg">
-    <div class="d-flex align-center justify-space-between mb-4 flex-wrap ga-2">
+  <v-sheet class="pt-4 pa-6" rounded="lg" width="100%">
+    <div class="d-flex align-center justify-space-between flex-wrap ga-2">
       <div>
         <h4 class="text-h6 font-weight-medium">
           Your Stats
@@ -10,18 +10,22 @@
         </p>
       </div>
 
-      <div class="d-flex ga-2">
-        <v-btn color="primary" variant="text">
+      <div v-if="!authenticated" class="d-flex ga-2">
+        <v-btn color="primary" variant="text" @click="login">
           Log In
         </v-btn>
-        <v-btn color="primary" variant="tonal">
+        <v-btn color="primary" variant="tonal" @click="signup">
           Sign Up
         </v-btn>
       </div>
+
+      <v-btn v-else color="primary" variant="text" @click="logout">
+        Log Out
+      </v-btn>
     </div>
 
-    <v-sheet class="blur rounded-lg pl-6 pr-6 pt-4 pb-4">
-      <dl class="d-flex flex-row ga-8 text-right">
+    <v-sheet v-if="authenticated" class="blur rounded-lg pl-6 pr-6 pt-4 pb-4 mt-4">
+      <dl class="d-flex flex-row ga-8 justify-space-between flex-wrap">
         <StatItem label="Total Score" :value="totalScore" />
         <StatItem label="Total Rounds" :value="totalRounds" />
         <StatItem label="Total Games" :value="totalGames" />
@@ -34,24 +38,41 @@
 </template>
 
 <script lang="ts" setup>
-const props = defineProps<{
-  totalScore: number
-  totalRounds: number
-  totalGames: number
-  averageScore: number
-  averageGuessTimeSeconds: number
-  totalGuessTimeSeconds: number
-}>()
+  const props = defineProps<{
+    totalScore: number
+    totalRounds: number
+    totalGames: number
+    averageScore: number
+    averageGuessTimeSeconds: number
+    totalGuessTimeSeconds: number
+    authenticated: boolean
+  }>()
 
-const formattedAverageScore = computed(() => props.averageScore.toFixed(1))
+  const emits = defineEmits<{
+    (e: 'login' | 'signup' | 'logout'): void
+  }>()
 
-const formattedAverageGuessTime = computed(
-  () => `${props.averageGuessTimeSeconds.toFixed(1)} seconds`,
-)
+  const formattedAverageScore = computed(() => props.averageScore.toFixed(1))
 
-const formattedTotalGuessTime = computed(
-  () => `${props.totalGuessTimeSeconds} seconds`,
-)
+  const formattedAverageGuessTime = computed(
+    () => `${props.averageGuessTimeSeconds.toFixed(1)} seconds`,
+  )
+
+  const formattedTotalGuessTime = computed(
+    () => `${props.totalGuessTimeSeconds} seconds`,
+  )
+
+  function login () {
+    emits('login')
+  }
+
+  function signup () {
+    emits('signup')
+  }
+
+  function logout () {
+    emits('logout')
+  }
 </script>
 
 <style scoped>
