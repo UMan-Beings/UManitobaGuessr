@@ -11,7 +11,6 @@ import com.umanbeing.umg.models.Guess;
 import com.umanbeing.umg.models.Location;
 import com.umanbeing.umg.repos.GuessRepo;
 import com.umanbeing.umg.models.Round;
-import java.lang.Math;
 
 @Service
 public class GuessService {
@@ -32,18 +31,33 @@ public class GuessService {
         guess.setGuessTimeSeconds(guessTimeSeconds);
 
         if (guessedX == null || guessedY == null) {
-            guess.setDistanceMeters(null);
-            guess.setScore(0);
+            markGuessAsInvalid(guess);
         } else {
-            Location location = round.getLocation();
-            Integer distance = calculateDistance(guessedX, guessedY, location.getCorX(), location.getCorY());
-
-            guess.setGuessedX(guessedX);
-            guess.setGuessedY(guessedY);
-            guess.setDistanceMeters(distance);
-            guess.setScore(calculateScore(distance));
+            setGuessAndScore(guess, round, guessedX, guessedY);
         }
 
+        return saveGuess(round, guess);
+    }
+
+// =========================== Helper Methods ===========================
+    
+    private void markGuessAsInvalid(Guess guess) {
+        guess.setDistanceMeters(null);
+        guess.setScore(0);
+    }
+
+    private void setGuessAndScore(Guess guess, Round round, BigDecimal guessedX, BigDecimal guessedY) {
+        Location location = round.getLocation();
+        Integer distance = calculateDistance(guessedX, guessedY, location.getCorX(), location.getCorY());
+
+        guess.setGuessedX(guessedX);
+        guess.setGuessedY(guessedY);
+        guess.setDistanceMeters(distance);
+        guess.setScore(calculateScore(distance));
+    }
+
+    // Save guess to the database with associated round
+    private Guess saveGuess(Round round, Guess guess) {
         try {
             Guess savedGuess = guessRepo.save(guess);
             round.setGuess(savedGuess);

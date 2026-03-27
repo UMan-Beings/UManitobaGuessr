@@ -1,6 +1,7 @@
 plugins {
 	id 'java'
     id 'jacoco'
+	id 'info.solidsoft.pitest' version '1.19.0-rc.3'
 	id 'org.springframework.boot' version '4.0.2'
 	id 'io.spring.dependency-management' version '1.1.7'
 }
@@ -59,7 +60,7 @@ dependencies {
 	testImplementation "org.testcontainers:postgresql:${testcontainersVersion}"
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 	testImplementation 'org.postgresql:postgresql:42.3.1'
-	
+	pitest 'org.pitest:pitest-junit5-plugin:1.2.3'
 }
 
 tasks.named('test') {
@@ -67,7 +68,7 @@ tasks.named('test') {
 }
 
 jacoco {
-	toolVersion = '0.8.10'
+	toolVersion = '0.8.14'
 }
 
 tasks.named('jacocoTestReport', JacocoReport) {
@@ -81,4 +82,16 @@ tasks.named('jacocoTestReport', JacocoReport) {
 
 tasks.named('check') {
 	dependsOn tasks.named('jacocoTestReport')
+}
+
+pitest {
+	targetClasses = ['com.umanbeing.umg.services.*']	// where to inject mutations
+	targetTests = ['com.umanbeing.umg.*Test']			// run only tests ending with "Test"
+	mutators = ['DEFAULTS']								// mutators to use, https://pitest.org/quickstart/mutators/
+	threads = 4															
+	outputFormats = ['XML', 'HTML']						
+	timestampedReports = false							// report folder is always the same, always overwrite previous report
+	useClasspathFile = true
+
+	excludedMethods = ['markGuessAsInvalid']			// exclude method, equivalent mutant occurs here that can't be killed by a test
 }

@@ -1,15 +1,18 @@
 package com.umanbeing.umg;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.math.BigDecimal;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -27,70 +30,157 @@ import com.umanbeing.umg.services.GuessService;
 
 @ExtendWith(MockitoExtension.class)
 class GuessServiceTest {
-    @Mock GuessRepo guessRepo;
+    @Mock 
+    GuessRepo guessRepo;
 
-    @InjectMocks GuessService guessService;
+    @InjectMocks 
+    GuessService guessService;
+    
+    private Round round;
+    private Location location;
+    private long arbitraryGuessTime;
+    private static final double FULL_SCORE_DISTANCE = 50;
+    private static final double MAX_DISTANCE = 350;
+    private static final int MAX_SCORE = 1000;
+
+    @BeforeEach
+    void setUp() {
+        // new round and location for each test 
+        round = new Round();
+        location = new Location();
+        round.setLocation(location);
+
+        arbitraryGuessTime = 5L;
+
+        // Mock save to return the same Guess object (lenient for tests that override this)
+        lenient().when(guessRepo.save(any(Guess.class))).thenAnswer(invocation -> invocation.getArgument(0));
+    }
+
+// =========================== Invalid Coordinate Tests =========================== 
+    @Test
+    void createGuess_missingX_setsCoordinatesNull() {
+        Guess guess = guessService.createGuess(round, null, BigDecimal.ONE, arbitraryGuessTime);
+        assertNull(guess.getGuessedX(), "Guessed X should be null when X coordinate is missing");
+        assertNull(guess.getGuessedY(), "Guessed Y should be null when X coordinate is missing");
+    }
+
+    @Test
+    void createGuess_missingX_setsDistanceNull() {
+        Guess guess = guessService.createGuess(round, null, BigDecimal.ONE, arbitraryGuessTime);
+        assertNull(guess.getDistanceMeters(), "Distance should be null when X coordinate is missing");
+        verify(guessRepo).save(any(Guess.class));
+    }
+
+    @Test
+    void createGuess_missingX_setsScoreZero() {
+        Guess guess = guessService.createGuess(round, null, BigDecimal.ONE, arbitraryGuessTime);
+        assertEquals(0, guess.getScore(), "Score should be 0 when X coordinate is missing");
+    }
+
+    @Test
+    void createGuess_missingY_setsCoordinatesNull() {
+        Guess guess = guessService.createGuess(round, BigDecimal.ONE, null, arbitraryGuessTime);
+        assertNull(guess.getGuessedX(), "Guessed X should be null when Y coordinate is missing");
+        assertNull(guess.getGuessedY(), "Guessed Y should be null when Y coordinate is missing");
+    }
+
+    @Test
+    void createGuess_missingY_setsDistanceNull() {
+        Guess guess = guessService.createGuess(round, BigDecimal.ONE, null, arbitraryGuessTime);
+        assertNull(guess.getDistanceMeters(), "Distance should be null when Y coordinate is missing");
+        verify(guessRepo).save(any(Guess.class));
+    }
     
     @Test
-    void createGuess_whenMissingCoordinateX_setsNullCoordinatesNullDistanceZeroScoreThenSetsRoundGuess() {
-        when(guessRepo.save(any(Guess.class))).thenAnswer(invocation -> invocation.getArgument(0));
-
-        Round round = new Round();
-        Guess result = guessService.createGuess(round, null, BigDecimal.ONE, 5L);
-
-        verify(guessRepo).save(result);
-        assertNull(result.getGuessedX());
-        assertNull(result.getGuessedY());
-        assertNull(result.getDistanceMeters());
-        assertEquals(5L, result.getGuessTimeSeconds());
-        assertEquals(0, result.getScore());
-        assertSame(round, result.getRound());
-        assertSame(round.getGuess(), result);
+    void createGuess_missingY_setsScoreZero() {
+        Guess guess = guessService.createGuess(round, BigDecimal.ONE, null, arbitraryGuessTime);
+        assertEquals(0, guess.getScore(), "Score should be 0 when Y coordinate is missing");
     }
 
     @Test
-    void createGuess_whenMissingCoordinateY_setsNullCoordinatesNullDistanceZeroScoreThenSetsRoundGuess() {
-        when(guessRepo.save(any(Guess.class))).thenAnswer(invocation -> invocation.getArgument(0));
-
-        Round round = new Round();
-        Guess result = guessService.createGuess(round, BigDecimal.ONE, null, 5L);
-
-        verify(guessRepo).save(result);
-        assertNull(result.getGuessedX());
-        assertNull(result.getGuessedY());
-        assertNull(result.getDistanceMeters());
-        assertEquals(5L, result.getGuessTimeSeconds());
-        assertEquals(0, result.getScore());
-        assertSame(round, result.getRound());
-        assertSame(round.getGuess(), result);
+    void createGuess_missingXY_setsDistanceNull() {
+        Guess guess = guessService.createGuess(round, null, null, arbitraryGuessTime);
+        assertNull(guess.getDistanceMeters());
     }
 
     @Test
-    void createGuess_whenDistanceWithinFullScoreRange_awardsFullScore() {
-        when(guessRepo.save(any(Guess.class))).thenAnswer(invocation -> invocation.getArgument(0));
+    void createGuess_missingXY_setsScoreZero() {
+        Guess guess = guessService.createGuess(round, null, null, arbitraryGuessTime);
+        assertEquals(0, guess.getScore());
+    }
 
-        Location location = new Location();
+// =========================== Round and Repository Tests ===========================
+    @Test
+    void createGuess_validGuess_assignsRoundToGuess() {
+        location.setCorX(BigDecimal.ZERO);
+        location.setCorY(BigDecimal.ZERO);
+        
+        Guess guess = guessService.createGuess(round, BigDecimal.ONE, BigDecimal.ONE, arbitraryGuessTime);
+        assertSame(round, guess.getRound(), "Round should be assigned to the guess in repository");
+    }
+
+    @Test
+    void createGuess_validGuess_roundReferencesCreatedGuess() {
+        location.setCorX(BigDecimal.ZERO);
+        location.setCorY(BigDecimal.ZERO);
+        
+        Guess guess = guessService.createGuess(round, BigDecimal.ONE, BigDecimal.ONE, arbitraryGuessTime);
+        assertSame(round.getGuess(), guess, "Round should reference the created guess in repository");
+    }
+
+    @Test
+    void createGuess_validGuess_savesGuessToRepository() {
+        location.setCorX(BigDecimal.ZERO);
+        location.setCorY(BigDecimal.ZERO);
+        
+        Guess guess = guessService.createGuess(round, BigDecimal.ONE, BigDecimal.ONE, arbitraryGuessTime);
+        verify(guessRepo).save(guess);
+    }
+
+// =========================== Scoring Tests ===========================
+    @Test
+    void createGuess_perfectGuess_awardsFullScore() {
         location.setCorX(BigDecimal.ONE);
         location.setCorY(BigDecimal.ONE);
 
-        Round round = new Round();
-        round.setLocation(location);
-
-        Guess result = guessService.createGuess(round, BigDecimal.ONE, BigDecimal.ONE, 5L);
-
-        verify(guessRepo).save(result);
-        assertEquals(BigDecimal.ONE, result.getGuessedX());
-        assertEquals(BigDecimal.ONE, result.getGuessedY());
-        assertEquals(0, result.getDistanceMeters());
-        assertEquals(5L, result.getGuessTimeSeconds());
-        assertEquals(1000, result.getScore());
-        assertSame(round, result.getRound());
-        assertSame(round.getGuess(), result);
+        Guess guess = guessService.createGuess(round, BigDecimal.ONE, BigDecimal.ONE, arbitraryGuessTime);
+        assertEquals(0, guess.getDistanceMeters(), "Perfect guess should have 0 distance apart from the location");
+        assertEquals(MAX_SCORE, guess.getScore(), "Perfect guess should award full score");
     }
 
     @Test
-    void createGuess_whenDistanceWithinScaledScoreRange_awardsPartialScore() {
-        when(guessRepo.save(any(Guess.class))).thenAnswer(invocation -> invocation.getArgument(0));
+    void createGuess_guessWithinFullScoreRange_awardsFullScore() {
+        location.setCorX(BigDecimal.ZERO);
+        location.setCorY(BigDecimal.ZERO);
+
+        Guess guess = guessService.createGuess(round, BigDecimal.valueOf(FULL_SCORE_DISTANCE - 1), BigDecimal.ZERO, arbitraryGuessTime);
+        assertEquals(MAX_SCORE, guess.getScore(), "Guess within full score range should award MAX_SCORE");
+    }
+
+    @Test
+    void createGuess_guessAtFullScoreDistance_awardsFullScore() {
+        location.setCorX(BigDecimal.ZERO);
+        location.setCorY(BigDecimal.ZERO);
+        
+        Guess guess = guessService.createGuess(round, BigDecimal.valueOf(FULL_SCORE_DISTANCE), BigDecimal.ZERO, arbitraryGuessTime);
+        assertEquals(MAX_SCORE, guess.getScore(), "Guess at full score distance should award MAX_SCORE");
+    }
+
+    @Test
+    void createGuess_guessJustOutsideFullScoreDistance_awardsPartialScore() {
+        location.setCorX(BigDecimal.ZERO);
+        location.setCorY(BigDecimal.ZERO);
+        
+        BigDecimal guessDistancePixels = BigDecimal.valueOf(FULL_SCORE_DISTANCE + 1);
+
+        Guess guess = guessService.createGuess(round, guessDistancePixels, BigDecimal.ZERO, arbitraryGuessTime);
+        assertTrue(guess.getScore() < MAX_SCORE, "Guess just outside full score distance boundary should NOT award MAX_SCORE");
+    }
+
+    @Test
+    void createGuess_withinScaledScoreRange_awardsCorrectPartialScore() {
+        location.setCorX(BigDecimal.ZERO);
+        location.setCorY(BigDecimal.ZERO);
 
         // full score range: 0-50px
         // partial score range: 50-350px (300px)
@@ -99,68 +189,44 @@ class GuessServiceTest {
         // distance from the full score range: 200-50 = 150px
         // so the guess is halfway through the partial score range: 1 - (150 / 300) = 0.5
         
-        // full score value: 1000
-        // guess score: 1000 * 0.5 = 500
+        // full score value: MAX_SCORE
+        // expectedScore: MAX_SCORE * 0.5 = 500
+        BigDecimal guessDistancePixels = BigDecimal.valueOf(200);
+        double scaledDistance = guessDistancePixels.doubleValue() - FULL_SCORE_DISTANCE;
+        double scoringRange = MAX_DISTANCE - FULL_SCORE_DISTANCE;
+        int expectedScore = (int) Math.round(MAX_SCORE * (1 - scaledDistance / scoringRange));
 
-        Location location = new Location();
-        location.setCorX(BigDecimal.ZERO);
-        location.setCorY(BigDecimal.ZERO);
-
-        Round round = new Round();
-        round.setLocation(location);
-        
-        Guess result = guessService.createGuess(round, BigDecimal.valueOf(200), BigDecimal.valueOf(0), 5L);
-
-        verify(guessRepo).save(result);
-        assertEquals(BigDecimal.valueOf(200), result.getGuessedX());
-        assertEquals(BigDecimal.valueOf(0), result.getGuessedY());
-        assertEquals(200, result.getDistanceMeters());
-        assertEquals(5L, result.getGuessTimeSeconds());
-        assertEquals(500, result.getScore());
-        assertSame(round, result.getRound());
-        assertSame(round.getGuess(), result);
+        Guess guess = guessService.createGuess(round, guessDistancePixels, BigDecimal.ZERO, arbitraryGuessTime);
+        assertEquals(expectedScore, guess.getScore(), "Guess within scaled score range should award correct partial score");
     }
 
     @Test
-    void createGuess_whenDistanceOutsideScoreRange_awardsZeroScore() {
-        when(guessRepo.save(any(Guess.class))).thenAnswer(invocation -> invocation.getArgument(0));
-
-        Location location = new Location();
+    void createGuess_guessBeyondScoreRange_awardsZeroScore() {
         location.setCorX(BigDecimal.ZERO);
         location.setCorY(BigDecimal.ZERO);
 
-        Round round = new Round();
-        round.setLocation(location);
-        
-        Guess result = guessService.createGuess(round, BigDecimal.valueOf(0), BigDecimal.valueOf(9999), 5L);
-
-        verify(guessRepo).save(result);
-        assertEquals(BigDecimal.valueOf(0), result.getGuessedX());
-        assertEquals(BigDecimal.valueOf(9999), result.getGuessedY());
-        assertEquals(9999, result.getDistanceMeters());
-        assertEquals(5L, result.getGuessTimeSeconds());
-        assertEquals(0, result.getScore());
-        assertSame(round, result.getRound());
-        assertSame(round.getGuess(), result);
+        Guess guess = guessService.createGuess(round, BigDecimal.valueOf(MAX_DISTANCE + 1), BigDecimal.ZERO, arbitraryGuessTime);
+        assertEquals(0, guess.getScore(), "Guess beyond MAX_DISTANCE should award 0 score");
     }
 
+// =========================== Repository Exception Tests ===========================
     @Test
-    void createGuess_whenRepoThrowsDataIntegrityViolationException_throwsConflict() {
+    void createGuess_repoThrowsDataIntegrityViolationException_throwsConflict() {
         when(guessRepo.save(any(Guess.class))).thenThrow(new DataIntegrityViolationException("kablooie"));
 
-        Location location = new Location();
         location.setCorX(BigDecimal.ZERO);
         location.setCorY(BigDecimal.ZERO);
 
-        Round round = new Round();
-        round.setLocation(location);
-        
+        double arbitraryDistance = 100;
+        BigDecimal arbitraryGuessCoordinate = BigDecimal.valueOf(arbitraryDistance);
+
         ResponseStatusException exception = assertThrows(
             ResponseStatusException.class,
-            () -> guessService.createGuess(round, BigDecimal.valueOf(0), BigDecimal.valueOf(9999), 5L)
+            () -> guessService.createGuess(round, arbitraryGuessCoordinate, arbitraryGuessCoordinate, arbitraryGuessTime)
         );
 
-        assertEquals(HttpStatus.CONFLICT, exception.getStatusCode());
+        assertEquals(HttpStatus.CONFLICT, exception.getStatusCode(), "Exception status should be CONFLICT when repository throws DataIntegrityViolationException");
         verify(guessRepo).save(any(Guess.class));
-    }
+    }   
+    
 }

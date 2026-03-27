@@ -30,8 +30,6 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
 
       # step 3: login to docker hub
-      # Can either push to public docker hub or will need to do the below. Not sure what marker wants
-      # TODO: need to create a docker account for the project and store credentials as secrets in github
       - name: Login to docker hub
         uses: docker/login-action@v4
         with:
@@ -47,10 +45,10 @@ jobs:
           file: ./backend/Dockerfile
           push: true
           tags: |
-            ghcr.io/${{ github.repository_owner }}/springboot-backend:${{ env.VERSION }}
-            ghcr.io/${{ github.repository_owner }}/springboot-backend:latest
-            ${{ secrets.DOCKERHUB_USER }}/springboot-backend:${{ env.VERSION }}
-            ${{ secrets.DOCKERHUB_USER }}/springboot-backend:latest
+            ghcr.io/${{ github.repository_owner }}/uman-backend:${{ env.VERSION }}
+            ghcr.io/${{ github.repository_owner }}/uman-backend:latest
+            ${{ secrets.DOCKERHUB_USER }}/uman-backend:${{ env.VERSION }}
+            ${{ secrets.DOCKERHUB_USER }}/uman-backend:latest
 
   release-frontend-image:
     runs-on: ubuntu-latest
@@ -91,7 +89,7 @@ jobs:
           file: ./web/Dockerfile
           push: true
           tags: |
-            ghcr.io/${{ github.repository_owner }}/vue-frontend:${{ env.VERSION }}
-            ghcr.io/${{ github.repository_owner }}/vue-frontend:latest
-            ${{ secrets.DOCKERHUB_USER }}/vue-frontend:${{ env.VERSION }}
-            ${{ secrets.DOCKERHUB_USER }}/vue-frontend:latest
+            ghcr.io/${{ github.repository_owner }}/uman-frontend:${{ env.VERSION }}
+            ghcr.io/${{ github.repository_owner }}/uman-frontend:latest
+            ${{ secrets.DOCKERHUB_USER }}/uman-frontend:${{ env.VERSION }}
+            ${{ secrets.DOCKERHUB_USER }}/uman-frontend:latest

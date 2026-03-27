@@ -104,7 +104,7 @@ jobs:
           cache-from: type=gha,scope=frontend-docker        # reuse cached layers from previous runs stored in gha cache
           cache-to: type=gha,mode=max,scope=frontend-docker # save layers to gha cache for future builds
 
-  # build backend container in CI, don't publish is.
+  # build backend container in CI, don't publish it.
   build-backend-container:
     runs-on: ubuntu-latest
     steps:
@@ -121,4 +121,68 @@ jobs:
           file: ./backend/Dockerfile
           push: false
           cache-from: type=gha,scope=backend-docker
-          cache-to: type=gha,mode=max,scope=backend-docker 
+          cache-to: type=gha,mode=max,scope=backend-docker
+
+  # Mutation testing (Runs only on PR/pushes to main)
+  mutation-testing:
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main' || (github.event_name == 'pull_request' && github.base_ref == 'main')
+    env:
+      DB_HOST: localhost
+      DB_NAME: test_db
+      DB_USER: test_user
+      DB_PASS: test_pass
+      SPRING_SECURITY_USER_NAME: ci_user
+      SPRING_SECURITY_USER_PASSWORD: ci_pass
+      SPRING_DATASOURCE_URL: jdbc:postgresql://localhost:5432/test_db
+      SPRING_DATASOURCE_USERNAME: test_user
+      SPRING_DATASOURCE_PASSWORD: test_pass
+      SPRING_PROFILES_ACTIVE: dev
+
+    services:
+      postgres:
+        image: postgres:18
+        env:
+          POSTGRES_DB: test_db
+          POSTGRES_USER: test_user
+          POSTGRES_PASSWORD: test_pass
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432
+
+    steps:
+      # Step 1: Checkout repository
+      - name: Checkout repository
+        uses: actions/checkout@v6
+
+      # Step 2: Set up Java 21
+      - name: Set up Java 21 and cache Gradle
+        uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: 21
+          cache: gradle
+          cache-dependency-path: backend/build.gradle
+
+      # Step 3: Make Gradle wrapper executable
+      - name: Make Gradle wrapper executable
+        run: chmod +x backend/gradlew
+
+      # Step 4: Wait for Postgres to be ready
+      - name: Wait for Postgres to be ready
+        timeout-minutes: 1
+        run: |
+          until pg_isready -h $DB_HOST -p 5432; do
+            echo "waiting for postgres..."
+            sleep 2
+          done
+
+      # Step 5: Run backend mutation testing with Pitest
+      - name: Run PIT mutation testing
+        if: github.event_name == 'pull_request'
+        working-directory: backend
+        run: ./gradlew pitest --no-daemon
