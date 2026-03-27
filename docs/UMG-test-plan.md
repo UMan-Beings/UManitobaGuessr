@@ -5,11 +5,12 @@
 | Version | Change Date | By             | Description                            |
 |---------|-------------|----------------|----------------------------------------|
 | 1.0     | 2026-03-05  | Jason Bilinsky | Initial Sprint 2 testing plan created. |
-| 2.0     | 2026-03-26  | Jason Bilinsky | Test plan updated.                     |
+| 2.0     | 2026-03-26  | Jason Bilinsky | Updated functional coverage, CI/CD, etc|
+
 
 ## 1. Introduction
 
-This document defines the testing strategy for UManitobaGuessr during Sprint 2. The plan will be updated as topics covered in class allow us to have the knowledge to meet those criteria.
+This document defines the testing strategy for UManitobaGuessr during Sprint 3. It may be updated during Sprint 4 if changes are made to the load testing plan.
 
 ### 1.1 Scope
 
@@ -23,7 +24,11 @@ The following software features and quality requirements are in scope for testin
 - Functional requirements:
   - Correct API request/response behavior for implemented endpoints
   - Correct game state transitions (`GUESS -> REVEAL -> GUESS/FINISHED`)
-  - Input validation and error handling (400/404/409 conditions)
+  - Authentication and authorization behavior:
+    - Protected endpoints require valid authentication
+    - Game ownership checks return forbidden access when violated
+  - Input validation and error handling (400/404/409/401/403 conditions)
+  - Player statistics aggregation correctness (total score, average score, average guess time)
 - Non-functional requirements (Sprint 4 planning level):
   - Load and mutation testing strategy definition for later execution
 
@@ -42,12 +47,13 @@ Role expectations:
   - Responsible for the CI/CD pipeline.
   - Docker containerization for frontend, backend, and database.
   - Deployment automation
+  - Mutation tests and additional unit tests
 - Team Lead
   - Organize and run team meetings
   - Keep the team on track with deadlines and sprint goals
   - Coordinate task assignments and track progress
 - Fullstack Developer
-  - Develop frontend interface for game configuration and location guessing
+  - Develop frontend interface for features
   - Implement backend endpoints as needed for game features
   - Write unit tests for frontend and backend components
 - System Architect:
@@ -59,6 +65,7 @@ Role expectations:
   - Setup up Spring Boot backend
   - Connected controller logic to service layers
   - Write integration tests
+  - Setup Authorization
   - Construct service layer
 
 ## 2. Test Methodology
@@ -69,44 +76,52 @@ Role expectations:
 
 Course mandatory levels: unit, integration, acceptance, regression, and load testing.
 
-Sprint 2 status summary:
+Sprint 3 status summary:
 
-- Current implemented automated tests are primarily backend service/unit-oriented.
-- CI runs backend build/test and container build validation.
-- Frontend automated tests may be planned for future sprints
+- Implemented automated tests currently cover backend unit and backend integration paths.
+- CI runs backend build/test, container build validation, SonarQube scan on PRs, and mutation testing on `main` PR/push.
+- CD runs on release publication and pushes versioned and `latest` frontend/backend images to GHCR and Docker Hub.
 
-
-Total unit tests: 78 
+Total unit tests (current): 78 
 
 Total integration tests: 23
 
 | Test Level | Scope and Requirement | Methodology (How will you do this?) |
 |------------|-----------------------|-------------------------------------|
-| Unit Testing | Minimum 10 tests per core feature. Sprint 3 unit tests: 78 | We use JUnit 5 with Mockito to isolate and test service logic. Integration tests using Spring Boot testing tools will be added later to verify interactions between controllers, services, and repositories |
-| Integration Testing | Minimum 10 tests total across core feature interactions. Sprint 3 integration tests: 23 | Add Spring Boot integration tests using test profile + H2/Postgres test setup to validate controller-service-repository flow and database interactions. |
+| Unit Testing | Minimum 10 tests per core feature. Current unit tests: 78 | We use JUnit 5 with Mockito to isolate and test service logic across game, auth, user, location, round, and JWT services. |
+| Integration Testing | Minimum 10 tests total across core feature interactions. Current integration tests: 23 | We use Spring Boot integration tests with PostgreSQL backed CI services to validate controller to service flow, authentication behavior, and exception handling. |
 | Acceptance Testing | End-user testing for every user story. | Team members will perform manual walkthroughs based on user story criteria. |
-| Regression Testing | Unit + Integration tests must run on every push to `main` (and PRs). | Use GitHub Actions CI to run backend build/tests on push and PR. Merges are blocked by required status checks when configured in repository branch protection. |
+| Regression Testing | Unit + Integration tests must run on every push/PR. | GitHub Actions CI runs backend build/tests on every push and on PRs to `main`, and runs mutation testing for `main` PR/pushes |
 
 Tools and environment used/planned:
 
 - Backend: Java 21, Spring Boot, JUnit 5, Mockito, Gradle, JaCoCo
 - Database for CI tests: PostgreSQL service container, H2
-- CI/CD: GitHub Actions (`.github/workflows/ci.yaml`)
+- CI/CD: GitHub Actions (`.github/workflows/ci.yaml`, `.github/workflows/cd.yaml`)
 
 ### 2.1.2 CI/CD Regression Workflow
 
-Current automated pipeline (Sprint 3):
+Current automated workflow baseline:
 
-- Trigger conditions:
+- CI trigger conditions (`ci.yaml`):
   - Every push on all branches
   - Every pull request targeting `main`
   - Manual workflow dispatch
-- CI actions:
-  - Start PostgreSQL service container
+- CI actions (`ci.yaml`):
+  - Start PostgreSQL service container for backend test jobs
   - Build backend with `./gradlew build` (runs tests and JaCoCo report generation)
   - Build frontend Docker image for validation
   - Build backend Docker image for validation
   - Run SonarQube Cloud scan on PR events
+  - Run PIT mutation testing for PRs targeting `main` and direct pushes to `main`
+- CD trigger conditions (`cd.yaml`):
+  - Release event: `published`
+- CD actions (`cd.yaml`):
+  - Checkout repository at the release tag
+  - Setup credentials for GHCR and Docker Hub
+  - Build and push backend image tags
+  - Build and push frontend image tags
+
 
 ### 2.2 Mutation Testing (Test Effectiveness)
 
@@ -114,6 +129,7 @@ Requirement reminder per core feature:
 
 - Generate at least 10 non-equivalent mutants per feature
 - Achieve 100% mutation score per feature (all mutants killed)
+  - Achieved 98%
   - Two mutants survive as they are equivalent mutants
 
 Proposed plan:
@@ -175,11 +191,11 @@ Potential Scenarios:
   - Load: 200–300 users submitting guesses and moving rounds concurrently
 
 - **Player Statistics**
-  - Endpoints: `GET /api/v1/stats/{userId}`, `POST /api/v1/games/{gameId}/guess`
+  - Endpoints: `GET /api/v1/users/me/stats`, `POST /api/v1/games/{gameId}/guess`
   - Load: 200–300 users retrieving stats while others play
 
 - **Account Management**
-  - Endpoints: `POST /api/v1/auth/login`, `GET /api/v1/users/{id}`
+  - Endpoints: `POST /api/v1/auth/login`, `POST /api/v1/auth/signup`
   - Load: 200–300 users logging in and fetching profiles
 
 ## 3. Terms and Acronyms
