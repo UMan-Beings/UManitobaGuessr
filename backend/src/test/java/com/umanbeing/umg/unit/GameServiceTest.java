@@ -612,6 +612,22 @@ class GameServiceTest {
     }
 
     @Test
+    void getUserStats_whenGameStatsMissing_throwsNotFound_andSkipsRoundStatsLookup() {
+        Long userId = 3L;
+
+        when(gameRepo.getUserGameStats(userId)).thenReturn(null);
+
+        ResponseStatusException exception = assertThrows(
+            ResponseStatusException.class,
+            () -> gameService.getUserStats(userId)
+        );
+
+        assertEquals(HttpStatus.NOT_FOUND, exception.getStatusCode());
+        verify(gameRepo).getUserGameStats(userId);
+        verify(gameRepo, never()).getUserRoundStats(userId);
+    }
+
+    @Test
     void getUserStats_whenDataExists_returnsCombinedStats() {
         Long userId = 2L;
 
