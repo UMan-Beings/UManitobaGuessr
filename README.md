@@ -411,6 +411,9 @@ docker run -d --name frontend_umg --network umg_net -p 7000:8081 \
 
 Application URL: http://localhost:7000
 
+**Marker / Demo Note:**
+The Docker images include default credentials and secrets baked in for quick setup. This is not safe for production, but allow the marker or demo user to run the application immediately without additional configuration.
+
 Cleanup:
 
 ```bash
