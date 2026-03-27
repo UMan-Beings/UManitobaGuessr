@@ -21,14 +21,3 @@ Frontend->Backend:POST /api/v1/signin {username, password}
 Backend->Database:Username, Password Hash
 Backend<-Database:Valid
 Frontend<-Backend:Sign In Confirmation
-==Password Recovery==
-Frontend->Backend:POST /api/v1/recover {email}
-box over Backend:Send Email Verification
-Frontend->Backend:PUT /api/v1/recover {email, password}
-Backend->Database:New Password Hash
-Frontend<-Backend:Recovery Success
-==Account Deletion==
-
-Frontend->Backend:DELETE /api/v1/delete {username, password}
-Backend->Database:Username, Password Hash
-Frontend<-Backend:Deletion Confirmation
