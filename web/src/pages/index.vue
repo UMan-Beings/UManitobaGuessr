@@ -5,16 +5,16 @@
     <GameConfiguration :loading @start="startGame" />
 
     <UserStats
+      :authenticated="jwt !== null"
       :average-guess-time-seconds="averageGuessTimeSeconds"
       :average-score="averageScore"
       :total-games="totalGames"
       :total-guess-time-seconds="totalGuessTimeSeconds"
       :total-rounds="totalRounds"
       :total-score="totalScore"
-      :authenticated="jwt !== null"
       @login="login"
-      @signup="signup"
       @logout="logout"
+      @signup="signup"
     />
   </v-container>
 </template>
@@ -58,8 +58,8 @@
         headers: {
           'Accept': 'application/json',
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('jwt')}`
-        }
+          'Authorization': `Bearer ${localStorage.getItem('jwt')}`,
+        },
       })
 
       if (!response.ok) {

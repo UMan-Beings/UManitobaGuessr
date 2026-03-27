@@ -27,11 +27,11 @@
         <v-btn
           block
           class="mt-4"
+          :color="email && password ? 'primary' : 'grey-darken-3'"
           :loading="loading"
+          :readonly="email && password ? false : true"
           size="large"
           type="submit"
-          :color="email && password ? 'primary' : 'grey-darken-3'"
-          :readonly="email && password ? false : true"
         >
           Log In
         </v-btn>

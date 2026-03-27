@@ -125,7 +125,7 @@
     }
   })
 
-  function updateFormattedTime() {
+  function updateFormattedTime () {
     formattedTime.value = timeLimitSeconds > 0 ? timeLimitSeconds - timer : timer
   }
 
