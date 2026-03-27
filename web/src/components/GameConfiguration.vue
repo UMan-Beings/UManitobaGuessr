@@ -1,9 +1,13 @@
 <template>
-  <v-sheet width="100%" class="d-flex flex-column pa-6" rounded="lg">
-    <v-sheet 
+  <v-sheet
+    class="d-flex flex-column pa-6"
+    rounded="lg"
+    width="100%"
+  >
+    <v-sheet
       class="blur px-10 pt-2 pb-6 d-flex flex-column justify-center align-center"
-      width="100%"
       rounded="lg"
+      width="100%"
     >
       <h3 class="text-h5">
         Rounds
@@ -39,11 +43,12 @@
       </v-btn-toggle>
     </v-sheet>
 
-    <v-btn 
-      color="primary" 
-      size="large" 
-      class="mt-6" 
-      block 
+    <v-btn
+      block
+      class="mt-6"
+      color="primary"
+      :loading="loading"
+      size="large"
       @click="startGame"
     >
       Start Game
@@ -54,6 +59,10 @@
 <script lang="ts" setup>
   const rounds = ref(5)
   const timer = ref(0)
+
+  defineProps<{
+    loading: boolean
+  }>()
 
   const emits = defineEmits<{
     (e: 'start', totalRounds: number, maxTimerSeconds: number): void

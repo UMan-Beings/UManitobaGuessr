@@ -1,8 +1,8 @@
 <template>
   <v-container class="h-100 d-flex flex-column justify-center align-center ga-6" max-width="900">
-    <HeroBanner class="rounded-lg"></HeroBanner>
-    
-    <GameConfiguration @start="startGame" />
+    <HeroBanner class="rounded-lg" />
+
+    <GameConfiguration :loading @start="startGame" />
 
     <UserStats
       :average-guess-time-seconds="averageGuessTimeSeconds"
@@ -29,6 +29,7 @@
 
   const router = useRouter()
 
+  const loading = ref(false)
   const jwt = ref<string | null>(localStorage.getItem('jwt'))
 
   onMounted(() => {
@@ -80,6 +81,8 @@
 
   async function startGame (totalRounds: number, maxTimerSeconds: number) {
     try {
+      loading.value = true
+
       const startGameHeaders: Record<string, string> = {
         'Accept': 'application/json',
         'Content-Type': 'application/json',
@@ -112,6 +115,8 @@
     } catch (caughtError) {
       const errorMessage = caughtError instanceof Error ? caughtError.message : 'Unexpected error'
       console.log(errorMessage)
+    } finally {
+      loading.value = false
     }
   }
 </script>
