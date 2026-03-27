@@ -27,8 +27,15 @@
     <div v-if="phase === 'GUESS'">
       <v-img
         class="h-screen w-auto"
+        cover
+        gradient="rgba(0,0,0,.45)"
         :src="imageUrl"
-      />
+      >
+        <v-img
+          class="h-screen w-auto"
+          :src="imageUrl"
+        />
+      </v-img>
       <GuessMap
         class="position-absolute bottom-0 right-0 ma-4"
         @map-clicked="updateGuessCoordinates"
