@@ -177,11 +177,12 @@
 
       const response = await fetch(url, { ...options, headers })
 
+      const data = await response.json()
+
       if (!response.ok) {
-        throw new Error(`Request failed (${response.status} ${response.statusText})`)
+        throw new Error(data.message || `Request failed (${response.status} ${response.statusText})`)
       }
 
-      const data = await response.json()
       updateGameRefs(data)
     } catch (caughtError) {
       error.value = caughtError instanceof Error ? caughtError.message : 'Unexpected error'
