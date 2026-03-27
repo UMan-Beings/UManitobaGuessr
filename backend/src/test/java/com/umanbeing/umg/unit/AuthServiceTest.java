@@ -2,6 +2,7 @@ package com.umanbeing.umg.unit;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.mockito.Mockito.when;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
@@ -198,6 +199,72 @@ class AuthServiceTest {
         assertThrows(NullPointerException.class, () -> {
             authService.registerUser(testCreateAccountRequest);
         });
+    }
+
+    @Test
+    void registerUser_passwordAtMaxLength_isAccepted() {
+        String email = "maxpwd@example.com";
+        String password = "Pass1234567890123456"; // 20 chars
+        String username = "maxpwduser";
+
+        CreateAccountRequest testCreateAccountRequest = new CreateAccountRequest(username, email, password);
+
+        User saved = new User();
+        saved.setEmail(email);
+        saved.setUsername(username);
+
+        when(userRepo.findByUsername(username)).thenReturn(java.util.Optional.empty());
+        when(userRepo.findByEmail(email)).thenReturn(java.util.Optional.empty());
+        when(passwordEncoder.encode(any(String.class))).thenReturn("encodedPassword");
+        when(userRepo.save(any(User.class))).thenReturn(saved);
+
+        SignUpResponse result = assertDoesNotThrow(() -> authService.registerUser(testCreateAccountRequest));
+        assertEquals("User registered successfully", result.message());
+        assertEquals(username, result.name());
+    }
+
+    @Test
+    void registerUser_usernameAtMinLength_isAccepted() {
+        String email = "minuser@example.com";
+        String password = "ValidPass123";
+        String username = "abc"; // 3 chars
+
+        CreateAccountRequest testCreateAccountRequest = new CreateAccountRequest(username, email, password);
+
+        User saved = new User();
+        saved.setEmail(email);
+        saved.setUsername(username);
+
+        when(userRepo.findByUsername(username)).thenReturn(java.util.Optional.empty());
+        when(userRepo.findByEmail(email)).thenReturn(java.util.Optional.empty());
+        when(passwordEncoder.encode(any(String.class))).thenReturn("encodedPassword");
+        when(userRepo.save(any(User.class))).thenReturn(saved);
+
+        SignUpResponse result = assertDoesNotThrow(() -> authService.registerUser(testCreateAccountRequest));
+        assertEquals("User registered successfully", result.message());
+        assertEquals(username, result.name());
+    }
+
+    @Test
+    void registerUser_usernameAtMaxLength_isAccepted() {
+        String email = "maxuser@example.com";
+        String password = "ValidPass123";
+        String username = "abcdefghijklmnopqrst"; // 20 chars
+
+        CreateAccountRequest testCreateAccountRequest = new CreateAccountRequest(username, email, password);
+
+        User saved = new User();
+        saved.setEmail(email);
+        saved.setUsername(username);
+
+        when(userRepo.findByUsername(username)).thenReturn(java.util.Optional.empty());
+        when(userRepo.findByEmail(email)).thenReturn(java.util.Optional.empty());
+        when(passwordEncoder.encode(any(String.class))).thenReturn("encodedPassword");
+        when(userRepo.save(any(User.class))).thenReturn(saved);
+
+        SignUpResponse result = assertDoesNotThrow(() -> authService.registerUser(testCreateAccountRequest));
+        assertEquals("User registered successfully", result.message());
+        assertEquals(username, result.name());
     }
 
 // ====================== Load User By Username Tests ======================

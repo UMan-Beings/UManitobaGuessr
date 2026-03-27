@@ -1,5 +1,6 @@
 package com.umanbeing.umg.integration.authentication;
 
+import com.umanbeing.umg.controllers.dto.CreateAccountRequest;
 import com.umanbeing.umg.integration.base.PostgresIntegrationTestBase;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
@@ -7,8 +8,11 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
 import com.umanbeing.umg.models.User;
 import com.umanbeing.umg.repos.UserRepo;
+import com.umanbeing.umg.services.AuthService;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.web.servlet.MockMvc;
@@ -20,6 +24,9 @@ class AuthTest extends PostgresIntegrationTestBase {
 
     @Autowired
     private UserRepo userRepo;
+
+    @Autowired
+    private AuthService authService;
 
     @Test
     void testSuccessfulSignup() throws Exception {
@@ -60,5 +67,28 @@ class AuthTest extends PostgresIntegrationTestBase {
                 .andExpect(status().isUnauthorized());
     }
 
+    @Test
+    void registerUser_passwordTooShort_throwsIllegalArgumentException() {
+        CreateAccountRequest req = new CreateAccountRequest("valid_user_short_pwd", "valid_user_short_pwd@example.com", "short");
+        assertThrows(IllegalArgumentException.class, () -> authService.registerUser(req));
+    }
+
+    @Test
+    void registerUser_passwordTooLong_throwsIllegalArgumentException() {
+        CreateAccountRequest req = new CreateAccountRequest("valid_user_long_pwd", "valid_user_long_pwd@example.com", "ThisPasswordIsWayTooLong123");
+        assertThrows(IllegalArgumentException.class, () -> authService.registerUser(req));
+    }
+
+    @Test
+    void registerUser_usernameTooShort_throwsIllegalArgumentException() {
+        CreateAccountRequest req = new CreateAccountRequest("ab", "short_username@example.com", "ValidPass123");
+        assertThrows(IllegalArgumentException.class, () -> authService.registerUser(req));
+    }
+
+    @Test
+    void registerUser_usernameTooLong_throwsIllegalArgumentException() {
+        CreateAccountRequest req = new CreateAccountRequest("ThisUsernameIsWayTooLong", "long_username@example.com", "ValidPass123");
+        assertThrows(IllegalArgumentException.class, () -> authService.registerUser(req));
+    }
 
 }
