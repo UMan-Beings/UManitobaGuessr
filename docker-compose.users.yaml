@@ -15,16 +15,16 @@
 # Stop the app:
 #    docker-compose -f docker-compose.users.yaml -p umg_users down
 #
-# App URL (frontend + proxied API): http://localhost:7000
+# App URL: http://localhost:7000
 
 services:
   db_umg:
     image: postgres:18
     container_name: db_umg_users
     env_file:
-      - ./env/.env.prod
+      - ./env/.env.users
     healthcheck:
-      test: ["CMD", "pg_isready", "-U", "myuser", "-d", "prod_database", "-q"]
+      test: ["CMD", "pg_isready", "-U", "appuser", "-d", "users_database", "-q"]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -38,7 +38,7 @@ services:
     pull_policy: always
     container_name: backend_umg_users
     env_file:
-      - ./env/.env.prod
+      - ./env/.env.users
     expose:
       - "8081"
     depends_on:

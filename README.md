@@ -42,6 +42,9 @@
   - [5.1. Frontend](#51-frontend)
   - [5.2. Backend](#52-backend)
   - [5.3. Database](#53-database)
+- [6. Running the Application](#6-running-the-application)
+  - [6.1. Prerequisites](#61-prerequisites)
+  - [6.2. Quick Start for Users and Markers](#62-quick-start-for-users-and-markers)
 
 ## 1. Team
 
@@ -318,4 +321,54 @@ Acceptance Criteria:
 
 ### 5.3. Database
 - PostgreSQL
+
+## 6. Running the Application
+
+### 6.1. Prerequisites
+- Docker and Docker Compose installed and running
+- Internet connection to download Docker images
+
+### 6.2. Quick Start for Users and Markers
+
+1. Open a terminal in the project root
+2. Run the application using Docker images from Docker Hub in a single commmand:
+
+```bash
+docker-compose -f docker-compose.users.yaml -p umg_users up -d --pull always
+```
+
+This will:
+1. Download the latest frontend and backend images from Docker Hub
+2. Create and start the PostgreSQL database
+3. Start the backend service
+4. Start the frontend service
+
+To start playing the application visit the url provided.
+**Application URL:** http://localhost:7000
+
+
+#### Useful Commands
+**Pull the latest images without starting:**
+```bash
+docker-compose -f docker-compose.users.yaml pull
+```
+
+**Run the application after pulling the images:**
+```bash
+docker-compose -f docker-compose.users.yaml -p umg_users up -d
+```
+
+**Stop the application:**
+```bash
+docker-compose -f docker-compose.users.yaml -p umg_users down
+```
+
+**Stop and remove all data (volumes, networks):**
+```bash
+docker-compose -f docker-compose.users.yaml -p umg_users down -v
+```
+
+#### Configuration
+
+The environment is configured in `env/.env.users` (committed to the repository). The application is set to run on port 7000 by default.
 
