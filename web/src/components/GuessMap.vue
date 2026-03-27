@@ -74,7 +74,7 @@
 .container {
   --full-w: 1000;
   --full-h: 773;
-  --mini-w-px: 400px;
+  --mini-w-px: 300px;
 
   width: var(--mini-w-px);
   transition: width .2s ease;
