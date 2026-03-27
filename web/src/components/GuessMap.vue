@@ -1,6 +1,6 @@
 <template>
   <div class="container">
-    <div class="map-frame overflow-hidden rounded-lg">
+    <div class="map-frame overflow-hidden rounded-lg elevation-1">
       <div ref="mapDiv" class="map-inner cursor-pointer" />
     </div>
 
@@ -22,8 +22,7 @@
   import { useLeafletImageMap } from '@/map/useLeafletImageMap'
 
   const emits = defineEmits<{
-    (e: 'map-clicked', lat: number, lng: number): void,
-    (e: 'guess', lat: number, lng: number): void
+    (e: 'map-clicked' | 'guess', lat: number, lng: number): void
   }>()
 
   const mapDiv = ref<HTMLDivElement | null>(null)
@@ -74,7 +73,7 @@
 .container {
   --full-w: 1000;
   --full-h: 773;
-  --mini-w-px: 400px;
+  --mini-w-px: 300px;
 
   width: var(--mini-w-px);
   transition: width .2s ease;

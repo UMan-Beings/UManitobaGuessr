@@ -1,20 +1,20 @@
 <template>
   <v-container class="h-100 d-flex flex-column justify-center align-center ga-6" max-width="900">
-    <HeroBanner class="rounded-lg"></HeroBanner>
-    
-    <GameConfiguration @start="startGame" />
+    <HeroBanner class="rounded-lg" />
+
+    <GameConfiguration :loading @start="startGame" />
 
     <UserStats
+      :authenticated="jwt !== null"
       :average-guess-time-seconds="averageGuessTimeSeconds"
       :average-score="averageScore"
       :total-games="totalGames"
       :total-guess-time-seconds="totalGuessTimeSeconds"
       :total-rounds="totalRounds"
       :total-score="totalScore"
-      :authenticated="jwt !== null"
       @login="login"
-      @signup="signup"
       @logout="logout"
+      @signup="signup"
     />
   </v-container>
 </template>
@@ -29,6 +29,7 @@
 
   const router = useRouter()
 
+  const loading = ref(false)
   const jwt = ref<string | null>(localStorage.getItem('jwt'))
 
   onMounted(() => {
@@ -57,8 +58,8 @@
         headers: {
           'Accept': 'application/json',
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('jwt')}`
-        }
+          'Authorization': `Bearer ${localStorage.getItem('jwt')}`,
+        },
       })
 
       if (!response.ok) {
@@ -80,6 +81,8 @@
 
   async function startGame (totalRounds: number, maxTimerSeconds: number) {
     try {
+      loading.value = true
+
       const startGameHeaders: Record<string, string> = {
         'Accept': 'application/json',
         'Content-Type': 'application/json',
@@ -112,6 +115,8 @@
     } catch (caughtError) {
       const errorMessage = caughtError instanceof Error ? caughtError.message : 'Unexpected error'
       console.log(errorMessage)
+    } finally {
+      loading.value = false
     }
   }
 </script>

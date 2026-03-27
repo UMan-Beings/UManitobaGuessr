@@ -28,11 +28,11 @@
         <v-btn
           block
           class="mt-4"
+          :color="email && username && password ? 'primary' : 'grey-darken-3'"
           :loading="loading"
+          :readonly="email && username && password ? false : true"
           size="large"
           type="submit"
-          :color="email && username && password ? 'primary' : 'grey-darken-3'"
-          :readonly="email && username && password ? false : true"
         >
           Sign Up
         </v-btn>
@@ -76,7 +76,7 @@
         },
         body: JSON.stringify(signupData),
       })
-      
+
       const data = await response.json()
 
       if (!response.ok) {

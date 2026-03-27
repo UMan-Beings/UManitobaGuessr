@@ -14,7 +14,7 @@
       <GameStats
         :round="round"
         :score="score"
-        :time-seconds="timer"
+        :time-seconds="formattedTime"
         :total-rounds="totalRounds"
       />
       <GuessResult
@@ -27,12 +27,19 @@
     <div v-if="phase === 'GUESS'">
       <v-img
         class="h-screen w-auto"
+        cover
+        gradient="rgba(0,0,0,.45)"
         :src="imageUrl"
-      />
+      >
+        <v-img
+          class="h-screen w-auto"
+          :src="imageUrl"
+        />
+      </v-img>
       <GuessMap
         class="position-absolute bottom-0 right-0 ma-4"
-        @map-clicked="updateGuessCoordinates"
         @guess="submitGuess"
+        @map-clicked="updateGuessCoordinates"
       />
     </div>
 
@@ -69,7 +76,8 @@
 
   let timerIntervalId: number | null = null
   let timeLimitSeconds = 0
-  const timer = ref(0)
+  let timer = 0
+  const formattedTime = ref(timeLimitSeconds)
 
   // guess refs
   const imageUrl = ref<string | undefined>(undefined)
@@ -97,9 +105,10 @@
       }
 
       if (!loading.value && phase.value === 'GUESS') {
-        timer.value++
+        timer++
+        updateFormattedTime()
 
-        if (timeLimitSeconds > 0 && timer.value == timeLimitSeconds) {
+        if (timeLimitSeconds > 0 && timer == timeLimitSeconds) {
           if (guessLat.value && guessLng.value) {
             submitGuess(guessLat.value, guessLng.value)
           } else {
@@ -116,6 +125,10 @@
     }
   })
 
+  function updateFormattedTime () {
+    formattedTime.value = timeLimitSeconds > 0 ? timeLimitSeconds - timer : timer
+  }
+
   function updateGuessCoordinates (lat?: number, lng?: number) {
     guessLat.value = lat
     guessLng.value = lng
@@ -131,13 +144,14 @@
     if (data.phase === 'GUESS') {
       updateGuessCoordinates()
       imageUrl.value = data.imageUrl
-      timer.value = 0
+      timer = 0
+      updateFormattedTime()
     } else if (data.phase === 'REVEAL') {
       updateGuessCoordinates(data.guessedY, data.guessedX)
       actualLat.value = data.actualY
       actualLng.value = data.actualX
       scoreReceived.value = data.scoreReceived
-      timer.value = data.guessTimeSeconds
+      timer = data.guessTimeSeconds
     }
   }
 
@@ -163,11 +177,12 @@
 
       const response = await fetch(url, { ...options, headers })
 
+      const data = await response.json()
+
       if (!response.ok) {
-        throw new Error(`Request failed (${response.status} ${response.statusText})`)
+        throw new Error(data.message || `Request failed (${response.status} ${response.statusText})`)
       }
 
-      const data = await response.json()
       updateGameRefs(data)
     } catch (caughtError) {
       error.value = caughtError instanceof Error ? caughtError.message : 'Unexpected error'
@@ -189,7 +204,7 @@
       body: JSON.stringify({
         corY: lat,
         corX: lng,
-        guessTimeSeconds: timer.value,
+        guessTimeSeconds: timer,
       }),
     })
   }
