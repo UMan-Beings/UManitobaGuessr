@@ -1,0 +1,69 @@
+# -----------------------------------------------------
+# User compose: run from published Docker Hub images
+# -----------------------------------------------------
+# Use this file when you want to run the app without building source locally.
+# It pulls the latest backend/frontend images from Docker Hub.
+#
+# 1) download newest images ONLY:
+#     docker-compose -f docker-compose.users.yaml pull
+# 2) Run the app:
+#     docker-compose -f docker-compose.users.yaml -p umg_users up -d
+#
+# OR do both steps in one command (pull + run):
+#     docker-compose -f docker-compose.users.yaml -p umg_users up -d --pull always
+#
+# Stop the app:
+#    docker-compose -f docker-compose.users.yaml -p umg_users down
+#
+# App URL (frontend + proxied API): http://localhost:7000
+
+services:
+  db_umg:
+    image: postgres:18
+    container_name: db_umg_users
+    env_file:
+      - ./env/.env.prod
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "myuser", "-d", "prod_database", "-q"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    volumes:
+      - postgres_users_data:/var/lib/postgresql
+    networks:
+      - app_internal
+
+  backend-umg:
+    image: bilinskyj/uman-backend:latest
+    pull_policy: always
+    container_name: backend_umg_users
+    env_file:
+      - ./env/.env.prod
+    expose:
+      - "8081"
+    depends_on:
+      db_umg:
+        condition: service_healthy
+    networks:
+      - app_internal
+
+  frontend_umg:
+    image: bilinskyj/uman-frontend:latest
+    pull_policy: always
+    container_name: frontend_umg_users
+    ports:
+      - "${FRONTEND_PORT:-7000}:8081"
+    depends_on:
+      backend-umg:
+        condition: service_started
+    networks:
+      - frontend_net
+      - app_internal
+
+volumes:
+  postgres_users_data:
+
+networks:
+  frontend_net:
+  app_internal:
+    internal: true
