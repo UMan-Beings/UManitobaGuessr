@@ -42,6 +42,10 @@
   - [5.1. Frontend](#51-frontend)
   - [5.2. Backend](#52-backend)
   - [5.3. Database](#53-database)
+- [6. Running the Application](#6-running-the-application)
+  - [6.1. Prerequisites](#61-prerequisites)
+  - [6.2. Quick Start for Users and Markers](#62-quick-start-for-users-and-markers)
+  - [6.3. Run with Images Only (No Repository Files)](#63-run-with-images-only-no-repository-files)
 
 ## 1. Team
 
@@ -318,4 +322,102 @@ Acceptance Criteria:
 
 ### 5.3. Database
 - PostgreSQL
+
+## 6. Running the Application
+
+### 6.1. Prerequisites
+- Docker installed and running
+- Internet connection to download Docker images
+
+### 6.2. Quick Start (With repository files)
+
+1. Open a terminal in the project root
+2. Run the application using Docker images from Docker Hub in a single commmand:
+
+```bash
+docker-compose -f docker-compose.users.yaml -p umg_users up -d --pull always
+```
+
+This will:
+1. Download the latest frontend and backend images from Docker Hub
+2. Create and start the PostgreSQL database
+3. Start the backend service
+4. Start the frontend service
+
+To start playing the application visit the url provided.
+**Application URL:** http://localhost:7000
+
+
+#### Useful Commands
+**Pull the latest images without starting:**
+```bash
+docker-compose -f docker-compose.users.yaml pull
+```
+
+**Run the application after pulling the images:**
+```bash
+docker-compose -f docker-compose.users.yaml -p umg_users up -d
+```
+
+**Stop the application:**
+```bash
+docker-compose -f docker-compose.users.yaml -p umg_users down
+```
+
+**Stop and remove all data (volumes, networks):**
+```bash
+docker-compose -f docker-compose.users.yaml -p umg_users down -v
+```
+
+#### Configuration
+
+The published Docker images are self-contained and include default configuration values so the application can run without any additional setup. The application runs on port 7000 by default.
+
+### 6.3. Run with Docker Images Only (No Repository Files)
+
+If you only have access to Docker Hub images and no repository files, run all required containers directly with Docker.
+
+1. Create a Docker network:
+
+```bash
+docker network create umg_net
+```
+
+2. Run Postgres (required by backend):
+
+```bash
+docker run -d --name db_umg --network umg_net \
+  -e POSTGRES_DB=users_database \
+  -e POSTGRES_USER=appuser \
+  -e POSTGRES_PASSWORD=apppass \
+  postgres:18
+```
+
+3. Run backend image:
+
+```bash
+docker run -d --name backend-umg --network umg_net -p 8081:8081 \
+  bilinskyj/uman-backend:latest
+```
+
+4. Run frontend image:
+
+```bash
+docker run -d --name frontend_umg --network umg_net -p 7000:8081 \
+  bilinskyj/uman-frontend:latest
+```
+
+5. Open the app:
+
+Application URL: http://localhost:7000
+
+**Marker / Demo Note:**
+The Docker images include default credentials and secrets baked in for quick setup. This is not safe for production, but allow the marker or demo user to run the application immediately without additional configuration.
+
+Cleanup:
+
+```bash
+docker rm -f frontend_umg backend-umg db_umg
+docker network rm umg_net
+```
 

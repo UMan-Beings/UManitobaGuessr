@@ -82,14 +82,14 @@ Sprint 3 status summary:
 - CI runs backend build/test, container build validation, SonarQube scan on PRs, and mutation testing on `main` PR/push.
 - CD runs on release publication and pushes versioned and `latest` frontend/backend images to GHCR and Docker Hub.
 
-Total unit tests (current): 78 
+Total unit tests (current): 82 
 
-Total integration tests: 23
+Total integration tests: 27
 
 | Test Level | Scope and Requirement | Methodology (How will you do this?) |
 |------------|-----------------------|-------------------------------------|
-| Unit Testing | Minimum 10 tests per core feature. Current unit tests: 78 | We use JUnit 5 with Mockito to isolate and test service logic across game, auth, user, location, round, and JWT services. |
-| Integration Testing | Minimum 10 tests total across core feature interactions. Current integration tests: 23 | We use Spring Boot integration tests with PostgreSQL backed CI services to validate controller to service flow, authentication behavior, and exception handling. |
+| Unit Testing | Minimum 10 tests per core feature. Current unit tests: 82 | We use JUnit 5 with Mockito to isolate and test service logic across game, auth, user, location, round, and JWT services. |
+| Integration Testing | Minimum 10 tests total across core feature interactions. Current integration tests: 27 | We use Spring Boot integration tests with PostgreSQL backed CI services to validate controller to service flow, authentication behavior, and exception handling. |
 | Acceptance Testing | End-user testing for every user story. | Team members will perform manual walkthroughs based on user story criteria. |
 | Regression Testing | Unit + Integration tests must run on every push/PR. | GitHub Actions CI runs backend build/tests on every push and on PRs to `main`, and runs mutation testing for `main` PR/pushes |
 
