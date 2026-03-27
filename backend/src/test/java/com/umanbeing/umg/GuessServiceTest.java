@@ -39,6 +39,9 @@ class GuessServiceTest {
     private Round round;
     private Location location;
     private long arbitraryGuessTime;
+    private static final double FULL_SCORE_DISTANCE = 50;
+    private static final double MAX_DISTANCE = 350;
+    private static final int MAX_SCORE = 1000;
 
     @BeforeEach
     void setUp() {
@@ -142,7 +145,7 @@ class GuessServiceTest {
 
         Guess guess = guessService.createGuess(round, BigDecimal.ONE, BigDecimal.ONE, arbitraryGuessTime);
         assertEquals(0, guess.getDistanceMeters(), "Perfect guess should have 0 distance apart from the location");
-        assertEquals(GuessService.MAX_SCORE, guess.getScore(), "Perfect guess should award full score");
+        assertEquals(MAX_SCORE, guess.getScore(), "Perfect guess should award full score");
     }
 
     @Test
@@ -150,8 +153,8 @@ class GuessServiceTest {
         location.setCorX(BigDecimal.ZERO);
         location.setCorY(BigDecimal.ZERO);
 
-        Guess guess = guessService.createGuess(round, BigDecimal.valueOf(GuessService.FULL_SCORE_DISTANCE - 1), BigDecimal.ZERO, arbitraryGuessTime);
-        assertEquals(GuessService.MAX_SCORE, guess.getScore(), "Guess within full score range should award MAX_SCORE");
+        Guess guess = guessService.createGuess(round, BigDecimal.valueOf(FULL_SCORE_DISTANCE - 1), BigDecimal.ZERO, arbitraryGuessTime);
+        assertEquals(MAX_SCORE, guess.getScore(), "Guess within full score range should award MAX_SCORE");
     }
 
     @Test
@@ -159,8 +162,8 @@ class GuessServiceTest {
         location.setCorX(BigDecimal.ZERO);
         location.setCorY(BigDecimal.ZERO);
         
-        Guess guess = guessService.createGuess(round, BigDecimal.valueOf(GuessService.FULL_SCORE_DISTANCE), BigDecimal.ZERO, arbitraryGuessTime);
-        assertEquals(GuessService.MAX_SCORE, guess.getScore(), "Guess at full score distance should award MAX_SCORE");
+        Guess guess = guessService.createGuess(round, BigDecimal.valueOf(FULL_SCORE_DISTANCE), BigDecimal.ZERO, arbitraryGuessTime);
+        assertEquals(MAX_SCORE, guess.getScore(), "Guess at full score distance should award MAX_SCORE");
     }
 
     @Test
@@ -168,10 +171,10 @@ class GuessServiceTest {
         location.setCorX(BigDecimal.ZERO);
         location.setCorY(BigDecimal.ZERO);
         
-        BigDecimal guessDistancePixels = BigDecimal.valueOf(GuessService.FULL_SCORE_DISTANCE + 1);
+        BigDecimal guessDistancePixels = BigDecimal.valueOf(FULL_SCORE_DISTANCE + 1);
 
         Guess guess = guessService.createGuess(round, guessDistancePixels, BigDecimal.ZERO, arbitraryGuessTime);
-        assertTrue(guess.getScore() < GuessService.MAX_SCORE, "Guess just outside full score distance boundary should NOT award MAX_SCORE");
+        assertTrue(guess.getScore() < MAX_SCORE, "Guess just outside full score distance boundary should NOT award MAX_SCORE");
     }
 
     @Test
@@ -186,12 +189,12 @@ class GuessServiceTest {
         // distance from the full score range: 200-50 = 150px
         // so the guess is halfway through the partial score range: 1 - (150 / 300) = 0.5
         
-        // full score value: GuessService.MAX_SCORE
-        // expectedScore: GuessService.MAX_SCORE * 0.5 = 500
+        // full score value: MAX_SCORE
+        // expectedScore: MAX_SCORE * 0.5 = 500
         BigDecimal guessDistancePixels = BigDecimal.valueOf(200);
-        double scaledDistance = guessDistancePixels.doubleValue() - GuessService.FULL_SCORE_DISTANCE;
-        double scoringRange = GuessService.MAX_DISTANCE - GuessService.FULL_SCORE_DISTANCE;
-        int expectedScore = (int) Math.round(GuessService.MAX_SCORE * (1 - scaledDistance / scoringRange));
+        double scaledDistance = guessDistancePixels.doubleValue() - FULL_SCORE_DISTANCE;
+        double scoringRange = MAX_DISTANCE - FULL_SCORE_DISTANCE;
+        int expectedScore = (int) Math.round(MAX_SCORE * (1 - scaledDistance / scoringRange));
 
         Guess guess = guessService.createGuess(round, guessDistancePixels, BigDecimal.ZERO, arbitraryGuessTime);
         assertEquals(expectedScore, guess.getScore(), "Guess within scaled score range should award correct partial score");
@@ -202,7 +205,7 @@ class GuessServiceTest {
         location.setCorX(BigDecimal.ZERO);
         location.setCorY(BigDecimal.ZERO);
 
-        Guess guess = guessService.createGuess(round, BigDecimal.valueOf(GuessService.MAX_DISTANCE + 1), BigDecimal.ZERO, arbitraryGuessTime);
+        Guess guess = guessService.createGuess(round, BigDecimal.valueOf(MAX_DISTANCE + 1), BigDecimal.ZERO, arbitraryGuessTime);
         assertEquals(0, guess.getScore(), "Guess beyond MAX_DISTANCE should award 0 score");
     }
 
