@@ -1,4 +1,4 @@
-package com.umanbeing.umg;
+package com.umanbeing.umg.unit;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;

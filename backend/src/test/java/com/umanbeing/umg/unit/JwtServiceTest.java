@@ -1,4 +1,4 @@
-package com.umanbeing.umg;
+package com.umanbeing.umg.unit;
 
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.umanbeing.umg.services.JwtService;
