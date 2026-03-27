@@ -30,8 +30,6 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
 
       # step 3: login to docker hub
-      # Can either push to public docker hub or will need to do the below. Not sure what marker wants
-      # TODO: need to create a docker account for the project and store credentials as secrets in github
       - name: Login to docker hub
         uses: docker/login-action@v4
         with:
