@@ -21,8 +21,10 @@ services:
   db_umg:
     image: postgres:18
     container_name: db_umg_users
-    env_file:
-      - ./env/.env.users
+    environment:
+      POSTGRES_DB: users_database
+      POSTGRES_USER: appuser
+      POSTGRES_PASSWORD: apppass
     healthcheck:
       test: ["CMD", "pg_isready", "-U", "appuser", "-d", "users_database", "-q"]
       interval: 10s
@@ -37,8 +39,15 @@ services:
     image: bilinskyj/uman-backend:latest
     pull_policy: always
     container_name: backend_umg_users
-    env_file:
-      - ./env/.env.users
+    environment:
+      SPRING_PROFILES_ACTIVE: prod
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db_umg:5432/users_database
+      SPRING_DATASOURCE_USERNAME: appuser
+      SPRING_DATASOURCE_PASSWORD: apppass
+      DB_SSL_MODE: disable
+      SPRING_SECURITY_USER_NAME: user
+      SPRING_SECURITY_USER_PASSWORD: password
+      JWT_SECRET: user_secret_key_do_not_use_in_production
     expose:
       - "8081"
     depends_on:

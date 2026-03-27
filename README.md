@@ -45,6 +45,7 @@
 - [6. Running the Application](#6-running-the-application)
   - [6.1. Prerequisites](#61-prerequisites)
   - [6.2. Quick Start for Users and Markers](#62-quick-start-for-users-and-markers)
+  - [6.3. Run with Images Only (No Repository Files)](#63-run-with-images-only-no-repository-files)
 
 ## 1. Team
 
@@ -325,10 +326,10 @@ Acceptance Criteria:
 ## 6. Running the Application
 
 ### 6.1. Prerequisites
-- Docker and Docker Compose installed and running
+- Docker installed and running
 - Internet connection to download Docker images
 
-### 6.2. Quick Start for Users and Markers
+### 6.2. Quick Start (With repository files)
 
 1. Open a terminal in the project root
 2. Run the application using Docker images from Docker Hub in a single commmand:
@@ -370,5 +371,50 @@ docker-compose -f docker-compose.users.yaml -p umg_users down -v
 
 #### Configuration
 
-The environment is configured in `env/.env.users` (committed to the repository). The application is set to run on port 7000 by default.
+The published Docker images are self-contained and include default configuration values so the application can run without any additional setup. The application runs on port 7000 by default.
+
+### 6.3. Run with Docker Images Only (No Repository Files)
+
+If you only have access to Docker Hub images and no repository files, run all required containers directly with Docker.
+
+1. Create a Docker network:
+
+```bash
+docker network create umg_net
+```
+
+2. Run Postgres (required by backend):
+
+```bash
+docker run -d --name db_umg --network umg_net \
+  -e POSTGRES_DB=users_database \
+  -e POSTGRES_USER=appuser \
+  -e POSTGRES_PASSWORD=apppass \
+  postgres:18
+```
+
+3. Run backend image:
+
+```bash
+docker run -d --name backend-umg --network umg_net -p 8081:8081 \
+  bilinskyj/uman-backend:latest
+```
+
+4. Run frontend image:
+
+```bash
+docker run -d --name frontend_umg --network umg_net -p 7000:8081 \
+  bilinskyj/uman-frontend:latest
+```
+
+5. Open the app:
+
+Application URL: http://localhost:7000
+
+Cleanup:
+
+```bash
+docker rm -f frontend_umg backend-umg db_umg
+docker network rm umg_net
+```
 
