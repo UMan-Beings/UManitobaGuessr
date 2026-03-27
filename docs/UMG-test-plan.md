@@ -5,6 +5,7 @@
 | Version | Change Date | By             | Description                            |
 |---------|-------------|----------------|----------------------------------------|
 | 1.0     | 2026-03-05  | Jason Bilinsky | Initial Sprint 2 testing plan created. |
+| 2.0     | 2026-03-26  | Jason Bilinsky | Test plan updated.                     |
 
 ## 1. Introduction
 
@@ -17,16 +18,13 @@ The following software features and quality requirements are in scope for testin
 - Core features:
   - Game configuration
   - Location guessing
-  - Player statistics  (barely implemented implemented sprint 2)
+  - Player statistics
+  - Account Management
 - Functional requirements:
   - Correct API request/response behavior for implemented endpoints
   - Correct game state transitions (`GUESS -> REVEAL -> GUESS/FINISHED`)
   - Input validation and error handling (400/404/409 conditions)
-- Non-functional requirements (Sprint 2 planning level):
-  - Automated regression on each push and pull request through CI
-  - Automated regression when a version is published as well through CD
-    - This needs refinement depening on future requirements for releases
-  - Test coverage reporting with JaCoCo
+- Non-functional requirements (Sprint 4 planning level):
   - Load and mutation testing strategy definition for later execution
 
 ### 1.2 Roles and Responsibilities
@@ -78,12 +76,14 @@ Sprint 2 status summary:
 - Frontend automated tests may be planned for future sprints
 
 
-Total unit tests: 35.
+Total unit tests: 78 
+
+Total integration tests: 23
 
 | Test Level | Scope and Requirement | Methodology (How will you do this?) |
 |------------|-----------------------|-------------------------------------|
-| Unit Testing | Minimum 10 tests per core feature. Sprint 2 unit tests: 35 | We use JUnit 5 with Mockito to isolate and test service logic. Integration tests using Spring Boot testing tools will be added later to verify interactions between controllers, services, and repositories |
-| Integration Testing | Minimum 10 tests total across core feature interactions. Sprint 2 baseline: partial (currently limited integration coverage). | Add Spring Boot integration tests using test profile + H2/Postgres test setup to validate controller-service-repository flow and database interactions. |
+| Unit Testing | Minimum 10 tests per core feature. Sprint 3 unit tests: 78 | We use JUnit 5 with Mockito to isolate and test service logic. Integration tests using Spring Boot testing tools will be added later to verify interactions between controllers, services, and repositories |
+| Integration Testing | Minimum 10 tests total across core feature interactions. Sprint 3 integration tests: 23 | Add Spring Boot integration tests using test profile + H2/Postgres test setup to validate controller-service-repository flow and database interactions. |
 | Acceptance Testing | End-user testing for every user story. | Team members will perform manual walkthroughs based on user story criteria. |
 | Regression Testing | Unit + Integration tests must run on every push to `main` (and PRs). | Use GitHub Actions CI to run backend build/tests on push and PR. Merges are blocked by required status checks when configured in repository branch protection. |
 
@@ -95,7 +95,7 @@ Tools and environment used/planned:
 
 ### 2.1.2 CI/CD Regression Workflow
 
-Current automated pipeline (Sprint 2):
+Current automated pipeline (Sprint 3):
 
 - Trigger conditions:
   - Every push on all branches
@@ -108,60 +108,44 @@ Current automated pipeline (Sprint 2):
   - Build backend Docker image for validation
   - Run SonarQube Cloud scan on PR events
 
-Planned tightening after Sprint 2:
-
-- Enforce branch protection so `main` requires all test jobs to pass
-- Add explicit integration and frontend test jobs as suites grow
-
 ### 2.2 Mutation Testing (Test Effectiveness)
 
 Requirement reminder per core feature:
 
 - Generate at least 10 non-equivalent mutants per feature
 - Achieve 100% mutation score per feature (all mutants killed)
+  - Two mutants survive as they are equivalent mutants
 
 Proposed plan:
 
 - Tool:
   - Backend Java: PIT (Pitest) Gradle plugin
-  - Frontend: Stryker
 
 - Game configuration
   - Primary classes/areas: `GameService.createNewGame`, request validation
   - Mutation type: Decision mutation, Value mutation
   - Operators:
-    - Replacement of conditional expressions (e.g., `>` with `>=`, `==` with `<=`)
-    - Negation of conditional expressions
-    - Replacement of constant with variable or vice versa
-    - Replacement of return statement
+    - `DEFAULTS` setting
 
 - Location guessing
   - Primary classes/areas: `GuessService`, `GameService.submitGuess`, `timeout`, `nextRound`
   - Mutation type: Value mutation, Decision mutation, Statement mutation
   - Operators:
-    - Replacement of arithmetic operations with others (e.g., `+` with `*`, `-` with `/`)
-    - Replacement of conditional expressions
-    - Negation of conditional expressions
-    - Statement deletion
+    - `DEFAULTS` setting
 
 - Player statistics
   - Primary classes/areas: score and round aggregation logic in the game flow
   - Mutation type: Value mutation, Decision mutation
   - Operators:
-    - Replacement of arithmetic operations with others
-    - Replacement of constant with variable or vice versa
-    - Replacement of conditional expressions
-    - Replacement of return statement
+    - `DEFAULTS` setting
 
 - Account management (planned)
-  - Primary classes/areas: future authentication/user service and controller endpoints
+  - Primary classes/areas: authentication/user service 
   - Mutation type: Decision mutation, Object-oriented mutation
   - Operators:
-    - Replacement of Boolean expressions with true or false
-    - Replacement of variables (must be type compatible)
-    - Replacement of return statement
-    - Changing the order of parameters in a call
+    - `DEFAULTS` setting
 
+The mutations that get injected follow the `DEFAULTS` setting found at https://pitest.org/quickstart/mutators/
 
 ### 2.3 Load Testing
 
