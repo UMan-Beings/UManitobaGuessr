@@ -1,4 +1,4 @@
-package com.umanbeing.umg;
+package com.umanbeing.umg.unit;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -11,7 +11,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.web.server.ResponseStatusException;
 
 import com.umanbeing.umg.models.User;
 import com.umanbeing.umg.repos.UserRepo;
