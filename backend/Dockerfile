@@ -37,16 +37,6 @@ WORKDIR /app
 # Copy the built JAR from the build stage
 COPY --from=build /app/build/libs/*.jar app.jar
 
-# Runtime defaults so published image can run without external env files.
-ENV SPRING_PROFILES_ACTIVE=prod \
-	SPRING_DATASOURCE_URL=jdbc:postgresql://db_umg:5432/users_database \
-	SPRING_DATASOURCE_USERNAME=appuser \
-	SPRING_DATASOURCE_PASSWORD=apppass \
-	DB_SSL_MODE=disable \
-	SPRING_SECURITY_USER_NAME=user \
-	SPRING_SECURITY_USER_PASSWORD=password \
-	JWT_SECRET=user_secret_key_do_not_use_in_production
-
 # Expose backend port
 EXPOSE 8081
 

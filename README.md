@@ -396,8 +396,19 @@ docker run -d --name db_umg --network umg_net \
 3. Run backend image:
 
 ```bash
-docker run -d --name backend-umg --network umg_net -p 8081:8081 \
-  bilinskyj/uman-backend:latest
+docker run -d --name backend-umg \
+  --network umg_net \
+  -p 8081:8081 \
+  -e SPRING_PROFILES_ACTIVE=prod \
+  -e SPRING_DATASOURCE_URL=jdbc:postgresql://db_umg:5432/users_database \
+  -e SPRING_DATASOURCE_USERNAME=appuser \
+  -e SPRING_DATASOURCE_PASSWORD=apppass \
+  -e DB_SSL_MODE=disable \
+  -e SPRING_SECURITY_USER_NAME=user \
+  -e SPRING_SECURITY_USER_PASSWORD=password \
+  -e JWT_SECRET=user_secret_key_do_not_use_in_production \
+  --entrypoint sh \
+  bilinskyj/uman-backend:latest -c "until pg_isready -h db_umg -p 5432 -U appuser; do echo 'Waiting for DB...'; sleep 1; done; java -jar /app/app.jar"
 ```
 
 4. Run frontend image:
