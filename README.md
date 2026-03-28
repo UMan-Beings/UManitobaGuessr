@@ -406,7 +406,8 @@ docker run -d --name backend-umg \
   -e DB_SSL_MODE=disable \
   -e SPRING_SECURITY_USER_NAME=user \
   -e SPRING_SECURITY_USER_PASSWORD=password \
-  -e JWT_SECRET=user_secret_key_do_not_use_in_production
+  -e JWT_SECRET=user_secret_key_do_not_use_in_production \
+  bilinskyj/uman-backend:latest
 ```
 
 4. Run frontend image:
@@ -424,7 +425,8 @@ Application URL: http://localhost:7000
 Cleanup:
 
 ```bash
-docker rm -f frontend_umg backend-umg db_umg
+docker rm -f frontend_umg 
+docker rm -f backend-umg db_umg
 docker network rm umg_net
 ```
 
