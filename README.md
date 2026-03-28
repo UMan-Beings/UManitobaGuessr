@@ -407,8 +407,7 @@ docker run -d --name backend-umg \
   -e SPRING_SECURITY_USER_NAME=user \
   -e SPRING_SECURITY_USER_PASSWORD=password \
   -e JWT_SECRET=user_secret_key_do_not_use_in_production \
-  --entrypoint sh \
-  bilinskyj/uman-backend:latest -c "until pg_isready -h db_umg -p 5432 -U appuser; do echo 'Waiting for DB...'; sleep 1; done; java -jar /app/app.jar"
+  bilinskyj/uman-backend:latest
 ```
 
 4. Run frontend image:
@@ -422,13 +421,12 @@ docker run -d --name frontend_umg --network umg_net -p 7000:8081 \
 
 Application URL: http://localhost:7000
 
-**Marker / Demo Note:**
-The Docker images include default credentials and secrets baked in for quick setup. This is not safe for production, but allow the marker or demo user to run the application immediately without additional configuration.
 
 Cleanup:
 
 ```bash
-docker rm -f frontend_umg backend-umg db_umg
+docker rm -f frontend_umg 
+docker rm -f backend-umg db_umg
 docker network rm umg_net
 ```
 
