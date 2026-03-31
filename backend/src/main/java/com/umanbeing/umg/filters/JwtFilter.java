@@ -18,8 +18,6 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import org.springframework.web.servlet.HandlerExceptionResolver;
 import org.springframework.beans.factory.annotation.Qualifier;
 
-import io.jsonwebtoken.ExpiredJwtException;
-
 
 public class JwtFilter extends OncePerRequestFilter {
 
@@ -66,10 +64,6 @@ public class JwtFilter extends OncePerRequestFilter {
                     .setAuthentication(authentication);
 
                 
-            } catch (ExpiredJwtException e) {
-                // Propagate the exception to be handled by GlobalExceptionHandler
-                resolver.resolveException(request, response, null, e);
-                return;
             } catch (Exception e) {
                 // Propagate other exceptions
                 resolver.resolveException(request, response, null, e);

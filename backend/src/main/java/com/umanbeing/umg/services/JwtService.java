@@ -36,10 +36,6 @@ public class JwtService {
                 .withSubject(subjectJWT)
                 .build();
 
-        if(isTokenExpired(token)) {
-            throw new ExpiredJwtException(null, null, "JWT token has expired");
-        }
-
         DecodedJWT jwt = verifier.verify(token);
         return jwt.getClaim("username").asString();
     }
