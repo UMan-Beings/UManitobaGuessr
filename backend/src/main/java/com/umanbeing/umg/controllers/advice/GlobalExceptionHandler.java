@@ -16,6 +16,7 @@ import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import com.auth0.jwt.exceptions.TokenExpiredException;
 import com.auth0.jwt.exceptions.SignatureVerificationException;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.web.servlet.HandlerExceptionResolver;
 import org.springframework.web.servlet.ModelAndView;
@@ -133,6 +134,16 @@ public class GlobalExceptionHandler implements HandlerExceptionResolver {
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED.value()).body(response);
     }
 
+
+    // We are using email for username during login
+    @ExceptionHandler(UsernameNotFoundException.class)
+    public ResponseEntity<HttpRes<Void>> handleUsernameNotFoundException(UsernameNotFoundException e, HttpServletRequest request) {
+        String requestUri = request.getRequestURI();
+        logger.error("Email not found for {}: {}", requestUri, e.getMessage());
+        HttpRes<Void> response = HttpRes.fail(HttpStatus.UNAUTHORIZED, "Email not found for JWT token");
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED.value()).body(response);
+    }
+
     @ExceptionHandler(Exception.class)
     public ResponseEntity<HttpRes<Void>> handleGenericException(Exception e, HttpServletRequest request) {
         String requestUri = request.getRequestURI();
@@ -147,6 +158,8 @@ public class GlobalExceptionHandler implements HandlerExceptionResolver {
             handleExpiredJwtException((TokenExpiredException) ex, request);
         } else if (ex instanceof SignatureVerificationException) {
             handleSignatureVerificationException((SignatureVerificationException) ex, request);
+        } else if (ex instanceof UsernameNotFoundException) {
+            handleUsernameNotFoundException((UsernameNotFoundException) ex, request);
         } else if (ex instanceof AccessDeniedException) {
             handleAccessDeniedException((AccessDeniedException) ex, request);
         } else if (ex instanceof HttpRequestMethodNotSupportedException) {

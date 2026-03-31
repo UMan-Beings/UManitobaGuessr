@@ -266,4 +266,21 @@ public class ExceptionHandlerTest extends PostgresIntegrationTestBase{
 
     }
 
+    @Test
+    void testToken_WithWrongUser() throws Exception {
+        // Build a token with a username that does not exist in the database
+        String fakeUserToken = JWT.create()
+                .withSubject("User Details")
+                .withClaim("username", "nonexistentuser")
+                .withIssuedAt(new Date(System.currentTimeMillis())) // Issued now
+                .withExpiresAt(new Date(System.currentTimeMillis() + 60 * 60 * 1000)) // Expires in 1 hour
+                .sign(Algorithm.HMAC256(secret));
+
+        // Access a protected endpoint with the token containing a non-existent user
+        mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/users/me/stats")
+                .header("Authorization", "Bearer " + fakeUserToken))
+                .andExpect(MockMvcResultMatchers.status().isUnauthorized())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.message").value("Email not found for JWT token"));
+    }
+
 }
