@@ -40,7 +40,7 @@ public class ExceptionHandlerTest extends PostgresIntegrationTestBase{
     }
 
 
-    // Spring Security will forbid access now that authentication happens before security.
+    // Spring Security will unathorize access to protected endpoints without a valid token, so we expect a 401 Unauthorized status instead of 403 Forbidden
     @Test
     void testNotFound() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/nonexistent"))
