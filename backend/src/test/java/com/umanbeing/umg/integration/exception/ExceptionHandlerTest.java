@@ -40,11 +40,11 @@ public class ExceptionHandlerTest extends PostgresIntegrationTestBase{
     }
 
 
-    // Spring Security will handle this entry point and return 401 without throwing an Exception
+    // Spring Security will forbid access now that authentication happens before security.
     @Test
     void testNotFound() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/nonexistent"))
-                .andExpect(MockMvcResultMatchers.status().isUnauthorized());
+                .andExpect(MockMvcResultMatchers.status().isForbidden());
     }
 
     @Test
@@ -195,8 +195,8 @@ public class ExceptionHandlerTest extends PostgresIntegrationTestBase{
     @Test
     void testUnauthorizedAccess() throws Exception {
         // Try to access a protected endpoint without authentication
-        mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/users/1/stats"))
-                .andExpect(MockMvcResultMatchers.status().isUnauthorized());
+        mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/users/me/stats"))
+                .andExpect(MockMvcResultMatchers.status().isForbidden());
     }
 
     @Test
