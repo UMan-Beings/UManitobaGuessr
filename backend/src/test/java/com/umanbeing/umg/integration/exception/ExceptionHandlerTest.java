@@ -44,7 +44,7 @@ public class ExceptionHandlerTest extends PostgresIntegrationTestBase{
     @Test
     void testNotFound() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/nonexistent"))
-                .andExpect(MockMvcResultMatchers.status().isForbidden());
+                .andExpect(MockMvcResultMatchers.status().isUnauthorized());
     }
 
     @Test
@@ -196,7 +196,7 @@ public class ExceptionHandlerTest extends PostgresIntegrationTestBase{
     void testUnauthorizedAccess() throws Exception {
         // Try to access a protected endpoint without authentication
         mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/users/me/stats"))
-                .andExpect(MockMvcResultMatchers.status().isForbidden());
+                .andExpect(MockMvcResultMatchers.status().isUnauthorized());
     }
 
     @Test
