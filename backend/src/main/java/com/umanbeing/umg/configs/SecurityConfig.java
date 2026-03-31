@@ -45,9 +45,9 @@ public class SecurityConfig{
                 // All other endpoints require authentication
                 .anyRequest().authenticated()
             )
-            .exceptionHandling(ex -> ex.authenticationEntryPoint((request, response, authException) -> {
-                response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized");
-            }))
+            .exceptionHandling(ex -> ex.authenticationEntryPoint((request, response, authException) -> 
+                response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized")
+            ))
             // Stateless session (required for JWT)
             .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 
