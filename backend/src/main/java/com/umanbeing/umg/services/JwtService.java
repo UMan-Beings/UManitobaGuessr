@@ -30,7 +30,7 @@ public class JwtService {
 
     }
 
-    public String validateTokenAndRetrieveSubject(String token) throws JWTVerificationException{
+    public String validateTokenAndRetrieveSubject(String token) throws JWTVerificationException {
             JWTVerifier verifier = JWT.require(Algorithm.HMAC256(secret))
                 .withSubject(subjectJWT)
                 .build();

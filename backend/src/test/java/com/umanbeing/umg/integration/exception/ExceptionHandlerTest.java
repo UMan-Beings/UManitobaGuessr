@@ -15,7 +15,10 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-
+import org.springframework.beans.factory.annotation.Value;
+import com.auth0.jwt.JWT;
+import com.auth0.jwt.algorithms.Algorithm;
+import java.util.Date;
 
 public class ExceptionHandlerTest extends PostgresIntegrationTestBase{
 
@@ -24,6 +27,9 @@ public class ExceptionHandlerTest extends PostgresIntegrationTestBase{
 
     @Autowired
     private UserRepo userRepo;
+
+    @Value("${JWT_SECRET}")
+    private String secret;
     
     @Test
     void testMethodNotAllowed() throws Exception {
@@ -34,7 +40,7 @@ public class ExceptionHandlerTest extends PostgresIntegrationTestBase{
     }
 
 
-    // Spring Security will handle this entry point and return 401 without throwing an Exception
+    // Spring Security will unathorize access to protected endpoints without a valid token, so we expect a 401 Unauthorized status instead of 403 Forbidden
     @Test
     void testNotFound() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/nonexistent"))
@@ -189,7 +195,92 @@ public class ExceptionHandlerTest extends PostgresIntegrationTestBase{
     @Test
     void testUnauthorizedAccess() throws Exception {
         // Try to access a protected endpoint without authentication
-        mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/users/1/stats"))
+        mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/users/me/stats"))
                 .andExpect(MockMvcResultMatchers.status().isUnauthorized());
     }
+
+    @Test
+    void testExpiredToken() throws Exception {
+        // Build a token that is already expired
+        String expiredToken = JWT.create()
+                .withSubject("User Details")
+                .withClaim("username", "testuser")
+                .withIssuedAt(new Date(System.currentTimeMillis() - 2 * 60 * 60 * 1000)) // Issued 2 hours ago
+                .withExpiresAt(new Date(System.currentTimeMillis() - 60 * 60 * 1000)) // Expired 1 hour ago
+                .sign(Algorithm.HMAC256(secret));
+        
+        String requestJson = "{\"username\":\"testuser\",\"password\":\"newpassword123\",\"email\":\"newuser1@example.com\"}";
+        mockMvc.perform(post("/api/v1/auth/signup")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(requestJson))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.message").value("User registered successfully"));
+
+        User user = userRepo.findByUsername("testuser").orElseThrow(() -> new AssertionError("User not found in database"));
+        assertEquals("newuser1@example.com", user.getEmail());
+
+        String realToken = mockMvc.perform(post("/api/v1/auth/login")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{\"password\":\"newpassword123\",\"email\":\"newuser1@example.com\"}"))
+                .andExpect(status().isOk())
+                .andReturn()
+                .getResponse()
+                .getContentAsString();
+        realToken = objectMapper.readTree(realToken).get("token").asText();
+
+        
+        mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/users/me/stats")
+                .header("Authorization", "Bearer " + realToken))
+                .andExpect(MockMvcResultMatchers.status().isOk());
+
+        // Access a protected endpoint with the expired token
+        mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/users/me/stats")
+                .header("Authorization", "Bearer " + expiredToken))
+                .andExpect(MockMvcResultMatchers.status().isUnauthorized())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.message").value("JWT token has expired"));
+    }
+
+    @Test
+    void testFakeToken() throws Exception {
+        // Build a token that is signed with the wrong secret to trigger signature verification failure
+        String fakeToken = JWT.create()
+                .withSubject("User Details")
+                .withClaim("username", "testuser")
+                .withIssuedAt(new Date(System.currentTimeMillis())) // Issued now
+                .withExpiresAt(new Date(System.currentTimeMillis() + 60 * 60 * 1000)) // Expires in 1 hour
+                .sign(Algorithm.HMAC256("wrong_secret"));
+
+        //
+        mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/users/me/stats")
+                .header("Authorization", "Bearer " + fakeToken))
+                .andExpect(MockMvcResultMatchers.status().isUnauthorized())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.message").value("JWT token signature verification failed, token may be invalid"));
+    }
+
+    // Spring security will handle this as unauthorized since the token is missing, so we expect a 401 Unauthorized status instead of 403 Forbidden
+    @Test
+    void testNoToken() throws Exception {
+        // Access a protected endpoint without providing any token
+        mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/users/me/stats"))
+                .andExpect(MockMvcResultMatchers.status().isUnauthorized());
+
+    }
+
+    @Test
+    void testToken_WithWrongUser() throws Exception {
+        // Build a token with a username that does not exist in the database
+        String fakeUserToken = JWT.create()
+                .withSubject("User Details")
+                .withClaim("username", "nonexistentuser")
+                .withIssuedAt(new Date(System.currentTimeMillis())) // Issued now
+                .withExpiresAt(new Date(System.currentTimeMillis() + 60 * 60 * 1000)) // Expires in 1 hour
+                .sign(Algorithm.HMAC256(secret));
+
+        // Access a protected endpoint with the token containing a non-existent user
+        mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/users/me/stats")
+                .header("Authorization", "Bearer " + fakeUserToken))
+                .andExpect(MockMvcResultMatchers.status().isUnauthorized())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.message").value("Email not found for JWT token"));
+    }
+
 }

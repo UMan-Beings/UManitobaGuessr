@@ -2,6 +2,7 @@ package com.umanbeing.umg.filters;
 
 import java.io.IOException;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -14,12 +15,18 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.web.filter.OncePerRequestFilter;
+import org.springframework.web.servlet.HandlerExceptionResolver;
+import org.springframework.beans.factory.annotation.Qualifier;
 
 
 public class JwtFilter extends OncePerRequestFilter {
 
     private final UserDetailsService userDetailsService;
     private final JwtService jwtService;
+
+    @Autowired
+    @Qualifier("handlerExceptionResolver")
+    private HandlerExceptionResolver resolver;
 
     public JwtFilter(UserDetailsService userDetailsService, JwtService jwtService) {
         this.userDetailsService = userDetailsService;
@@ -35,24 +42,34 @@ public class JwtFilter extends OncePerRequestFilter {
         token = extractTokenFromHeader(request);
 
         // Validate and set the authentication context
-        if (token != null && jwtService.validateToken(token)) {
-            username = jwtService.validateTokenAndRetrieveSubject(token);
+        if (token != null) {
 
-            // Load user details from the database
-            UserDetails userDetails = userDetailsService
-                .loadUserByUsername(username);
+            try {
+                username = jwtService.validateTokenAndRetrieveSubject(token);
 
-            // Create an authentication token with the user's authorities
-            UsernamePasswordAuthenticationToken authentication =
-                new UsernamePasswordAuthenticationToken(
-                    userDetails,
-                    null,
-                    userDetails.getAuthorities()
-                );
+                // Load user details from the database
+                UserDetails userDetails = userDetailsService
+                    .loadUserByUsername(username);
 
-            // Set authentication in the security context
-            SecurityContextHolder.getContext()
-                .setAuthentication(authentication);
+                // Create an authentication token with the user's authorities
+                UsernamePasswordAuthenticationToken authentication =
+                    new UsernamePasswordAuthenticationToken(
+                        userDetails,
+                        null,
+                        userDetails.getAuthorities()
+                    );
+
+                // Set authentication in the security context
+                SecurityContextHolder.getContext()
+                    .setAuthentication(authentication);
+
+                
+            } catch (Exception e) {
+                // Propagate other exceptions
+                resolver.resolveException(request, response, null, e);
+                return;
+            }
+
         }
 
         filterChain.doFilter(request, response);

@@ -73,7 +73,7 @@ public class GameController {
     //Implement the game update logic here
     //Return the current game state (GUESS phase, REVEAL phase, or FINISHED)
     @RequestMapping(value = "/games/{gameId}", method = RequestMethod.GET)
-    public ResponseEntity<Map<String, Object>> getGameById(@PathVariable Long gameId, Authentication authentication) {
+    public ResponseEntity<Map<String, Object>> getGameById(@PathVariable("gameId") Long gameId, Authentication authentication) {
         Game game = gameService.getGameById(gameId);
         checkGameOwnership(game, authentication);
 
@@ -109,7 +109,7 @@ public class GameController {
     //Implement the guess submission logic here
     //Return the result of the guess (actual location, score for the round, and updated game state)
     @RequestMapping(value = "/games/{gameId}/guess", method = RequestMethod.POST)
-    public ResponseEntity<Map<String, Object>> makeGuess(@PathVariable Long gameId, @RequestBody MakeGuessRequest request, Authentication authentication) {
+    public ResponseEntity<Map<String, Object>> makeGuess(@PathVariable("gameId") Long gameId, @RequestBody MakeGuessRequest request, Authentication authentication) {
         checkGameOwnership(gameService.getGameById(gameId), authentication);
 
         Game game = gameService.submitGuess(gameId, request.getCorX(), request.getCorY(), request.getGuessTimeSeconds());
@@ -134,7 +134,7 @@ public class GameController {
     }
 
     @RequestMapping(value = "/games/{gameId}/timeout", method=RequestMethod.POST)
-    public ResponseEntity<Map<String, Object>> timeout(@PathVariable Long gameId, Authentication authentication) {
+    public ResponseEntity<Map<String, Object>> timeout(@PathVariable("gameId") Long gameId, Authentication authentication) {
         checkGameOwnership(gameService.getGameById(gameId), authentication);
 
         Game game = gameService.timeout(gameId);
@@ -159,7 +159,7 @@ public class GameController {
     //Implement the logic to move to the next round here
     //Return the new game state (GUESS phase for the next round, or FINISHED if it was the last round)
     @RequestMapping(value = "/games/{gameId}/next", method=RequestMethod.POST)
-    public ResponseEntity<Map<String, Object>> requestNextRound(@PathVariable Long gameId, Authentication authentication) {
+    public ResponseEntity<Map<String, Object>> requestNextRound(@PathVariable("gameId") Long gameId, Authentication authentication) {
         checkGameOwnership(gameService.getGameById(gameId), authentication);
 
         Game game = gameService.nextRound(gameId);

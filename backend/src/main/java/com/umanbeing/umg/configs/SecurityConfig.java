@@ -14,11 +14,8 @@ import org.springframework.security.authentication.dao.DaoAuthenticationProvider
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-
-import com.umanbeing.umg.services.JwtService;
-
 import jakarta.servlet.http.HttpServletResponse;
-
+import com.umanbeing.umg.services.JwtService;
 import com.umanbeing.umg.filters.JwtFilter;
 
 @Configuration
@@ -36,7 +33,6 @@ public class SecurityConfig{
         return new JwtFilter(userDetailsService, jwtService);
     }
 
-
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
@@ -49,17 +45,14 @@ public class SecurityConfig{
                 // All other endpoints require authentication
                 .anyRequest().authenticated()
             )
-
+            .exceptionHandling(ex -> ex.authenticationEntryPoint((request, response, authException) -> 
+                response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized")
+            ))
             // Stateless session (required for JWT)
             .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-            
+
             // Add JWT filter before Spring Security's default filter
-            .addFilterBefore(jwtFilter(userDetailsService, jwtService), UsernamePasswordAuthenticationFilter.class)
-            .exceptionHandling(exh -> exh.authenticationEntryPoint(
-            (request, response, ex) -> 
-                response.sendError(HttpServletResponse.SC_UNAUTHORIZED, ex.getMessage())
-            
-        ));
+            .addFilterBefore(jwtFilter(userDetailsService, jwtService), UsernamePasswordAuthenticationFilter.class);
             return http.build();
     }
 
