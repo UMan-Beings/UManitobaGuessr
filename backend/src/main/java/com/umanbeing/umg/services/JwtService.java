@@ -31,7 +31,7 @@ public class JwtService {
 
     }
 
-    public String validateTokenAndRetrieveSubject(String token) throws JWTVerificationException, ExpiredJwtException{
+    public String validateTokenAndRetrieveSubject(String token) throws JWTVerificationException {
             JWTVerifier verifier = JWT.require(Algorithm.HMAC256(secret))
                 .withSubject(subjectJWT)
                 .build();
