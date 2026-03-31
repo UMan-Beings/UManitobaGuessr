@@ -73,7 +73,7 @@ public class GameController {
     //Implement the game update logic here
     //Return the current game state (GUESS phase, REVEAL phase, or FINISHED)
     @RequestMapping(value = "/games/{gameId}", method = RequestMethod.GET)
-    public ResponseEntity<Map<String, Object>> getGameById(@PathVariable Long gameId, Authentication authentication) {
+    public ResponseEntity<Map<String, Object>> getGameById(@PathVariable("gameId") Long gameId, Authentication authentication) {
         Game game = gameService.getGameById(gameId);
         checkGameOwnership(game, authentication);
 
