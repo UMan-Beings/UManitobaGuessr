@@ -14,11 +14,11 @@ import org.springframework.web.servlet.resource.NoResourceFoundException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
+import com.auth0.jwt.exceptions.TokenExpiredException;
+import com.auth0.jwt.exceptions.SignatureVerificationException;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.web.servlet.HandlerExceptionResolver;
 import org.springframework.web.servlet.ModelAndView;
-
-import com.auth0.jwt.exceptions.TokenExpiredException;
 import com.umanbeing.umg.domain.HttpRes;
 import org.springframework.http.ResponseEntity;
 
@@ -125,6 +125,14 @@ public class GlobalExceptionHandler implements HandlerExceptionResolver {
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED.value()).body(response);
     }
 
+    @ExceptionHandler(SignatureVerificationException.class)
+    public ResponseEntity<HttpRes<Void>> handleSignatureVerificationException(SignatureVerificationException e, HttpServletRequest request) {
+        String requestUri = request.getRequestURI();
+        logger.error("JWT signature verification failed for {}: {}", requestUri, e.getMessage());
+        HttpRes<Void> response = HttpRes.fail(HttpStatus.UNAUTHORIZED, "JWT token signature verification failed, token may be invalid");
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED.value()).body(response);
+    }
+
     @ExceptionHandler(Exception.class)
     public ResponseEntity<HttpRes<Void>> handleGenericException(Exception e, HttpServletRequest request) {
         String requestUri = request.getRequestURI();
@@ -137,6 +145,8 @@ public class GlobalExceptionHandler implements HandlerExceptionResolver {
     public ModelAndView resolveException(HttpServletRequest request, jakarta.servlet.http.HttpServletResponse response, Object handler, Exception ex) {
         if (ex instanceof TokenExpiredException) {
             handleExpiredJwtException((TokenExpiredException) ex, request);
+        } else if (ex instanceof SignatureVerificationException) {
+            handleSignatureVerificationException((SignatureVerificationException) ex, request);
         } else if (ex instanceof AccessDeniedException) {
             handleAccessDeniedException((AccessDeniedException) ex, request);
         } else if (ex instanceof HttpRequestMethodNotSupportedException) {

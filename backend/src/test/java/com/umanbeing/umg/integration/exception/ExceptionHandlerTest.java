@@ -239,4 +239,31 @@ public class ExceptionHandlerTest extends PostgresIntegrationTestBase{
                 .andExpect(MockMvcResultMatchers.status().isUnauthorized())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.message").value("JWT token has expired"));
     }
+
+    @Test
+    void testFakeToken() throws Exception {
+        // Build a token that is signed with the wrong secret to trigger signature verification failure
+        String fakeToken = JWT.create()
+                .withSubject("User Details")
+                .withClaim("username", "testuser")
+                .withIssuedAt(new Date(System.currentTimeMillis())) // Issued now
+                .withExpiresAt(new Date(System.currentTimeMillis() + 60 * 60 * 1000)) // Expires in 1 hour
+                .sign(Algorithm.HMAC256("wrong_secret"));
+
+        //
+        mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/users/me/stats")
+                .header("Authorization", "Bearer " + fakeToken))
+                .andExpect(MockMvcResultMatchers.status().isUnauthorized())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.message").value("JWT token signature verification failed, token may be invalid"));
+    }
+
+    // Spring security will handle this as unauthorized since the token is missing, so we expect a 401 Unauthorized status instead of 403 Forbidden
+    @Test
+    void testNoToken() throws Exception {
+        // Access a protected endpoint without providing any token
+        mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/users/me/stats"))
+                .andExpect(MockMvcResultMatchers.status().isUnauthorized());
+
+    }
+
 }
