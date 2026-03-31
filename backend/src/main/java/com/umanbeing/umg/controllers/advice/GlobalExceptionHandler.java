@@ -15,12 +15,15 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import jakarta.servlet.http.HttpServletRequest;
+import org.springframework.web.servlet.HandlerExceptionResolver;
+import org.springframework.web.servlet.ModelAndView;
 
+import com.auth0.jwt.exceptions.TokenExpiredException;
 import com.umanbeing.umg.domain.HttpRes;
 import org.springframework.http.ResponseEntity;
 
 @RestControllerAdvice
-public class GlobalExceptionHandler {
+public class GlobalExceptionHandler implements HandlerExceptionResolver {
 
     private static final Logger logger = LoggerFactory.getLogger(GlobalExceptionHandler.class);
 
@@ -114,11 +117,52 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST.value()).body(response);
     }
 
+    @ExceptionHandler(TokenExpiredException.class)
+    public ResponseEntity<HttpRes<Void>> handleExpiredJwtException(TokenExpiredException e, HttpServletRequest request) {
+        String requestUri = request.getRequestURI();
+        logger.error("JWT token expired for {}: {}", requestUri, e.getMessage());
+        HttpRes<Void> response = HttpRes.fail(HttpStatus.UNAUTHORIZED, "JWT token has expired");
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED.value()).body(response);
+    }
+
     @ExceptionHandler(Exception.class)
     public ResponseEntity<HttpRes<Void>> handleGenericException(Exception e, HttpServletRequest request) {
         String requestUri = request.getRequestURI();
-        logger.error("An error occurred while processing {}: {}", requestUri, e.getMessage());
+        logger.error("An error occurred while processing {}: {}, {}", requestUri, e.getClass().getSimpleName(), e.getMessage());
         HttpRes<Void> response = HttpRes.fail(HttpStatus.INTERNAL_SERVER_ERROR, "An unexpected error occurred");
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR.value()).body(response);
+    }
+
+    @Override
+    public ModelAndView resolveException(HttpServletRequest request, jakarta.servlet.http.HttpServletResponse response, Object handler, Exception ex) {
+        if (ex instanceof TokenExpiredException) {
+            handleExpiredJwtException((TokenExpiredException) ex, request);
+        } else if (ex instanceof AccessDeniedException) {
+            handleAccessDeniedException((AccessDeniedException) ex, request);
+        } else if (ex instanceof HttpRequestMethodNotSupportedException) {
+            handleHttpRequestMethodNotSupportedException((HttpRequestMethodNotSupportedException) ex, request);
+        } else if (ex instanceof NoHandlerFoundException) {
+            handleNoHandlerFoundException((NoHandlerFoundException) ex, request);
+        } else if (ex instanceof NoResourceFoundException) {
+            handleNoResourceFoundException((NoResourceFoundException) ex, request);
+        } else if (ex instanceof MethodArgumentNotValidException) {
+            handleMethodArgumentNotValidException((MethodArgumentNotValidException) ex, request);
+        } else if (ex instanceof HttpMessageNotReadableException) {
+            handleHttpMessageNotReadableException((HttpMessageNotReadableException) ex, request);
+        } else if (ex instanceof ResponseStatusException) {
+            handleResponseStatusException((ResponseStatusException) ex, request);
+        } else if (ex instanceof BadCredentialsException) {
+            handleBadCredentialsException((BadCredentialsException) ex, request);
+        } else if (ex instanceof MethodArgumentTypeMismatchException) {
+            handleTypeMismatchException((MethodArgumentTypeMismatchException) ex, request);
+        } else if (ex instanceof IllegalArgumentException) {
+            handleIllegalArgumentException((IllegalArgumentException) ex, request);
+        } else {
+            handleGenericException(ex, request);
+        }
+
+        ModelAndView mav = new ModelAndView("errorView");
+        mav.addObject("message", ex.getMessage());
+        return mav;
     }
 }

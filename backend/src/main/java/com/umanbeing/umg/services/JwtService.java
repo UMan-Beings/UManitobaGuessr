@@ -5,6 +5,7 @@ import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTCreationException;
 import com.auth0.jwt.exceptions.JWTVerificationException;
+import io.jsonwebtoken.ExpiredJwtException;
 import com.auth0.jwt.interfaces.DecodedJWT;
 
 import org.springframework.beans.factory.annotation.Value;
@@ -30,10 +31,14 @@ public class JwtService {
 
     }
 
-    public String validateTokenAndRetrieveSubject(String token) throws JWTVerificationException{
+    public String validateTokenAndRetrieveSubject(String token) throws JWTVerificationException, ExpiredJwtException{
             JWTVerifier verifier = JWT.require(Algorithm.HMAC256(secret))
                 .withSubject(subjectJWT)
                 .build();
+
+        if(isTokenExpired(token)) {
+            throw new ExpiredJwtException(null, null, "JWT token has expired");
+        }
 
         DecodedJWT jwt = verifier.verify(token);
         return jwt.getClaim("username").asString();

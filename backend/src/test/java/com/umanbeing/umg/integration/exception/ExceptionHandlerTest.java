@@ -15,7 +15,10 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-
+import org.springframework.beans.factory.annotation.Value;
+import com.auth0.jwt.JWT;
+import com.auth0.jwt.algorithms.Algorithm;
+import java.util.Date;
 
 public class ExceptionHandlerTest extends PostgresIntegrationTestBase{
 
@@ -24,6 +27,9 @@ public class ExceptionHandlerTest extends PostgresIntegrationTestBase{
 
     @Autowired
     private UserRepo userRepo;
+
+    @Value("${JWT_SECRET}")
+    private String secret;
     
     @Test
     void testMethodNotAllowed() throws Exception {
@@ -191,5 +197,46 @@ public class ExceptionHandlerTest extends PostgresIntegrationTestBase{
         // Try to access a protected endpoint without authentication
         mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/users/1/stats"))
                 .andExpect(MockMvcResultMatchers.status().isUnauthorized());
+    }
+
+    @Test
+    void testExpiredToken() throws Exception {
+        // Build a token that is already expired
+        String expiredToken = JWT.create()
+                .withSubject("User Details")
+                .withClaim("username", "testuser")
+                .withIssuedAt(new Date(System.currentTimeMillis() - 2 * 60 * 60 * 1000)) // Issued 2 hours ago
+                .withExpiresAt(new Date(System.currentTimeMillis() - 60 * 60 * 1000)) // Expired 1 hour ago
+                .sign(Algorithm.HMAC256(secret));
+        
+        String requestJson = "{\"username\":\"testuser\",\"password\":\"newpassword123\",\"email\":\"newuser1@example.com\"}";
+        mockMvc.perform(post("/api/v1/auth/signup")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(requestJson))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.message").value("User registered successfully"));
+
+        User user = userRepo.findByUsername("testuser").orElseThrow(() -> new AssertionError("User not found in database"));
+        assertEquals("newuser1@example.com", user.getEmail());
+
+        String realToken = mockMvc.perform(post("/api/v1/auth/login")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{\"password\":\"newpassword123\",\"email\":\"newuser1@example.com\"}"))
+                .andExpect(status().isOk())
+                .andReturn()
+                .getResponse()
+                .getContentAsString();
+        realToken = objectMapper.readTree(realToken).get("token").asText();
+
+        
+        mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/users/me/stats")
+                .header("Authorization", "Bearer " + realToken))
+                .andExpect(MockMvcResultMatchers.status().isOk());
+
+        // Access a protected endpoint with the expired token
+        mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/users/me/stats")
+                .header("Authorization", "Bearer " + expiredToken))
+                .andExpect(MockMvcResultMatchers.status().isUnauthorized())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.message").value("JWT token has expired"));
     }
 }
