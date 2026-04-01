@@ -1,13 +1,5 @@
 package com.umanbeing.umg.services;
 
-import java.math.BigDecimal;
-import java.util.List;
-
-import org.springframework.http.HttpStatus;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.server.ResponseStatusException;
-
 import com.umanbeing.umg.controllers.dto.UserStatsResponse;
 import com.umanbeing.umg.domain.GameState;
 import com.umanbeing.umg.models.Game;
@@ -17,6 +9,13 @@ import com.umanbeing.umg.models.User;
 import com.umanbeing.umg.repos.GameRepo;
 import com.umanbeing.umg.repos.projections.UserGameStatsProjection;
 import com.umanbeing.umg.repos.projections.UserRoundStatsProjection;
+import org.springframework.http.HttpStatus;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
+
+import java.math.BigDecimal;
+import java.util.List;
 
 @Service
 public class GameService {
@@ -24,7 +23,7 @@ public class GameService {
     public static final int MAX_ROUNDS = 20;
     public static final int MAX_TIME_LIMIT_SECONDS = 300;
     public static final int MAX_GUESS_TIME_SECONDS = 3600;
-    
+
     private final GameRepo gameRepo;
     private final RoundService roundService;
     private final GuessService guessService;
@@ -42,112 +41,84 @@ public class GameService {
         if (totalRounds <= 0) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Total rounds must be greater than 0");
         }
-
         if (totalRounds > MAX_ROUNDS) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Total rounds must not exceed " + MAX_ROUNDS);
         }
-
         if (maxTimerSeconds < 0) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Max timer seconds must be non-negative");
         }
-
         if (maxTimerSeconds > MAX_TIME_LIMIT_SECONDS) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Max timer seconds must not exceed " + MAX_TIME_LIMIT_SECONDS);
         }
-        
         Game game = new Game();
-
         // Get the user from the UserService and set it to the game
         User user = userId == null ? null : userService.getUserById(userId);
-
         game.setTotalRounds(totalRounds);
         game.setMaxTimerSeconds(maxTimerSeconds);
-
         game.setCompleted(false);
-
         game.setCurrentRoundNumber(1);
         game.setGameState(GameState.GUESS);
         game.setScore(0);
         game.setUser(user);
         // Save the game first to ensure it has an ID
         Game savedGame = gameRepo.save(game);
-
         // Use RoundService to create rounds for the saved game
         List<Round> rounds = roundService.createRoundForGame(savedGame);
-
         savedGame.getRounds().addAll(rounds);
-
         return gameRepo.save(savedGame);
     }
 
     @Transactional
     public Game submitGuess(Long gameId, BigDecimal guessedX, BigDecimal guessedY, Long guessTimeSeconds) {
         Game game = getGameById(gameId);
-
         if (GameState.GUESS != game.getGameState()) {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "Game is not in a state to accept guesses");
         }
-
         if (guessedX == null || guessedY == null) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Guessed coordinates must not be null");
         }
-
         if (guessTimeSeconds == null) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Guess time must not be null");
         }
-
         if (game.getMaxTimerSeconds() > 0) {
             guessTimeSeconds = Math.min(guessTimeSeconds, game.getMaxTimerSeconds());
         } else {
             guessTimeSeconds = Math.min(guessTimeSeconds, MAX_GUESS_TIME_SECONDS);
         }
-        
         Round currentRound = game.getCurrentRound();
-
         guessService.createGuess(currentRound, guessedX, guessedY, guessTimeSeconds);
         game.setGameState(GameState.REVEAL);
-
         return gameRepo.save(game);
     }
 
     @Transactional
     public Game timeout(Long gameId) {
         Game game = getGameById(gameId);
-
         if (game.getMaxTimerSeconds() <= 0) {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "Game does not have a timer set");
         }
-
         if (GameState.GUESS != game.getGameState()) {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "Game is not in a state to accept guesses");
         }
-
         Round currentRound = game.getCurrentRound();
         long guessTime = game.getMaxTimerSeconds();
-
         guessService.createGuess(currentRound, null, null, guessTime);
-
         game.setGameState(GameState.REVEAL);
-
         return gameRepo.save(game);
     }
 
     @Transactional
     public Game nextRound(Long gameId) {
         Game game = getGameById(gameId);
-
         if (GameState.REVEAL != game.getGameState()) {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "Game is not in a state to proceed to the next round");
         }
-
         int currentRoundNumber = game.getCurrentRoundNumber();
         Round currentRound = game.getCurrentRound();
         Guess guess = currentRound.getGuess();
-
         if (guess != null) {
             game.addScore(guess.getScore());
         }
-
         if (currentRoundNumber == game.getTotalRounds()) {
             game.setGameState(GameState.FINISHED);
             game.setCompleted(true);
@@ -155,7 +126,6 @@ public class GameService {
             game.setGameState(GameState.GUESS);
             game.incrementCurrentRoundNumber();
         }
-
         return gameRepo.save(game);
     }
 
@@ -163,13 +133,10 @@ public class GameService {
         if (gameId == null) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Game ID must not be null");
         }
-
         Game game = gameRepo.findById(gameId).orElse(null);
-
         if (game == null) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Game not found");
         }
-
         return game;
     }
 
@@ -177,21 +144,19 @@ public class GameService {
         if (userId == null) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "User ID must not be null");
         }
-
         UserGameStatsProjection gameStats = gameRepo.getUserGameStats(userId);
         if (gameStats == null) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User game stats not found");
         }
-
         UserRoundStatsProjection roundStats = gameRepo.getUserRoundStats(userId);
-
         return new UserStatsResponse(
-            gameStats.getTotalScore(),
-            gameStats.getTotalRounds(),
-            gameStats.getTotalGames(),
-            gameStats.getAverageScore(),
-            roundStats.getTotalGuessTimeSeconds(),
-            roundStats.getAverageGuessTimeSeconds()
+                gameStats.getTotalScore(),
+                gameStats.getTotalRounds(),
+                gameStats.getTotalGames(),
+                gameStats.getAverageScore(),
+                roundStats.getTotalGuessTimeSeconds(),
+                roundStats.getAverageGuessTimeSeconds()
         );
     }
+
 }

@@ -1,15 +1,17 @@
 package com.umanbeing.umg.models;
 
 import jakarta.persistence.*;
-import java.math.BigDecimal;
 import lombok.Getter;
 import lombok.Setter;
+
+import java.math.BigDecimal;
 
 @Entity
 @Table(name = "\"GUESS\"")
 @Getter
 @Setter
 public class Guess {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long guessId;
@@ -32,4 +34,5 @@ public class Guess {
 
     @Column(name = "\"score\"", nullable = false)
     private Integer score;
+
 }

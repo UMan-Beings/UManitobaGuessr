@@ -1,10 +1,11 @@
 package com.umanbeing.umg.models;
 
 import jakarta.persistence.*;
-import java.math.BigDecimal;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+
+import java.math.BigDecimal;
 
 @Entity
 @Table(name = "\"LOCATION\"")
@@ -12,6 +13,7 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 public class Location {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "\"locationId\"")
@@ -35,4 +37,5 @@ public class Location {
         this.corX = corX;
         this.corY = corY;
     }
+
 }

@@ -1,23 +1,20 @@
 package com.umanbeing.umg.filters;
 
-import java.io.IOException;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
-
 import com.umanbeing.umg.services.JwtService;
-
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.web.filter.OncePerRequestFilter;
 import org.springframework.web.servlet.HandlerExceptionResolver;
-import org.springframework.beans.factory.annotation.Qualifier;
 
+import java.io.IOException;
 
 public class JwtFilter extends OncePerRequestFilter {
 
@@ -35,35 +32,27 @@ public class JwtFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-
         String token = null;
         String username = null;
-
         token = extractTokenFromHeader(request);
-
         // Validate and set the authentication context
         if (token != null) {
-
             try {
                 username = jwtService.validateTokenAndRetrieveSubject(token);
-
                 // Load user details from the database
                 UserDetails userDetails = userDetailsService
-                    .loadUserByUsername(username);
-
+                        .loadUserByUsername(username);
                 // Create an authentication token with the user's authorities
                 UsernamePasswordAuthenticationToken authentication =
-                    new UsernamePasswordAuthenticationToken(
-                        userDetails,
-                        null,
-                        userDetails.getAuthorities()
-                    );
-
+                        new UsernamePasswordAuthenticationToken(
+                                userDetails,
+                                null,
+                                userDetails.getAuthorities()
+                        );
                 // Set authentication in the security context
                 SecurityContextHolder.getContext()
-                    .setAuthentication(authentication);
+                        .setAuthentication(authentication);
 
-                
             } catch (Exception e) {
                 // Propagate other exceptions
                 resolver.resolveException(request, response, null, e);
@@ -71,7 +60,6 @@ public class JwtFilter extends OncePerRequestFilter {
             }
 
         }
-
         filterChain.doFilter(request, response);
     }
 
@@ -82,4 +70,5 @@ public class JwtFilter extends OncePerRequestFilter {
         }
         return null;
     }
+
 }

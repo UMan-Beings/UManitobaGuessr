@@ -1,9 +1,9 @@
 package com.umanbeing.umg.domain;
 
-import org.springframework.http.HttpStatus;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.http.HttpStatus;
 
 @Data
 @AllArgsConstructor
@@ -25,6 +25,7 @@ public class HttpRes<T> {
         res.setMessage(message);
         return res;
     }
+
     public static <T> HttpRes<T> fail(HttpStatus httpStatus) {
         return response(httpStatus.value(), httpStatus.getReasonPhrase(), "");
     }

@@ -1,16 +1,15 @@
 package com.umanbeing.umg.services;
 
-import java.math.BigDecimal;
-
+import com.umanbeing.umg.models.Guess;
+import com.umanbeing.umg.models.Location;
+import com.umanbeing.umg.models.Round;
+import com.umanbeing.umg.repos.GuessRepo;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
-import com.umanbeing.umg.models.Guess;
-import com.umanbeing.umg.models.Location;
-import com.umanbeing.umg.repos.GuessRepo;
-import com.umanbeing.umg.models.Round;
+import java.math.BigDecimal;
 
 @Service
 public class GuessService {
@@ -29,18 +28,15 @@ public class GuessService {
         Guess guess = new Guess();
         guess.setRound(round);
         guess.setGuessTimeSeconds(guessTimeSeconds);
-
         if (guessedX == null || guessedY == null) {
             markGuessAsInvalid(guess);
         } else {
             setGuessAndScore(guess, round, guessedX, guessedY);
         }
-
         return saveGuess(round, guess);
     }
-
 // =========================== Helper Methods ===========================
-    
+
     private void markGuessAsInvalid(Guess guess) {
         guess.setDistanceMeters(null);
         guess.setScore(0);
@@ -49,7 +45,6 @@ public class GuessService {
     private void setGuessAndScore(Guess guess, Round round, BigDecimal guessedX, BigDecimal guessedY) {
         Location location = round.getLocation();
         Integer distance = calculateDistance(guessedX, guessedY, location.getCorX(), location.getCorY());
-
         guess.setGuessedX(guessedX);
         guess.setGuessedY(guessedY);
         guess.setDistanceMeters(distance);
@@ -73,19 +68,16 @@ public class GuessService {
 
     private int calculateScore(int distance) {
         int calculatedScore = 0;
-
         if (distance <= FULL_SCORE_DISTANCE) {
             calculatedScore = MAX_SCORE;
         } else {
             double scaledDistance = distance - FULL_SCORE_DISTANCE;
             double scoringRange = MAX_DISTANCE - FULL_SCORE_DISTANCE;
-
             calculatedScore = Math.max(
-                0, 
-                (int) Math.round(MAX_SCORE * (1 - scaledDistance / scoringRange))
+                    0,
+                    (int) Math.round(MAX_SCORE * (1 - scaledDistance / scoringRange))
             );
         }
-
         return calculatedScore;
     }
 

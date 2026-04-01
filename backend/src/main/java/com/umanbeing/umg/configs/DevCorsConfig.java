@@ -12,8 +12,9 @@ public class DevCorsConfig implements WebMvcConfigurer {
     @Override
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/api/**")
-            .allowedOrigins("http://localhost:3000")
-            .allowedMethods("*")
-            .allowedHeaders("*");
+                .allowedOrigins("http://localhost:3000")
+                .allowedMethods("*")
+                .allowedHeaders("*");
     }
+
 }

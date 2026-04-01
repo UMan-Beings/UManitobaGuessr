@@ -1,27 +1,27 @@
 package com.umanbeing.umg.controllers.advice;
 
+import com.auth0.jwt.exceptions.SignatureVerificationException;
+import com.auth0.jwt.exceptions.TokenExpiredException;
+import com.umanbeing.umg.domain.HttpRes;
+import jakarta.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.web.bind.annotation.RestControllerAdvice;
-import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.access.AccessDeniedException;
-import org.springframework.web.HttpRequestMethodNotSupportedException;
-import org.springframework.web.servlet.NoHandlerFoundException;
-import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.web.server.ResponseStatusException;
-import org.springframework.web.servlet.resource.NoResourceFoundException;
-import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
-import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
-import com.auth0.jwt.exceptions.TokenExpiredException;
-import com.auth0.jwt.exceptions.SignatureVerificationException;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import jakarta.servlet.http.HttpServletRequest;
+import org.springframework.web.HttpRequestMethodNotSupportedException;
+import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
+import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.HandlerExceptionResolver;
 import org.springframework.web.servlet.ModelAndView;
-import com.umanbeing.umg.domain.HttpRes;
-import org.springframework.http.ResponseEntity;
+import org.springframework.web.servlet.NoHandlerFoundException;
+import org.springframework.web.servlet.resource.NoResourceFoundException;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler implements HandlerExceptionResolver {
@@ -59,7 +59,6 @@ public class GlobalExceptionHandler implements HandlerExceptionResolver {
         HttpRes<Void> response = HttpRes.fail(HttpStatus.NOT_FOUND, e.getMessage());
         return ResponseEntity.status(HttpStatus.NOT_FOUND.value()).body(response);
     }
-
 
     // MethodArgumentNotValidException is thrown when @Valid validation on request body fails
     @ExceptionHandler(MethodArgumentNotValidException.class)
@@ -134,7 +133,6 @@ public class GlobalExceptionHandler implements HandlerExceptionResolver {
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED.value()).body(response);
     }
 
-
     // We are using email for username during login
     @ExceptionHandler(UsernameNotFoundException.class)
     public ResponseEntity<HttpRes<Void>> handleUsernameNotFoundException(UsernameNotFoundException e, HttpServletRequest request) {
@@ -183,9 +181,9 @@ public class GlobalExceptionHandler implements HandlerExceptionResolver {
         } else {
             handleGenericException(ex, request);
         }
-
         ModelAndView mav = new ModelAndView("errorView");
         mav.addObject("message", ex.getMessage());
         return mav;
     }
+
 }

@@ -9,6 +9,7 @@ import lombok.Setter;
 @Getter
 @Setter
 public class Round {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "\"roundId\"")

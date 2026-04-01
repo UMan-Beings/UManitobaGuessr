@@ -1,18 +1,19 @@
 package com.umanbeing.umg.models;
 
+import com.umanbeing.umg.domain.GameState;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+
 import java.util.ArrayList;
 import java.util.List;
-
-import com.umanbeing.umg.domain.GameState;
 
 @Entity
 @Table(name = "\"GAME\"")
 @Getter
 @Setter
 public class Game {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "\"gameId\"")
@@ -21,7 +22,7 @@ public class Game {
     @ManyToOne(fetch = FetchType.LAZY, optional = true)
     @JoinColumn(name = "\"userId\"", nullable = true)
     private User user;
-    
+
     @Column(name = "\"maxTimerSeconds\"", nullable = false)
     private Integer maxTimerSeconds;
 
@@ -56,4 +57,5 @@ public class Game {
     public void addScore(int additionalScore) {
         score += additionalScore;
     }
+
 }
