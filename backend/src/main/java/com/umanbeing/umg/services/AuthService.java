@@ -41,6 +41,7 @@ public class AuthService implements UserDetailsService {
     private PasswordEncoder passwordEncoder;
 
     @Override
+    @NonNull
     public UserDetails loadUserByUsername(@NonNull String email) throws UsernameNotFoundException {
         Optional<User> userRes = userRepo.findByEmail(email);
         if (userRes.isEmpty())
