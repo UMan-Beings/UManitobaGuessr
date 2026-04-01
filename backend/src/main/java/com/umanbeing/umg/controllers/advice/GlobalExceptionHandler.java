@@ -4,6 +4,7 @@ import com.auth0.jwt.exceptions.SignatureVerificationException;
 import com.auth0.jwt.exceptions.TokenExpiredException;
 import com.umanbeing.umg.domain.HttpRes;
 import jakarta.servlet.http.HttpServletRequest;
+import org.jspecify.annotations.NonNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -151,35 +152,35 @@ public class GlobalExceptionHandler implements HandlerExceptionResolver {
     }
 
     @Override
-    public ModelAndView resolveException(HttpServletRequest request, jakarta.servlet.http.HttpServletResponse response, Object handler, Exception ex) {
-        if (ex instanceof TokenExpiredException) {
-            handleExpiredJwtException((TokenExpiredException) ex, request);
-        } else if (ex instanceof SignatureVerificationException) {
-            handleSignatureVerificationException((SignatureVerificationException) ex, request);
-        } else if (ex instanceof UsernameNotFoundException) {
-            handleUsernameNotFoundException((UsernameNotFoundException) ex, request);
-        } else if (ex instanceof AccessDeniedException) {
-            handleAccessDeniedException((AccessDeniedException) ex, request);
-        } else if (ex instanceof HttpRequestMethodNotSupportedException) {
-            handleHttpRequestMethodNotSupportedException((HttpRequestMethodNotSupportedException) ex, request);
-        } else if (ex instanceof NoHandlerFoundException) {
-            handleNoHandlerFoundException((NoHandlerFoundException) ex, request);
-        } else if (ex instanceof NoResourceFoundException) {
-            handleNoResourceFoundException((NoResourceFoundException) ex, request);
-        } else if (ex instanceof MethodArgumentNotValidException) {
-            handleMethodArgumentNotValidException((MethodArgumentNotValidException) ex, request);
-        } else if (ex instanceof HttpMessageNotReadableException) {
-            handleHttpMessageNotReadableException((HttpMessageNotReadableException) ex, request);
-        } else if (ex instanceof ResponseStatusException) {
-            handleResponseStatusException((ResponseStatusException) ex, request);
-        } else if (ex instanceof BadCredentialsException) {
-            handleBadCredentialsException((BadCredentialsException) ex, request);
-        } else if (ex instanceof MethodArgumentTypeMismatchException) {
-            handleTypeMismatchException((MethodArgumentTypeMismatchException) ex, request);
-        } else if (ex instanceof IllegalArgumentException) {
-            handleIllegalArgumentException((IllegalArgumentException) ex, request);
-        } else {
-            handleGenericException(ex, request);
+    public ModelAndView resolveException(@NonNull HttpServletRequest request, jakarta.servlet.http.@NonNull HttpServletResponse response, Object handler, @NonNull Exception ex) {
+        switch (ex) {
+            case TokenExpiredException tokenExpiredException ->
+                    handleExpiredJwtException(tokenExpiredException, request);
+            case SignatureVerificationException signatureVerificationException ->
+                    handleSignatureVerificationException(signatureVerificationException, request);
+            case UsernameNotFoundException usernameNotFoundException ->
+                    handleUsernameNotFoundException(usernameNotFoundException, request);
+            case AccessDeniedException accessDeniedException ->
+                    handleAccessDeniedException(accessDeniedException, request);
+            case HttpRequestMethodNotSupportedException httpRequestMethodNotSupportedException ->
+                    handleHttpRequestMethodNotSupportedException(httpRequestMethodNotSupportedException, request);
+            case NoHandlerFoundException noHandlerFoundException ->
+                    handleNoHandlerFoundException(noHandlerFoundException, request);
+            case NoResourceFoundException noResourceFoundException ->
+                    handleNoResourceFoundException(noResourceFoundException, request);
+            case MethodArgumentNotValidException methodArgumentNotValidException ->
+                    handleMethodArgumentNotValidException(methodArgumentNotValidException, request);
+            case HttpMessageNotReadableException httpMessageNotReadableException ->
+                    handleHttpMessageNotReadableException(httpMessageNotReadableException, request);
+            case ResponseStatusException responseStatusException ->
+                    handleResponseStatusException(responseStatusException, request);
+            case BadCredentialsException badCredentialsException ->
+                    handleBadCredentialsException(badCredentialsException, request);
+            case MethodArgumentTypeMismatchException methodArgumentTypeMismatchException ->
+                    handleTypeMismatchException(methodArgumentTypeMismatchException, request);
+            case IllegalArgumentException illegalArgumentException ->
+                    handleIllegalArgumentException(illegalArgumentException, request);
+            default -> handleGenericException(ex, request);
         }
         ModelAndView mav = new ModelAndView("errorView");
         mav.addObject("message", ex.getMessage());
