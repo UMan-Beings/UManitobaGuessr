@@ -18,12 +18,12 @@ public class JwtService {
     @Value("${JWT_SECRET}")
     private String secret;
 
-    private String subjectJWT = "User Details";
+    private final String SUBJECT_JWT = "User Details";
 
     public String generateToken(String username) throws
             IllegalArgumentException, JWTCreationException {
         return JWT.create()
-                .withSubject(subjectJWT)
+                .withSubject(SUBJECT_JWT)
                 .withClaim("username", username)
                 .withIssuedAt(new Date())
                 .withExpiresAt(new Date(System.currentTimeMillis() + 60 * 60 * 1000)) // 1 hour expiration
@@ -33,7 +33,7 @@ public class JwtService {
 
     public String validateTokenAndRetrieveSubject(String token) throws JWTVerificationException {
         JWTVerifier verifier = JWT.require(Algorithm.HMAC256(secret))
-                .withSubject(subjectJWT)
+                .withSubject(SUBJECT_JWT)
                 .build();
         DecodedJWT jwt = verifier.verify(token);
         return jwt.getClaim("username").asString();
@@ -50,7 +50,7 @@ public class JwtService {
 
     protected Date extractExpiration(String token) throws JWTVerificationException {
         JWTVerifier verifier = JWT.require(Algorithm.HMAC256(secret))
-                .withSubject(subjectJWT)
+                .withSubject(SUBJECT_JWT)
                 .build();
         DecodedJWT jwt = verifier.verify(token);
         return jwt.getExpiresAt();

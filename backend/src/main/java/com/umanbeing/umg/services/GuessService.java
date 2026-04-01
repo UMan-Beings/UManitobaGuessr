@@ -67,7 +67,7 @@ public class GuessService {
     }
 
     private int calculateScore(int distance) {
-        int calculatedScore = 0;
+        int calculatedScore;
         if (distance <= FULL_SCORE_DISTANCE) {
             calculatedScore = MAX_SCORE;
         } else {
