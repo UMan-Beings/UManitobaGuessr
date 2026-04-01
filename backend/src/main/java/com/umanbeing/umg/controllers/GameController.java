@@ -32,6 +32,9 @@ public class GameController {
     @Autowired
     private GameService gameService;
 
+    @Autowired
+    private UserService userService;
+
     private static final String JSON_GAME_ID = "gameId";
     private static final String JSON_PHASE = "phase";
     private static final String JSON_ROUND = "round";
@@ -45,12 +48,10 @@ public class GameController {
     private static final String JSON_GUESSED_Y = "guessedY";
     private static final String JSON_SCORE_RECEIVED = "scoreReceived";
     private static final String JSON_GUESS_TIME_SECONDS = "guessTimeSeconds";
-    @Autowired
-    private UserService userService;
 
     //Implement the game creation logic here
     //Return game ID, initial game state (GUESS phase)
-    //Receive total rouns, count down seconds, and user ID as parameters
+    //Receive total rounds, count down seconds, and user ID as parameters
     @RequestMapping(value = "/games", method = RequestMethod.POST)
     public ResponseEntity<Map<String, Object>> createNewGame(@RequestBody CreateGameRequest request, Authentication authentication) {
         User user = getAuthenticatedUserOrNull(authentication);
