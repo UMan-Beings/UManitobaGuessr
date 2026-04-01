@@ -6,11 +6,12 @@
 |---------|-------------|----------------|----------------------------------------|
 | 1.0     | 2026-03-05  | Jason Bilinsky | Initial Sprint 2 testing plan created. |
 | 2.0     | 2026-03-26  | Jason Bilinsky | Updated functional coverage, CI/CD, etc|
+| 3.0     | 2026-04-01  | Jason Bilinsky | Updated Load testing section           |
 
 
 ## 1. Introduction
 
-This document defines the testing strategy for UManitobaGuessr during Sprint 3. It may be updated during Sprint 4 if changes are made to the load testing plan.
+This document defines the testing strategy for UManitobaGuessr during Sprint 4.
 
 ### 1.1 Scope
 
@@ -29,8 +30,13 @@ The following software features and quality requirements are in scope for testin
     - Game ownership checks return forbidden access when violated
   - Input validation and error handling (400/404/409/401/403 conditions)
   - Player statistics aggregation correctness (total score, average score, average guess time)
-- Non-functional requirements (Sprint 4 planning level):
-  - Load and mutation testing strategy definition for later execution
+- Non-functional requirements:
+  - Mutation testing is conducted to evaluate effectiveness of test cases
+    - Included into CI pipeline when merging to main only
+    - Implemented with Pitest
+  - Load Testing is conducted and meets the requirements of at least 20 concurrent users generating 200 requests per minute
+    - Plan to integrate into CI pipeline
+    - Implemented with k6
 
 ### 1.2 Roles and Responsibilities
 
@@ -48,6 +54,7 @@ Role expectations:
   - Docker containerization for frontend, backend, and database.
   - Deployment automation
   - Mutation tests and additional unit tests
+  - Load testing
 - Team Lead
   - Organize and run team meetings
   - Keep the team on track with deadlines and sprint goals
@@ -165,38 +172,36 @@ The mutations that get injected follow the `DEFAULTS` setting found at https://p
 
 ### 2.3 Load Testing
 
-Requirement for Future:
+Requirement:
 
-- Include at least two request types associated with every core feature
+- Include at least two API requests associated with every core feature.
+- Include both GET and POST traffic across the full load test suite.
+- System must handle at least 20 concurrent users, generating a total of 200 requests per minute.
 
-Sprint 2 decision:
-
-- Load testing execution is deferred in Sprint 2 as allowed by course guidance.
-- This section documents the test design so implementation can start quickly later.
 
 Proposed load-testing plan:
 
-- Tool: k6 or JMeter (undecided)
+- Tool:
+  - k6
+
 - Strategy:
-  - Gradual ramp up to a steady anticipated volume 
+  
+  - Gradually ramp up to 20 users, and ramp up to 200 requests.
+  - Each user will perform a series of feature-specific requests (GET and POST where supported by the API).
+  - We will monitor response times and request failures
 
-Potential Scenarios:
+Feature Load Test Mapping:
 
-- **Game Configuration**
-  - Endpoints: `POST /api/v1/games`, `GET /api/v1/games/{gameId}`
-  - Load: 200–300 users starting and checking games concurrently
+| Feature            | Request Type 1               | Request Type 2                   | What is Being Tested                          |
+|--------------------|------------------------------|----------------------------------|-----------------------------------------------|
+| Game Configuration | GET /api/v1/games/{gameId}   | POST /api/v1/games               | Starting a new game and checking game state   |
+| Location Guessing  | GET /api/v1/games/{gameId}   | POST /api/v1/games/{gameId}/guess| Submitting guesses and seeing updated results |
+| Player Statistics  | GET /api/v1/users/me/stats   | POST /api/v1/games/{gameId}/next | Viewing player stats while progressing rounds |
+| Account Management | POST /api/v1/auth/signup     | POST /api/v1/auth/login          | Registering a new user and logging in         |
 
-- **Location Guessing**
-  - Endpoints: `POST /api/v1/games/{gameId}/guess`, `POST /api/v1/games/{gameId}/next`, `GET /api/v1/games/{gameId}`
-  - Load: 200–300 users submitting guesses and moving rounds concurrently
-
-- **Player Statistics**
-  - Endpoints: `GET /api/v1/users/me/stats`, `POST /api/v1/games/{gameId}/guess`
-  - Load: 200–300 users retrieving stats while others play
-
-- **Account Management**
-  - Endpoints: `POST /api/v1/auth/login`, `POST /api/v1/auth/signup`
-  - Load: 200–300 users logging in and fetching profiles
+Notes:
+- Account Management exposes POST endpoints only. This is expected and reflected in the mapping.
+- The full suite still includes both GET and POST traffic as required.
 
 ## 3. Terms and Acronyms
 
