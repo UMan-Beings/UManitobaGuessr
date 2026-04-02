@@ -23,6 +23,14 @@ import org.springframework.stereotype.Component;
 import java.util.Collections;
 import java.util.Optional;
 
+/**
+ * Service class for user authentication and authorization.
+ * Provides methods for user registration, login, and token generation.
+ *
+ * <p>
+ *     It is very similar to the UserService class, but focuses on authentication and token generation.
+ * </p>
+ */
 @Component
 public class AuthService implements UserDetailsService {
 
@@ -40,6 +48,16 @@ public class AuthService implements UserDetailsService {
     @Lazy
     private PasswordEncoder passwordEncoder;
 
+    /**
+     * The primary method for loading user information from the database to allow
+     * Spring Security to authenticate the user.
+     * Despite the name, we can customize the specific information we want to load here.
+     * In this case, we are loading the user's email and password.
+     *
+     * @param email the user's email
+     * @return UserDetails object for the user
+     * @throws UsernameNotFoundException if no user is found with the given email
+     */
     @Override
     @NonNull
     public UserDetails loadUserByUsername(@NonNull String email) throws UsernameNotFoundException {
@@ -57,6 +75,13 @@ public class AuthService implements UserDetailsService {
         );
     }
 
+    /**
+     * Registers a new user with the provided account details.
+     *
+     * @param createAccountRequest DTO containing the user's account details
+     * @return SignUpResponse DTO containing the user's information
+     * @throws IllegalArgumentException if the password or username is invalid
+     */
     public SignUpResponse registerUser(CreateAccountRequest createAccountRequest) throws IllegalArgumentException {
         User newUser = AuthMapper.fromDtoSignUp(createAccountRequest);
         // Information in DTO was already checked for null/blank values
@@ -87,6 +112,13 @@ public class AuthService implements UserDetailsService {
         );
     }
 
+    /**
+     * Authenticates a user with the provided login details.
+     *
+     * @param loginRequest DTO containing the user's login details
+     * @return LoginResponse DTO containing the JWT token and username
+     * @throws BadCredentialsException if the login credentials are invalid
+     */
     public LoginResponse loginUser(LoginRequest loginRequest) throws IllegalArgumentException {
         try {
             // Authenticate the user

@@ -18,6 +18,17 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+/**
+ * Configuration class for Spring Security.
+ * <p>
+ * This class sets up the security configuration for the application, including
+ * authentication, authorization, and JWT token handling.
+ * </p>
+ * <p>
+ * UserDetailsService is the source of user information that Spring Security uses to authenticate users.
+ * JwtService is responsible for generating and validating JWT tokens.
+ * </p>
+ */
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
@@ -28,11 +39,28 @@ public class SecurityConfig {
     @Autowired
     private JwtService jwtService;
 
+    /**
+     * Bean definition for JwtFilter.
+     * It is a custom filter that get injected into a filter chain before Spring Security's default filters.
+     *
+     * @param userDetailsService The source of user information for authentication.
+     * @param jwtService The JWT service for token handling.
+     * @return JwtFilter instance for JWT token validation.
+     */
     @Bean
     public JwtFilter jwtFilter(UserDetailsService userDetailsService, JwtService jwtService) {
         return new JwtFilter(userDetailsService, jwtService);
     }
 
+    /**
+     * Bean definition for SecurityFilterChain.
+     * Configures the filter chain for handling HTTP requests.
+     * Every request passes through the chain and gets captured by the first filter that matches.
+     *
+     * @param http The HttpSecurity instance for configuring the filter chain.
+     * @return SecurityFilterChain instance with configured filters.
+     * It does not throw exceptions to Spring MVC, thus only customized filter would return exceptions.
+     */
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) {
         http
@@ -58,9 +86,11 @@ public class SecurityConfig {
         return new BCryptPasswordEncoder();
     }
 
-    /*
+    /**
      * Authentication manager bean
-     * Required for programmatic authentication (e.g., in /generateToken)
+     * It is responsible for authenticating users based on the provided user details service.
+     *
+     * @return AuthenticationManager instance with a configured authentication provider.
      */
     @Bean
     public AuthenticationManager authManager(UserDetailsService userDetailsService, PasswordEncoder passwordEncoder) {

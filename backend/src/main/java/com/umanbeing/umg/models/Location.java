@@ -7,6 +7,17 @@ import lombok.Setter;
 
 import java.math.BigDecimal;
 
+/**
+ * Represents a location entity in the game.
+ * This class is mapped to the "LOCATION" table in the database.
+ * <p>It has the following attributes:
+ * <li>{@link Long} locationId</li>
+ * <li>{@link String} name</li>
+ * <li>{@link String} imageUrl</li>
+ * <li>{@link BigDecimal} corX</li>
+ * <li>{@link BigDecimal} corY</li>
+ * </p>
+ */
 @Entity
 @Table(name = "\"LOCATION\"")
 @Getter

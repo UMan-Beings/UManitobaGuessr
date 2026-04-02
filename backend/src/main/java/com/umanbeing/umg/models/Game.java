@@ -8,6 +8,20 @@ import lombok.Setter;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Represents a game entity with user association, game state tracking, and round management.
+ * This class is mapped to the "GAME" table in the database.
+ * <p>It has the following attributes:
+ * <li>{@link Long} gameId</li>
+ * <li>{@link User} user</li>
+ * <li>{@link Integer} maxTimerSeconds</li>
+ * <li>{@link Integer} totalRounds</li>
+ * <li>boolean isCompleted</li>
+ * <li>{@link GameState} gameState</li>
+ * <li>{@link Integer} currentRoundNumber</li>
+ * <li>{@link Integer} score</li>
+ * </p>
+ */
 @Entity
 @Table(name = "\"GAME\"")
 @Getter

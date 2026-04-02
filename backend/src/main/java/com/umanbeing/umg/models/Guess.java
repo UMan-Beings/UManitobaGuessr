@@ -6,6 +6,19 @@ import lombok.Setter;
 
 import java.math.BigDecimal;
 
+/**
+ * Represents a guess made by a user in a round.
+ * This class is mapped to the "GUESS" table in the database.
+ * <p>It has the following attributes:
+ * <li>{@link Long} guessId</li>
+ * <li>{@link Round} round</li>
+ * <li>{@link BigDecimal} guessedX</li>
+ * <li>{@link BigDecimal} guessedY</li>
+ * <li>{@link Long} guessTimeSeconds</li>
+ * <li>{@link Integer} distanceMeters</li>
+ * <li>{@link Integer} score</li>
+ * </p>
+ */
 @Entity
 @Table(name = "\"GUESS\"")
 @Getter

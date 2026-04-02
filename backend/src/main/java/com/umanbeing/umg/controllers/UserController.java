@@ -13,6 +13,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
+/**
+ * Controller for user-related operations.
+ * <p>
+ * Provides endpoints for user-related operations such as retrieving user stats.
+ */
 @RestController
 @RequestMapping("/api/v1/users")
 @AllArgsConstructor
@@ -28,6 +33,13 @@ public class UserController {
         return ResponseEntity.ok(response);
     }
 
+    /**
+     * Retrieves the authenticated user from the authentication object.
+     *
+     * @param authentication The authentication object containing user information.
+     * @return The authenticated user.
+     * @throws ResponseStatusException if the user is not authenticated or not found.
+     */
     private User getAuthenticatedUser(Authentication authentication) {
         if (authentication == null || authentication.getName() == null) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "User not authenticated");

@@ -13,6 +13,14 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+/**
+ * Controller for handling authentication-related endpoints.
+ * <p>
+ * This controller provides endpoints for user authentication, including login and signup.
+ * Each handler validates and processes the request body according to the corresponding DTO.
+ * The DTOs are then sent to the AuthService for further processing.
+ * </p>
+ */
 @RestController
 @RequestMapping("/api/v1/auth")
 public class AuthController {

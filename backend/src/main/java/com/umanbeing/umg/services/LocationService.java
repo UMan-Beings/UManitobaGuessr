@@ -7,6 +7,9 @@ import org.springframework.stereotype.Service;
 import java.security.SecureRandom;
 import java.util.List;
 
+/**
+ * Service class for managing location-related operations.
+ */
 @Service
 public class LocationService {
 
@@ -17,6 +20,12 @@ public class LocationService {
         this.locationRepo = locationRepo;
     }
 
+    /**
+     * Retrieves a random selection of locations from the repository.
+     * @param amount The number of random locations to retrieve.
+     * @return A list of random locations.
+     * @throws IllegalStateException if there are not enough locations in the repository.
+     */
     public List<Location> getRandomLocations(int amount) {
         List<Location> allLocations = locationRepo.findAll();
         if (allLocations.size() < amount) {

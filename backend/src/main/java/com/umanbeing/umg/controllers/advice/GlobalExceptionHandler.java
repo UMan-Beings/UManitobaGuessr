@@ -24,6 +24,18 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.NoHandlerFoundException;
 import org.springframework.web.servlet.resource.NoResourceFoundException;
 
+/**
+ * Global exception handler for handling exceptions across the application.
+ * It provides centralized error handling and response formatting for various exception types.
+ * <p>
+ *     It is a controller advice that handles exceptions globally but runs within Spring MVC layers.
+ *     It ensures that all exceptions are properly logged and formatted into a consistent response format.
+ * </p>
+ * <p>
+ *     Spring Security does not throw exceptions to Spring MVC;
+ *     therefore, only customized filters would access this class by including a HandlerExceptionResolver bean.
+ * </p>
+ */
 @RestControllerAdvice
 public class GlobalExceptionHandler implements HandlerExceptionResolver {
 
@@ -151,6 +163,17 @@ public class GlobalExceptionHandler implements HandlerExceptionResolver {
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR.value()).body(response);
     }
 
+    /**
+     * Resolves exceptions globally and returns a ModelAndView for error handling.
+     * This method is from the HandlerExceptionResolver interface used by filters to send exceptions.
+     * It handles specific exceptions and logs them appropriately.
+     *
+     * @param request The HttpServletRequest object.
+     * @param response The HttpServletResponse object.
+     * @param handler The handler object that threw the exception.
+     * @param ex The exception that was thrown.
+     * @return A ModelAndView containing the error view and the exception message. It is not used within this project.
+     */
     @Override
     public ModelAndView resolveException(@NonNull HttpServletRequest request, jakarta.servlet.http.@NonNull HttpServletResponse response, Object handler, @NonNull Exception ex) {
         switch (ex) {

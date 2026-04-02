@@ -19,6 +19,16 @@ import org.springframework.web.server.ResponseStatusException;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Controller for handling game-related endpoints.
+ * <p>
+ *     This controller provides endpoints for game management, including creating games, making guesses, and retrieving game state.
+ *     Each handler validates and processes the request body according to the corresponding DTO.
+ * </p>
+ * <p>
+ *     GameService is responsible for handling game logic, while UserService manages user-related operations.
+ * </p>
+ */
 @RestController
 @RequestMapping("/api/v1")
 public class GameController {
@@ -154,10 +164,21 @@ public class GameController {
         return ResponseEntity.ok(response);
     }
 
+    /**
+     * Returns the authenticated user if authentication is present, otherwise returns null.
+     * @param authentication The authentication object containing user information.
+     * @return The authenticated user or null if not authenticated.
+     */
     private User getAuthenticatedUserOrNull(Authentication authentication) {
         return authentication != null ? userService.getUserByEmail(authentication.getName()) : null;
     }
 
+    /**
+     * Checks if the given game belongs to the authenticated user.
+     * It throws a ResponseStatusException if the game does not belong to the authenticated user.
+     * @param game The game to check.
+     * @param authentication The authentication object containing user information.
+     */
     private void checkGameOwnership(Game game, Authentication authentication) {
         User user = getAuthenticatedUserOrNull(authentication);
         User gameUser = game.getUser();
