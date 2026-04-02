@@ -452,7 +452,31 @@ Current thresholds:
 - `http_req_failed`: `rate<0.05`
 - `http_reqs`: `rate>3.33` (200 requests/minute target)
 
-Run from project root:
+To run k6 from the same terminal, start Docker Compose in detached mode (`up -d`).
+If Compose is running in foreground mode, use a second/split terminal for k6.
+
+Step by step workflow:
+
+1. Start one target stack in detached mode (`up -d`):
+
+```bash
+# Dev stack
+docker-compose -f docker-compose.dev.yaml -p umg_dev up -d --build
+
+# Users stack
+docker-compose -f docker-compose.users.yaml -p umg_users up -d --pull always
+
+# Prod stack
+docker-compose -f docker-compose.prod.yaml -p umg_prod up -d --build
+```
+
+2. Verify services are running:
+
+```bash
+docker ps --filter name=umg
+```
+
+3. Run the load test from project root:
 
 ```bash
 # Run with Dev environment(port 3000)
@@ -460,5 +484,18 @@ K6_BASE_URL=http://localhost:3000/api/v1 k6 run backend/load-tests/userJourneyTe
 
 # Run with Users/Prod environment(port 7000)
 K6_BASE_URL=http://localhost:7000/api/v1 k6 run backend/load-tests/userJourneyTest.js
+```
+
+4. Stop the selected stack when done:
+
+```bash
+# Dev stack
+docker-compose -f docker-compose.dev.yaml -p umg_dev down
+
+# Users stack
+docker-compose -f docker-compose.users.yaml -p umg_users down
+
+# Prod stack
+docker-compose -f docker-compose.prod.yaml -p umg_prod down
 ```
 

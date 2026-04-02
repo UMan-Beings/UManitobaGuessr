@@ -21,21 +21,54 @@ This keeps feature dependencies realistic under concurrent load instead of testi
 1. k6 installed
 2. Backend stack running
 3. Base URL passed with `K6_BASE_URL` (required by the script)
+4. Start Docker Compose in detached mode (`up -d`) so the terminal is available for k6, or run k6 in a second/split terminal.
 
 ## Run Commands
 
 Run from this folder: `backend/load-tests`
 
-Dev compose path (frontend proxy on port 3000):
+Step by step workflow:
+
+1. Start one target stack in detached mode (`up -d`):
 
 ```bash
-K6_BASE_URL=http://localhost:3000/api/v1 k6 run userJourneyTest.js
+# Dev stack
+docker-compose -f docker-compose.dev.yaml -p umg_dev up -d --build
+
+# Users stack
+docker-compose -f docker-compose.users.yaml -p umg_users up -d --pull always
+
+# Prod stack
+docker-compose -f docker-compose.prod.yaml -p umg_prod up -d --build
 ```
 
-Users or prod compose path (nginx/proxy on port 7000):
+2. Verify services are running:
 
 ```bash
+docker ps --filter name=umg
+```
+
+3. Run the load test:
+
+```bash
+# Dev compose path (frontend proxy on port 3000)
+K6_BASE_URL=http://localhost:3000/api/v1 k6 run userJourneyTest.js
+
+# Users or prod compose path (nginx/proxy on port 7000)
 K6_BASE_URL=http://localhost:7000/api/v1 k6 run userJourneyTest.js
+```
+
+4. Stop the selected stack when done:
+
+```bash
+# Dev stack
+docker-compose -f docker-compose.dev.yaml -p umg_dev down
+
+# Users stack
+docker-compose -f docker-compose.users.yaml -p umg_users down
+
+# Prod stack
+docker-compose -f docker-compose.prod.yaml -p umg_prod down
 ```
 
 ## Current Load Profile
