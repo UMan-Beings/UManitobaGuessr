@@ -1,9 +1,11 @@
 package com.umanbeing.umg.controllers.dto;
 
-
-public record LoginResponse(
-  String token,
-  String name
-){
-    
-}
+/**
+ * Data transfer object for user login response. It is used for transferring user login response
+ * data between the controller and service layers.
+ *
+ * <p>It must contain:
+ * <li>an authentication token for the user
+ * <li>the username of the logged-in user
+ */
+public record LoginResponse(String token, String name) {}
