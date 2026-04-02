@@ -5,6 +5,9 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
+/**
+ * Configuration class for enabling CORS in development environment.
+ */
 @Configuration
 @Profile("dev")
 public class DevCorsConfig implements WebMvcConfigurer {

@@ -10,7 +10,16 @@ package com.umanbeing.umg.domain;
  * </p>
  */
 public enum GameState {
+    /**
+     * GUESS - the player is making a guess
+     */
     GUESS,
+    /**
+     * REVEAL - the correct answer is being revealed
+     */
     REVEAL,
+    /**
+     * FINISHED - the game is finished
+     */
     FINISHED
 }

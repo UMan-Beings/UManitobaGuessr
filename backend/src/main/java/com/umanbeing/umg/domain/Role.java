@@ -10,8 +10,18 @@ import org.springframework.security.core.GrantedAuthority;
  * <li>GUEST - has limited access</li>
  */
 public enum Role implements GrantedAuthority {
+
+    /**
+     * ADMIN role that has access to all features.
+     */
     ADMIN,
+    /**
+     * USER role that has access to most features.
+     */
     USER,
+    /**
+     * GUEST role that has limited access.
+     */
     GUEST;
 
     @Override

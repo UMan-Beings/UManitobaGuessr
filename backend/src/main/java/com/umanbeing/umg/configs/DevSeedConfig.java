@@ -10,6 +10,9 @@ import org.springframework.context.annotation.Profile;
 import java.math.BigDecimal;
 import java.util.List;
 
+/**
+ * Configuration class for seeding development environment with initial data.
+ */
 @Configuration
 @Profile({"dev", "prod"})
 public class DevSeedConfig {
