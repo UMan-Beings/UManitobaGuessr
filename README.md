@@ -435,6 +435,14 @@ docker network rm umg_net
 
 Load testing is implemented with k6 using an integrated user journey script.
 
+Prerequisites:
+
+1. k6 installed: https://k6.io/docs/get-started/installation/
+2. Docker Compose installed and running
+3. Backend stack accessible
+
+References:
+
 - Test file location: `backend/load-tests/userJourneyTest.js`
 - Detailed load-test documentation: `backend/load-tests/README.md`
 

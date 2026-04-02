@@ -18,7 +18,7 @@ This keeps feature dependencies realistic under concurrent load instead of testi
 
 ## Prerequisites
 
-1. k6 installed
+1. k6 installed: https://k6.io/docs/get-started/installation/
 2. Backend stack running
 3. Base URL passed with `K6_BASE_URL` (required by the script)
 4. Start Docker Compose in detached mode (`up -d`) so the terminal is available for k6, or run k6 in a second/split terminal.
