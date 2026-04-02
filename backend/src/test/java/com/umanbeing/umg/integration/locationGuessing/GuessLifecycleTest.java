@@ -63,9 +63,53 @@ class GuessLifecycleTest extends PostgresIntegrationTestBase {
                 .andExpect(MockMvcResultMatchers.jsonPath("$.scoreReceived").doesNotExist());
     }
 
- //--------------
- // HELPERS
- // ------------   
+// ========== Timeout Tests ==========
+    @Test
+    void timeout_callTimeout_createsGuessWithZeroScore() throws Exception {
+        long gameId = createGameForTest(5, 60);
+
+        mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/games/{gameId}/timeout", gameId)
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.phase").value("REVEAL"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.scoreReceived").value(0))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.actualX").exists())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.actualY").exists());
+    }
+
+    @Test
+    void timeout_callTimeout_transitionsToRevealPhase() throws Exception {
+        long gameId = createGameForTest(3, 30);
+
+        mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/games/{gameId}", gameId))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.phase").value("GUESS"));
+
+        mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/games/{gameId}/timeout", gameId))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.phase").value("REVEAL"));
+
+        mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/games/{gameId}", gameId))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.round").value(1));
+    }
+
+    @Test
+    void timeout_multipleRounds_progressesCorrectly() throws Exception {
+        long gameId = createGameForTest(2, 30);
+
+        mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/games/{gameId}/timeout", gameId))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.phase").value("REVEAL"));
+
+        mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/games/{gameId}/next", gameId))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.phase").value("GUESS"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.round").value(2));
+
+        mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/games/{gameId}/timeout", gameId))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.phase").value("REVEAL"));
+
+        mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/games/{gameId}/next", gameId))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.phase").value("FINISHED"));
+    }
+
+// ========= Helper Methods ========== 
     private long createGameForTest(int totalRounds, int maxTimerSeconds) throws Exception {
         CreateGameRequest request = new CreateGameRequest();
         request.setTotalRounds(totalRounds);
