@@ -2,13 +2,12 @@ package com.umanbeing.umg.configs;
 
 import com.umanbeing.umg.models.Location;
 import com.umanbeing.umg.repos.LocationRepo;
+import java.math.BigDecimal;
+import java.util.List;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
-
-import java.math.BigDecimal;
-import java.util.List;
 
 /**
  * Configuration class for seeding development environment with initial data.

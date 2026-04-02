@@ -9,6 +9,5 @@ import java.util.List;
 @Repository
 public interface RoundRepo extends JpaRepository<Round, Long> {
 
-    List<Round> findByGame_GameId(Long gameId);
-
+  List<Round> findByGame_GameId(Long gameId);
 }

@@ -2,12 +2,11 @@ package com.umanbeing.umg.repos.projections;
 
 public interface UserGameStatsProjection {
 
-    Long getTotalScore();
+  Long getTotalScore();
 
-    Long getTotalRounds();
+  Long getTotalRounds();
 
-    Long getTotalGames();
+  Long getTotalGames();
 
-    Double getAverageScore();
-
+  Double getAverageScore();
 }

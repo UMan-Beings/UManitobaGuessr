@@ -2,8 +2,7 @@ package com.umanbeing.umg.repos.projections;
 
 public interface UserRoundStatsProjection {
 
-    Long getTotalGuessTimeSeconds();
+  Long getTotalGuessTimeSeconds();
 
-    Double getAverageGuessTimeSeconds();
-
+  Double getAverageGuessTimeSeconds();
 }

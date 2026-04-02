@@ -7,6 +7,8 @@ import com.umanbeing.umg.controllers.dto.SignUpResponse;
 import com.umanbeing.umg.controllers.mappers.AuthMapper;
 import com.umanbeing.umg.models.User;
 import com.umanbeing.umg.repos.UserRepo;
+import java.util.Collections;
+import java.util.Optional;
 import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
@@ -19,9 +21,6 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
-
-import java.util.Collections;
-import java.util.Optional;
 
 /**
  * Service class for user authentication and authorization.

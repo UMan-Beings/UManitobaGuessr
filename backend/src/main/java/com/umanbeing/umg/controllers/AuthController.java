@@ -15,27 +15,25 @@ import org.springframework.web.bind.annotation.RestController;
 
 /**
  * Controller for handling authentication-related endpoints.
- * <p>
- * This controller provides endpoints for user authentication, including login and signup.
- * Each handler validates and processes the request body according to the corresponding DTO.
- * The DTOs are then sent to the AuthService for further processing.
- * </p>
+ *
+ * <p>This controller provides endpoints for user authentication, including login and signup. Each
+ * handler validates and processes the request body according to the corresponding DTO. The DTOs are
+ * then sent to the AuthService for further processing.
  */
 @RestController
 @RequestMapping("/api/v1/auth")
 public class AuthController {
 
-    @Autowired
-    private AuthService authService;
+  @Autowired private AuthService authService;
 
-    @PostMapping("/login")
-    public ResponseEntity<LoginResponse> login(@RequestBody LoginRequest loginRequest) {
-        return ResponseEntity.ok(authService.loginUser(loginRequest));
-    }
+  @PostMapping("/login")
+  public ResponseEntity<LoginResponse> login(@RequestBody LoginRequest loginRequest) {
+    return ResponseEntity.ok(authService.loginUser(loginRequest));
+  }
 
-    @PostMapping("/signup")
-    public ResponseEntity<SignUpResponse> signup(@Valid @RequestBody CreateAccountRequest createAccountRequest) {
-        return ResponseEntity.ok(authService.registerUser(createAccountRequest));
-    }
-
+  @PostMapping("/signup")
+  public ResponseEntity<SignUpResponse> signup(
+      @Valid @RequestBody CreateAccountRequest createAccountRequest) {
+    return ResponseEntity.ok(authService.registerUser(createAccountRequest));
+  }
 }

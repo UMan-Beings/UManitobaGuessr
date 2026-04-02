@@ -1,11 +1,10 @@
 package com.umanbeing.umg.models;
 
 import jakarta.persistence.*;
+import java.math.BigDecimal;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-
-import java.math.BigDecimal;
 
 /**
  * Represents a location entity in the game.

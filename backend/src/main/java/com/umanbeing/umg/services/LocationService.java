@@ -2,10 +2,9 @@ package com.umanbeing.umg.services;
 
 import com.umanbeing.umg.models.Location;
 import com.umanbeing.umg.repos.LocationRepo;
-import org.springframework.stereotype.Service;
-
 import java.security.SecureRandom;
 import java.util.List;
+import org.springframework.stereotype.Service;
 
 /**
  * Service class for managing location-related operations.

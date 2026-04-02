@@ -4,12 +4,11 @@ import com.umanbeing.umg.models.Guess;
 import com.umanbeing.umg.models.Location;
 import com.umanbeing.umg.models.Round;
 import com.umanbeing.umg.repos.GuessRepo;
+import java.math.BigDecimal;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
-
-import java.math.BigDecimal;
 
 /**
  * Service class for managing Guess entities contained in Rounds.

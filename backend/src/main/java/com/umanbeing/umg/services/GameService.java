@@ -9,13 +9,12 @@ import com.umanbeing.umg.models.User;
 import com.umanbeing.umg.repos.GameRepo;
 import com.umanbeing.umg.repos.projections.UserGameStatsProjection;
 import com.umanbeing.umg.repos.projections.UserRoundStatsProjection;
+import java.math.BigDecimal;
+import java.util.List;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
-
-import java.math.BigDecimal;
-import java.util.List;
 
 /**
  * Service class for managing game-related operations.

@@ -9,23 +9,19 @@ import org.springframework.security.core.Authentication;
 
 public class AuthMapper {
 
-    private AuthMapper() {
-        throw new UnsupportedOperationException("This class should never be instantiated");
-    }
+  private AuthMapper() {
+    throw new UnsupportedOperationException("This class should never be instantiated");
+  }
 
-    public static User fromDtoSignUp(final CreateAccountRequest createUserDto) {
-        return User.builder()
-                .email(createUserDto.email())
-                .username(createUserDto.username())
-                .build();
-    }
+  public static User fromDtoSignUp(final CreateAccountRequest createUserDto) {
+    return User.builder().email(createUserDto.email()).username(createUserDto.username()).build();
+  }
 
-    public static Authentication fromDtoLogin(final LoginRequest loginRequest) {
-        return new UsernamePasswordAuthenticationToken(loginRequest.email(), loginRequest.password());
-    }
+  public static Authentication fromDtoLogin(final LoginRequest loginRequest) {
+    return new UsernamePasswordAuthenticationToken(loginRequest.email(), loginRequest.password());
+  }
 
-    public static LoginResponse toDto(String token, String name) {
-        return new LoginResponse(token, name);
-    }
-
+  public static LoginResponse toDto(String token, String name) {
+    return new LoginResponse(token, name);
+  }
 }
