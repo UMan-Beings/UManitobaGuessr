@@ -178,26 +178,24 @@ Requirement:
 - Include both GET and POST traffic across the full load test suite.
 - System must handle at least 20 concurrent users, generating a total of 200 requests per minute.
 
-
-Proposed load-testing plan:
+Implemented load-testing approach:
 
 - Tool:
   - k6
+- Script and location:
+  - `backend/load-tests/userJourneyTest.js`
+- Execution:
+  - One integrated end-to-end user journey per VU to preserve feature dependencies.
+  - Iteration flow: signup/login once per VU, then create game, submit guess, advance round, and fetch stats.
 
-- Strategy:
-  
-  - Gradually ramp up to 20 users, and ramp up to 200 requests.
-  - Each user will perform a series of feature-specific requests (GET and POST where supported by the API).
-  - We will monitor response times and request failures
+Implemented endpoint coverage mapping:
 
-Feature Load Test Mapping:
-
-| Feature            | Request Type 1               | Request Type 2                   | What is Being Tested                          |
-|--------------------|------------------------------|----------------------------------|-----------------------------------------------|
-| Game Configuration | GET /api/v1/games/{gameId}   | POST /api/v1/games               | Starting a new game and checking game state   |
-| Location Guessing  | GET /api/v1/games/{gameId}   | POST /api/v1/games/{gameId}/guess| Submitting guesses and seeing updated results |
-| Player Statistics  | GET /api/v1/users/me/stats   | POST /api/v1/games/{gameId}/next | Viewing player stats while progressing rounds |
-| Account Management | POST /api/v1/auth/signup     | POST /api/v1/auth/login          | Registering a new user and logging in         |
+| Feature            | Request Type 1                    | Request Type 2                   | What is Being Tested                          |
+|--------------------|-----------------------------------|----------------------------------|-----------------------------------------------|
+| Game Configuration | POST /api/v1/games                | GET /api/v1/games/{gameId}       | Starting a new game and checking game state   |
+| Location Guessing  | POST /api/v1/games/{gameId}/guess | GET /api/v1/games/{gameId}       | Submitting guesses and seeing updated results |
+| Player Statistics  | GET /api/v1/users/me/stats        | POST /api/v1/games/{gameId}/next | Viewing player stats while progressing rounds |
+| Account Management | POST /api/v1/auth/signup          | POST /api/v1/auth/login          | Registering a new user and logging in         |
 
 Notes:
 - Account Management exposes POST endpoints only. This is expected and reflected in the mapping.
@@ -212,3 +210,4 @@ Notes:
 | CD           | Continuous Delivery/Deployment    |
 | PR           | Pull Request                      |
 | UMG          | UManitobaGuessr                   |
+| VU           | Virtual User (load tests)         |
