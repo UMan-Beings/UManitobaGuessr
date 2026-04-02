@@ -2,8 +2,11 @@
 # Commands to run in prod environment
 # -----------------------------------
 
-# Build and run full prod app (db + backend + frontend)
-# docker-compose -f docker-compose.prod.yaml -p umg_prod up --build
+# Build and run full prod app (db + backend + frontend):
+#       docker-compose -f docker-compose.prod.yaml -p umg_prod up -d --build
+# 
+# Recommended for load testing so this terminal stays free for k6 commands.
+# If you run without -d, use a second/split terminal to run k6.
 
 # Stop prod environment
 # docker-compose -f docker-compose.prod.yaml -p umg_prod down

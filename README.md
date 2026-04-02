@@ -46,6 +46,7 @@
   - [6.1. Prerequisites](#61-prerequisites)
   - [6.2. Quick Start for Users and Markers](#62-quick-start-for-users-and-markers)
   - [6.3. Run with Images Only (No Repository Files)](#63-run-with-images-only-no-repository-files)
+- [7. Load Testing](#7-load-testing)
 
 ## 1. Team
 
@@ -428,5 +429,81 @@ Cleanup:
 docker rm -f frontend_umg 
 docker rm -f backend-umg db_umg
 docker network rm umg_net
+```
+
+## 7. Load Testing
+
+Load testing is implemented with k6 using an integrated user journey script.
+
+Prerequisites:
+
+1. k6 installed: https://k6.io/docs/get-started/installation/
+2. Docker Compose installed and running
+3. Backend stack accessible
+
+References:
+
+- Test file location: `backend/load-tests/userJourneyTest.js`
+- Detailed load-test documentation: `backend/load-tests/README.md`
+
+The test covers authentication, game creation, guessing, round progression, and player stats in one flow.
+
+Current configured load profile:
+
+- Ramp up to 40 virtual users over 15 seconds
+- Hold 40 virtual users for 1 minute 30 seconds
+- Ramp down to 0 users over 15 seconds
+
+Current thresholds:
+
+- `http_req_duration`: `p(95)<200`
+- `http_req_failed`: `rate<0.05`
+- `http_reqs`: `rate>3.33` (200 requests/minute target)
+
+To run k6 from the same terminal, start Docker Compose in detached mode (`up -d`).
+If Compose is running in foreground mode, use a second/split terminal for k6.
+
+Step by step workflow:
+
+1. Start one target stack in detached mode (`up -d`):
+
+```bash
+# Dev stack
+docker-compose -f docker-compose.dev.yaml -p umg_dev up -d --build
+
+# Users stack
+docker-compose -f docker-compose.users.yaml -p umg_users up -d --pull always
+
+# Prod stack
+docker-compose -f docker-compose.prod.yaml -p umg_prod up -d --build
+```
+
+2. Verify services are running:
+
+```bash
+docker ps --filter name=umg
+```
+
+3. Run the load test from project root:
+
+```bash
+# Run with Dev environment(port 3000)
+K6_BASE_URL=http://localhost:3000/api/v1 k6 run backend/load-tests/userJourneyTest.js
+
+# Run with Users/Prod environment(port 7000)
+K6_BASE_URL=http://localhost:7000/api/v1 k6 run backend/load-tests/userJourneyTest.js
+```
+
+4. Stop the selected stack when done:
+
+```bash
+# Dev stack
+docker-compose -f docker-compose.dev.yaml -p umg_dev down
+
+# Users stack
+docker-compose -f docker-compose.users.yaml -p umg_users down
+
+# Prod stack
+docker-compose -f docker-compose.prod.yaml -p umg_prod down
 ```
 
