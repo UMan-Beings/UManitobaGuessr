@@ -6,12 +6,24 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+/**
+ * Represents a location entity in the game.
+ * This class is mapped to the "LOCATION" table in the database.
+ * <p>It has the following attributes:
+ * <li>{@link Long} locationId</li>
+ * <li>{@link String} name</li>
+ * <li>{@link String} imageUrl</li>
+ * <li>{@link BigDecimal} corX</li>
+ * <li>{@link BigDecimal} corY</li>
+ * </p>
+ */
 @Entity
 @Table(name = "\"LOCATION\"")
 @Getter
 @Setter
 @NoArgsConstructor
 public class Location {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "\"locationId\"")
@@ -35,4 +47,5 @@ public class Location {
         this.corX = corX;
         this.corY = corY;
     }
+
 }
