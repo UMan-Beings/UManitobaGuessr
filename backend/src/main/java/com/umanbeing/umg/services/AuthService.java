@@ -41,7 +41,6 @@ public class AuthService implements UserDetailsService {
 
   @Lazy private final PasswordEncoder passwordEncoder;
 
-
   /**
    * The primary method for loading user information from the database to allow Spring Security to
    * authenticate the user. Despite the name, we can customize the specific information we want to
