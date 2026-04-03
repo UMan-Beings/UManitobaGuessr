@@ -47,6 +47,9 @@
   - [6.2. Quick Start for Users and Markers](#62-quick-start-for-users-and-markers)
   - [6.3. Run with Images Only (No Repository Files)](#63-run-with-images-only-no-repository-files)
 - [7. Load Testing](#7-load-testing)
+  - [7.1. View Load Test Report](#71-view-load-test-report)
+- [8. Mutation Testing](#8-mutation-testing)
+  - [8.1. View Mutation Test Report](#81-view-mutation-test-report)
 
 ## 1. Team
 
@@ -508,3 +511,35 @@ docker-compose -f docker-compose.users.yaml -p umg_users down
 docker-compose -f docker-compose.prod.yaml -p umg_prod down
 ```
 
+### 7.1 View Load Test Report
+
+The latest saved load-test summary is:
+
+- [`backend/load-tests/userJourney-results.txt`](backend/load-tests/userJourney-results.txt)
+
+To view it from VS Code:
+
+1. Open the file directly in the editor.
+2. Or right click the file and choose Reveal in File Explorer, then open it with any text editor.
+
+## 8. Mutation Testing
+
+Mutation testing uses PIT on the backend services.
+
+PIT requires Docker to be running because the integration tests start a PostgreSQL container through Testcontainers. Docker Compose is not required for PIT itself.
+
+References:
+
+- Test file location: `backend/mutation-test/README.md`
+- Latest mutation report snapshot: [`backend/mutation-test/index.html`](backend/mutation-test/index.html)
+
+The tracked snapshot lets reviewers inspect the most recent PIT results without rerunning the test, and the PIT task keeps it updated automatically after each run.
+
+### 8.1 View Mutation Test Report
+
+You can view the mutation report without any VS Code extension.
+
+From the repository root (`UManitobaGuessr`), use one of these options:
+
+1. Right click `backend/mutation-test/index.html` in VS Code and choose Open with Live Server (if the extension is installed).
+2. Right click `backend/mutation-test/index.html` and choose Reveal in File Explorer, then open the file in your browser.
