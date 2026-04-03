@@ -98,3 +98,12 @@ pitest {
 
 	excludedMethods = ['markGuessAsInvalid']			// exclude method, equivalent mutant occurs here that can't be killed by a test
 }
+
+tasks.register('syncPitestReport', Copy) {
+	from layout.buildDirectory.dir('reports/pitest')
+	into layout.projectDirectory.dir('mutation-test')
+}
+
+tasks.named('pitest') {
+	finalizedBy tasks.named('syncPitestReport')
+}
