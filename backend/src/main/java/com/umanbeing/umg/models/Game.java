@@ -2,11 +2,10 @@ package com.umanbeing.umg.models;
 
 import com.umanbeing.umg.domain.GameState;
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
-
 import java.util.ArrayList;
 import java.util.List;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * Represents a game entity with user association, game state tracking, and round management. This
@@ -54,7 +53,7 @@ public class Game {
   private Integer currentRoundNumber;
 
   @Column(name = "\"score\"", nullable = false)
-  private Integer score; // cant we just sum the guess scores?
+  private Integer score;
 
   @OneToMany(
       mappedBy = "game",
