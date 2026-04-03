@@ -9,25 +9,27 @@ import static org.mockito.Mockito.mock;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import static org.mockito.ArgumentMatchers.any;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.BadCredentialsException;
-
-import com.umanbeing.umg.models.User;
-import com.umanbeing.umg.repos.UserRepo;
-import com.umanbeing.umg.services.JwtService;
-import com.umanbeing.umg.services.AuthService;
 import com.umanbeing.umg.controllers.dto.CreateAccountRequest;
 import com.umanbeing.umg.controllers.dto.LoginRequest;
 import com.umanbeing.umg.controllers.dto.LoginResponse;
 import com.umanbeing.umg.controllers.dto.SignUpResponse;
 import com.umanbeing.umg.controllers.mappers.AuthMapper;
+import com.umanbeing.umg.models.User;
+import com.umanbeing.umg.repos.UserRepo;
+import com.umanbeing.umg.services.AuthService;
+import com.umanbeing.umg.services.JwtService;
 
 @ExtendWith(MockitoExtension.class)
 class AuthServiceTest {
@@ -202,67 +204,153 @@ class AuthServiceTest {
     }
 
     @Test
-    void registerUser_passwordAtMaxLength_isAccepted() {
-        String email = "maxpwd@example.com";
-        String password = "Pass1234567890123456"; // 20 chars
-        String username = "maxpwduser";
+    void registerUser_passwordBelowMinimumLength_throwsIllegalArgumentException() {
+        String email = "test@example.com";
+        String password = "1234567";
+        String username = "testuser";
 
         CreateAccountRequest testCreateAccountRequest = new CreateAccountRequest(username, email, password);
 
-        User saved = new User();
-        saved.setEmail(email);
-        saved.setUsername(username);
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
+            authService.registerUser(testCreateAccountRequest);
+        });
 
-        when(userRepo.findByUsername(username)).thenReturn(java.util.Optional.empty());
+        assertEquals("Password must be at least 8 characters long", exception.getMessage());
+    }
+
+    @Test
+    void registerUser_passwordAtMinimumLength_returnsSuccessMessage() {
+        String email = "test@example.com";
+        String password = "12345678";
+        String username = "testuser";
+
+        CreateAccountRequest testCreateAccountRequest = new CreateAccountRequest(username, email, password);
+
+        User user = new User();
+        user.setEmail(email);
+        user.setUsername(username);
+        user.setPasswordHash("encodedPassword");
+
         when(userRepo.findByEmail(email)).thenReturn(java.util.Optional.empty());
         when(passwordEncoder.encode(any(String.class))).thenReturn("encodedPassword");
-        when(userRepo.save(any(User.class))).thenReturn(saved);
+        when(userRepo.save(any(User.class))).thenReturn(user);
 
-        SignUpResponse result = assertDoesNotThrow(() -> authService.registerUser(testCreateAccountRequest));
+        SignUpResponse result = authService.registerUser(testCreateAccountRequest);
+
         assertEquals("User registered successfully", result.message());
         assertEquals(username, result.name());
     }
 
     @Test
-    void registerUser_usernameAtMinLength_isAccepted() {
-        String email = "minuser@example.com";
-        String password = "ValidPass123";
-        String username = "abc"; // 3 chars
+    void registerUser_passwordAboveMaximumLength_throwsIllegalArgumentException() {
+        String email = "test@example.com";
+        String password = "123456789012345678901"; // 21 characters
+        String username = "testuser";
 
         CreateAccountRequest testCreateAccountRequest = new CreateAccountRequest(username, email, password);
 
-        User saved = new User();
-        saved.setEmail(email);
-        saved.setUsername(username);
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
+            authService.registerUser(testCreateAccountRequest);
+        });
 
-        when(userRepo.findByUsername(username)).thenReturn(java.util.Optional.empty());
+        assertEquals("Password must be less than 20 characters long", exception.getMessage());
+    }
+
+    @Test
+    void registerUser_passwordAtMaximumLength_returnsSuccessMessage() {
+        String email = "test@example.com";
+        String password = "12345678901234567890"; // 20 characters
+        String username = "testuser";
+
+        CreateAccountRequest testCreateAccountRequest = new CreateAccountRequest(username, email, password);
+
+        User user = new User();
+        user.setEmail(email);
+        user.setUsername(username);
+        user.setPasswordHash("encodedPassword");
+
         when(userRepo.findByEmail(email)).thenReturn(java.util.Optional.empty());
         when(passwordEncoder.encode(any(String.class))).thenReturn("encodedPassword");
-        when(userRepo.save(any(User.class))).thenReturn(saved);
+        when(userRepo.save(any(User.class))).thenReturn(user);
 
-        SignUpResponse result = assertDoesNotThrow(() -> authService.registerUser(testCreateAccountRequest));
+        SignUpResponse result = authService.registerUser(testCreateAccountRequest);
+
         assertEquals("User registered successfully", result.message());
         assertEquals(username, result.name());
     }
 
     @Test
-    void registerUser_usernameAtMaxLength_isAccepted() {
-        String email = "maxuser@example.com";
-        String password = "ValidPass123";
-        String username = "abcdefghijklmnopqrst"; // 20 chars
+    void registerUser_usernameBelowMinimumLength_throwsIllegalArgumentException() {
+        String email = "test@example.com";
+        String password = "password";
+        String username = "ab";
 
         CreateAccountRequest testCreateAccountRequest = new CreateAccountRequest(username, email, password);
 
-        User saved = new User();
-        saved.setEmail(email);
-        saved.setUsername(username);
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
+            authService.registerUser(testCreateAccountRequest);
+        });
 
-        when(userRepo.findByUsername(username)).thenReturn(java.util.Optional.empty());
+        assertEquals("Username must be at least 3 characters long", exception.getMessage());
+    }
+
+    @Test
+    void registerUser_usernameAtMinimumLength_returnsSuccessMessage() {
+        String email = "test@example.com";
+        String password = "password";
+        String username = "abc";
+
+        CreateAccountRequest testCreateAccountRequest = new CreateAccountRequest(username, email, password);
+
+        User user = new User();
+        user.setEmail(email);
+        user.setUsername(username);
+        user.setPasswordHash("encodedPassword");
+
         when(userRepo.findByEmail(email)).thenReturn(java.util.Optional.empty());
         when(passwordEncoder.encode(any(String.class))).thenReturn("encodedPassword");
-        when(userRepo.save(any(User.class))).thenReturn(saved);
+        when(userRepo.save(any(User.class))).thenReturn(user);
 
-        SignUpResponse result = assertDoesNotThrow(() -> authService.registerUser(testCreateAccountRequest));
+        SignUpResponse result = authService.registerUser(testCreateAccountRequest);
+
+        assertEquals("User registered successfully", result.message());
+        assertEquals(username, result.name());
+    }
+
+    @Test
+    void registerUser_usernameAboveMaximumLength_throwsIllegalArgumentException() {
+        String email = "test@example.com";
+        String password = "password";
+        String username = "123456789012345678901"; // 21 characters
+
+        CreateAccountRequest testCreateAccountRequest = new CreateAccountRequest(username, email, password);
+
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
+            authService.registerUser(testCreateAccountRequest);
+        });
+
+        assertEquals("Username must be less than 20 characters long", exception.getMessage());
+    }
+
+    @Test
+    void registerUser_usernameAtMaximumLength_returnsSuccessMessage() {
+        String email = "test@example.com";
+        String password = "password";
+        String username = "12345678901234567890"; // 20 characters
+
+        CreateAccountRequest testCreateAccountRequest = new CreateAccountRequest(username, email, password);
+
+        User user = new User();
+        user.setEmail(email);
+        user.setUsername(username);
+        user.setPasswordHash("encodedPassword");
+
+        when(userRepo.findByEmail(email)).thenReturn(java.util.Optional.empty());
+        when(passwordEncoder.encode(any(String.class))).thenReturn("encodedPassword");
+        when(userRepo.save(any(User.class))).thenReturn(user);
+
+        SignUpResponse result = authService.registerUser(testCreateAccountRequest);
+
         assertEquals("User registered successfully", result.message());
         assertEquals(username, result.name());
     }
@@ -284,7 +372,7 @@ class AuthServiceTest {
     @Test
     void loadUserByUsername_userFound_returnsUserDetails() {
         String email = "test@example.com";
-        String password = "testPassword";
+        String password = "password";
         User user = new User();
         user.setEmail(email);
         user.setPasswordHash(password);

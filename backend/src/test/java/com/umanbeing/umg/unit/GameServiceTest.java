@@ -612,7 +612,7 @@ class GameServiceTest {
     }
 
     @Test
-    void getUserStats_whenGameStatsMissing_throwsNotFound_andSkipsRoundStatsLookup() {
+    void getUserStats_whenGameStatsMissing_throwsNotFoundAndSkipsRoundStatsLookup() {
         Long userId = 3L;
 
         when(gameRepo.getUserGameStats(userId)).thenReturn(null);
@@ -623,8 +623,10 @@ class GameServiceTest {
         );
 
         assertEquals(HttpStatus.NOT_FOUND, exception.getStatusCode());
+        assertEquals("User game stats not found", exception.getReason());
+
         verify(gameRepo).getUserGameStats(userId);
-        verify(gameRepo, never()).getUserRoundStats(userId);
+        verify(gameRepo, org.mockito.Mockito.never()).getUserRoundStats(userId);
     }
 
     @Test
