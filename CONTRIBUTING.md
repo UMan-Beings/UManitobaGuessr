@@ -9,6 +9,15 @@ Please read the resources below. This document explains how we apply them in thi
 - cbeams commit message style (not Conventional Commits)  
   https://cbea.ms/git-commit/
 
+- Google Java style guide  
+  https://google.github.io/styleguide/javaguide.html
+
+- Vue style guide  
+  https://vuejs.org/style-guide/
+
+- Vuetify ESLint configuration for frontend code style enforcement  
+  https://github.com/vuetifyjs/eslint-config-vuetify  
+
 ## Workflow
 
 ### Steps
