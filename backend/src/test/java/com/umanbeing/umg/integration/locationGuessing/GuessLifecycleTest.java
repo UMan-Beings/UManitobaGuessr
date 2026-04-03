@@ -1,38 +1,22 @@
 package com.umanbeing.umg.integration.locationGuessing;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.umanbeing.umg.controllers.dto.CreateGameRequest;
-import com.umanbeing.umg.controllers.dto.MakeGuessRequest;
-import com.umanbeing.umg.integration.base.PostgresIntegrationTestBase;
 import java.math.BigDecimal;
+
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.umanbeing.umg.controllers.dto.CreateGameRequest;
+import com.umanbeing.umg.controllers.dto.MakeGuessRequest;
+import com.umanbeing.umg.integration.base.PostgresIntegrationTestBase;
+
 class GuessLifecycleTest extends PostgresIntegrationTestBase {
 
     @Test
-    void guessReturns_revealPayload() throws Exception {
-        long gameId = createGameForTest(5, 60);
-
-        String requestJson = objectMapper.writeValueAsString(buildValidGuess(30L));
-
-        mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/games/{gameId}/guess", gameId)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(requestJson))
-                .andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.phase").value("REVEAL"))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.guessedX").value(100))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.guessedY").value(200))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.actualX").exists())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.actualY").exists())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.scoreReceived").exists());
-    }
-
-    @Test
-    void guessPhaseTransition_andPayload() throws Exception {    
+    void makeGuess_validGuess_returnsGuessPhaseAndPayload() throws Exception {    
         long gameId = createGameForTest(5, 60);
 
         String guessJson = objectMapper.writeValueAsString(buildValidGuess(20L));
