@@ -11,7 +11,7 @@ import com.umanbeing.umg.services.GameService;
 import com.umanbeing.umg.services.UserService;
 import java.util.HashMap;
 import java.util.Map;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -29,12 +29,13 @@ import org.springframework.web.server.ResponseStatusException;
  * operations.
  */
 @RestController
+@AllArgsConstructor
 @RequestMapping("/api/v1")
 public class GameController {
 
-  @Autowired private GameService gameService;
+  private final GameService gameService;
 
-  @Autowired private UserService userService;
+  private final UserService userService;
 
   private static final String JSON_GAME_ID = "gameId";
   private static final String JSON_PHASE = "phase";
@@ -50,7 +51,7 @@ public class GameController {
   private static final String JSON_SCORE_RECEIVED = "scoreReceived";
   private static final String JSON_GUESS_TIME_SECONDS = "guessTimeSeconds";
 
-  // Implement the game creation logic here
+  // Game creation logic
   // Return game ID, initial game state (GUESS phase)
   // Receive total rounds, count down seconds, and user ID as parameters
   @RequestMapping(value = "/games", method = RequestMethod.POST)
@@ -71,7 +72,7 @@ public class GameController {
     return ResponseEntity.ok(response);
   }
 
-  // Implement the game update logic here
+  // Game retrieval logic
   // Return the current game state (GUESS phase, REVEAL phase, or FINISHED)
   @RequestMapping(value = "/games/{gameId}", method = RequestMethod.GET)
   public ResponseEntity<Map<String, Object>> getGameById(
@@ -102,7 +103,7 @@ public class GameController {
     return ResponseEntity.ok(response);
   }
 
-  // Implement the guess submission logic here
+  // Game guess submission logic
   // Return the result of the guess (actual location, score for the round, and updated game state)
   @RequestMapping(value = "/games/{gameId}/guess", method = RequestMethod.POST)
   public ResponseEntity<Map<String, Object>> makeGuess(
@@ -131,6 +132,8 @@ public class GameController {
     return ResponseEntity.ok(response);
   }
 
+  // Game timeout logic
+  // Return the result of the timeout (actual location, score for the round, and updated game state)
   @RequestMapping(value = "/games/{gameId}/timeout", method = RequestMethod.POST)
   public ResponseEntity<Map<String, Object>> timeout(
       @PathVariable("gameId") Long gameId, Authentication authentication) {
@@ -152,9 +155,8 @@ public class GameController {
     return ResponseEntity.ok(response);
   }
 
-  // Implement the logic to move to the next round here
-  // Return the new game state (GUESS phase for the next round, or FINISHED if it was the last
-  // round)
+  // Game round logic
+  // Return the result of the next round (updated game state, score, and image URL)
   @RequestMapping(value = "/games/{gameId}/next", method = RequestMethod.POST)
   public ResponseEntity<Map<String, Object>> requestNextRound(
       @PathVariable("gameId") Long gameId, Authentication authentication) {
