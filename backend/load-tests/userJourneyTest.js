@@ -5,9 +5,11 @@
 
 import http from 'k6/http';
 import { check, sleep } from 'k6';
+import { textSummary } from 'https://jslib.k6.io/k6-summary/0.1.0/index.js';
 
 const VU_COUNT = 40;  // concurrent virtual users
 const BASE_URL = __ENV.K6_BASE_URL;
+const RESULTS_FILE = __ENV.K6_RESULTS_FILE || 'load-tests/userJourney-results.txt';
 
 // Seeded test location (from backend test data)
 const SEEDED_LOCATION_X = 49.8951;
@@ -128,4 +130,13 @@ export default function userJourney() {
   );
   check(statsResponse, { 'stats 200': response => response.status === 200 });
   sleep(1);
+}
+
+export function handleSummary(data) {
+  const summary = textSummary(data, { indent: ' ', enableColors: true });
+
+  return {
+    [RESULTS_FILE]: summary,
+    stdout: summary,
+  };
 }
