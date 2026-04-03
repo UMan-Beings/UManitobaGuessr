@@ -441,10 +441,7 @@ Prerequisites:
 2. Docker Compose installed and running
 3. Backend stack accessible
 
-References:
 
-- Test file location: `backend/load-tests/userJourneyTest.js`
-- Detailed load-test documentation: `backend/load-tests/README.md`
 
 The test covers authentication, game creation, guessing, round progression, and player stats in one flow.
 
@@ -460,8 +457,12 @@ Current thresholds:
 - `http_req_failed`: `rate<0.05`
 - `http_reqs`: `rate>3.33` (200 requests/minute target)
 
+The most recent load test summary is saved in [`backend/load-tests/userJourney-results.txt`](backend/load-tests/userJourney-results.txt).
+
 To run k6 from the same terminal, start Docker Compose in detached mode (`up -d`).
 If Compose is running in foreground mode, use a second/split terminal for k6.
+
+Run the docker-compose commands below from the repository root (`UManitobaGuessr`), as the docker-compose files are in the root.
 
 Step by step workflow:
 
@@ -484,7 +485,7 @@ docker-compose -f docker-compose.prod.yaml -p umg_prod up -d --build
 docker ps --filter name=umg
 ```
 
-3. Run the load test from project root:
+3. Run the load test from the repository root:
 
 ```bash
 # Run with Dev environment(port 3000)

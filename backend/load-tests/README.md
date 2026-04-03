@@ -25,9 +25,11 @@ This keeps feature dependencies realistic under concurrent load instead of testi
 
 ## Run Commands
 
-Run from this folder: `backend/load-tests`
+Run from the repository root: `UManitobaGuessr`
 
 Step by step workflow:
+
+Run the docker-compose commands below from the repository root (`UManitobaGuessr`), as the docker-compose files are in the root.
 
 1. Start one target stack in detached mode (`up -d`):
 
@@ -48,14 +50,14 @@ docker-compose -f docker-compose.prod.yaml -p umg_prod up -d --build
 docker ps --filter name=umg
 ```
 
-3. Run the load test:
+3. Run the load test from the repository root:
 
 ```bash
 # Dev compose path (frontend proxy on port 3000)
-K6_BASE_URL=http://localhost:3000/api/v1 k6 run userJourneyTest.js
+K6_BASE_URL=http://localhost:3000/api/v1 k6 run backend/load-tests/userJourneyTest.js
 
 # Users or prod compose path (nginx/proxy on port 7000)
-K6_BASE_URL=http://localhost:7000/api/v1 k6 run userJourneyTest.js
+K6_BASE_URL=http://localhost:7000/api/v1 k6 run backend/load-tests/userJourneyTest.js
 ```
 
 4. Stop the selected stack when done:
@@ -94,3 +96,5 @@ Configured in userJourneyTest.js:
 1. Each virtual user creates a unique account on first iteration, then reuses its token.
 2. The test uses seeded coordinates and a fixed guess offset for gameplay requests.
 3. Current script checks for HTTP 200 and required response fields (token, gameId).
+4. The summary is written to the file specified by `K6_RESULTS_FILE` and uses the same text format as the console output.
+5. The most recent load test summary is saved in this folder at [`userJourney-results.txt`](./userJourney-results.txt).

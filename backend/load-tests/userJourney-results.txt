@@ -1,0 +1,26 @@
+     ✓ signup 200
+     ✓ login 200
+     ✓ token present
+     ✓ game 200
+     ✓ gameId present
+     ✓ guess 200
+     ✓ next round 200
+     ✓ stats 200
+
+     checks.........................: 100.00% ✓ 8500      ✗ 0   
+     data_received..................: 3.5 MB  29 kB/s
+     data_sent......................: 2.6 MB  22 kB/s
+     http_req_blocked...............: avg=2.73µs  min=0s     med=0s     max=1.17ms  p(90)=0s      p(95)=0s     
+     http_req_connecting............: avg=1.95µs  min=0s     med=0s     max=798µs   p(90)=0s      p(95)=0s     
+   ✓ http_req_duration..............: avg=6.97ms  min=2.15ms med=6.48ms max=96.96ms p(90)=8.34ms  p(95)=9.24ms 
+       { expected_response:true }...: avg=6.97ms  min=2.15ms med=6.48ms max=96.96ms p(90)=8.34ms  p(95)=9.24ms 
+   ✓ http_req_failed................: 0.00%   ✓ 0         ✗ 6784
+     http_req_receiving.............: avg=61.88µs min=0s     med=0s     max=1.63ms  p(90)=514.1µs p(95)=530.4µs
+     http_req_sending...............: avg=1.57µs  min=0s     med=0s     max=804.5µs p(90)=0s      p(95)=0s     
+     http_req_tls_handshaking.......: avg=0s      min=0s     med=0s     max=0s      p(90)=0s      p(95)=0s     
+     http_req_waiting...............: avg=6.91ms  min=2.01ms med=6.4ms  max=96.4ms  p(90)=8.29ms  p(95)=9.18ms 
+   ✓ http_reqs......................: 6784    55.633409/s
+     iteration_duration.............: avg=2.54s   min=2.52s  med=2.52s  max=3.21s   p(90)=2.52s   p(95)=2.53s  
+     iterations.....................: 1676    13.744339/s
+     vus............................: 1       min=1       max=40
+     vus_max........................: 40      min=40      max=40

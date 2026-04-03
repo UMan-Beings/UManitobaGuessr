@@ -626,7 +626,7 @@ class GameServiceTest {
         assertEquals("User game stats not found", exception.getReason());
 
         verify(gameRepo).getUserGameStats(userId);
-        verify(gameRepo, org.mockito.Mockito.never()).getUserRoundStats(userId);
+        verify(gameRepo, never()).getUserRoundStats(userId);
     }
 
     @Test

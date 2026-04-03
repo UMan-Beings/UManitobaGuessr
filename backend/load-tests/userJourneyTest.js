@@ -1,7 +1,9 @@
-// Virtual users follow this flow: signup (once) -> create game -> make guess -> check stats -> advance round (repeated)
-// This integrated test validates the system under realistic 40 (changeable) user concurrent load generating 200+ requests per minute
-// Endpoints: POST /api/v1/auth/signup, POST /api/v1/auth/login, POST /api/v1/games, 
-//            POST /api/v1/games/{gameId}/guess, GET /api/v1/users/me/stats, POST /api/v1/games/{gameId}/next
+/** 
+* Virtual users follow this flow: signup (once) -> create game -> make guess -> check stats -> advance round (repeated)
+* This integrated test validates the system under realistic 40 (changeable) user concurrent load generating 200+ requests per minute
+* Endpoints: POST /api/v1/auth/signup, POST /api/v1/auth/login, POST /api/v1/games, 
+*           POST /api/v1/games/{gameId}/guess, GET /api/v1/users/me/stats, POST /api/v1/games/{gameId}/next 
+*/
 
 import http from 'k6/http';
 import { check, sleep } from 'k6';
@@ -9,7 +11,7 @@ import { textSummary } from 'https://jslib.k6.io/k6-summary/0.1.0/index.js';
 
 const VU_COUNT = 40;  // concurrent virtual users
 const BASE_URL = __ENV.K6_BASE_URL;
-const RESULTS_FILE = __ENV.K6_RESULTS_FILE || 'load-tests/userJourney-results.txt';
+const RESULTS_FILE = 'backend/load-tests/userJourney-results.txt';
 
 // Seeded test location (from backend test data)
 const SEEDED_LOCATION_X = 49.8951;
@@ -37,7 +39,7 @@ export default function userJourney() {
   // On the first iteration for each virtual user, create a unique account and store its token.
   if (__ITER === 0) {
     const uniqueId = `vu${__VU}_${Date.now()}`;
-    const email = `${uniqueId}@test.local`;
+    const email = `${uniqueId}@example.com`;
     const password = 'TestPassword123!';
 
     // Create a unique test account for this virtual user.
@@ -52,7 +54,11 @@ export default function userJourney() {
         headers: { 'Content-Type': 'application/json' }
       }
     );
-    check(signupResponse, {'signup 200': response => response.status === 200 });
+    
+    // Check that the signup request succeeded (status 200)
+    check(signupResponse, {
+      'signup 200': response => response.status === 200
+    });
 
     // Log in with the newly created account and capture the auth token.
     const loginResponse = http.post(
@@ -63,16 +69,17 @@ export default function userJourney() {
       }
     );
 
+    // check that the login request succeeded and that a token was returned
     check(loginResponse, {
       'login 200': response => response.status === 200,
       'token present': response => response.json('token') != null
     });
+
     authToken = loginResponse.json('token');
     sleep(0.5);
   }
 
   // Phase 2: Create a game.
-  // Create a new game for this iteration so the request pattern matches a real session.
   const gameResponse = http.post(
     `${BASE_URL}/games`,
     JSON.stringify({
@@ -84,6 +91,7 @@ export default function userJourney() {
     }
   );
 
+  // Check if game creation succeeded and that a gameId was returned
   check(gameResponse, {
     'game 200': response => response.status === 200,
     'gameId present': response => response.json('gameId') != null
@@ -93,7 +101,6 @@ export default function userJourney() {
   sleep(0.5);
 
   // Phase 3: Submit a guess.
-  // Submit a guess against the seeded location, offset by 100 units.
   const guessResponse = http.post(
     `${BASE_URL}/games/${currentGameId}/guess`,
     JSON.stringify({
@@ -105,11 +112,14 @@ export default function userJourney() {
       headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${authToken}` }
     }
   );
-  check(guessResponse, { 'guess 200': response => response.status === 200 });
+
+  // Check if guess submission succeeded
+  check(guessResponse, {
+    'guess 200': response => response.status === 200
+  });
   sleep(0.5);
 
   // Phase 4: Advance to the next round.
-  // Advance the game to the next round after the guess has been submitted.
   const nextResponse = http.post(
     `${BASE_URL}/games/${currentGameId}/next`,
     '{}',
@@ -117,26 +127,35 @@ export default function userJourney() {
       headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${authToken}` }
     }
   );
-  check(nextResponse, { 'next round 200': response => response.status === 200 });
+
+  // Check if next round advancement succeeded
+  check(nextResponse, {
+    'next round 200': response => response.status === 200
+  });
   sleep(0.5);
 
   // Phase 5: Fetch player statistics.
-  // Fetch player stats at the end of the loop to confirm user progress is recorded.
   const statsResponse = http.get(
     `${BASE_URL}/users/me/stats`,
     {
       headers: { 'Authorization': `Bearer ${authToken}` }
     }
   );
-  check(statsResponse, { 'stats 200': response => response.status === 200 });
+
+  // Check if stats fetch succeeded
+  check(statsResponse, {
+    'stats 200': response => response.status === 200
+  });
   sleep(1);
 }
 
+// Summary handler
 export function handleSummary(data) {
-  const summary = textSummary(data, { indent: ' ', enableColors: true });
-
   return {
-    [RESULTS_FILE]: summary,
-    stdout: summary,
+    // Save a plain-text file without colors for readability
+    [RESULTS_FILE]: textSummary(data, { indent: ' ', enableColors: false }),
+
+    // Print a terminal summary with colors
+    stdout: textSummary(data, { indent: ' ', enableColors: true }),
   };
 }
