@@ -2,34 +2,31 @@ package com.umanbeing.umg.unit;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.mockito.Mockito.when;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import static org.mockito.ArgumentMatchers.any;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
+
+import com.umanbeing.umg.models.User;
+import com.umanbeing.umg.repos.UserRepo;
+import com.umanbeing.umg.services.JwtService;
+import com.umanbeing.umg.services.AuthService;
 import com.umanbeing.umg.controllers.dto.CreateAccountRequest;
 import com.umanbeing.umg.controllers.dto.LoginRequest;
 import com.umanbeing.umg.controllers.dto.LoginResponse;
 import com.umanbeing.umg.controllers.dto.SignUpResponse;
 import com.umanbeing.umg.controllers.mappers.AuthMapper;
-import com.umanbeing.umg.models.User;
-import com.umanbeing.umg.repos.UserRepo;
-import com.umanbeing.umg.services.AuthService;
-import com.umanbeing.umg.services.JwtService;
 
 @ExtendWith(MockitoExtension.class)
 class AuthServiceTest {
