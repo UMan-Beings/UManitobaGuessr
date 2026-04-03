@@ -3,7 +3,7 @@ package com.umanbeing.umg.configs;
 import com.umanbeing.umg.filters.JwtFilter;
 import com.umanbeing.umg.services.JwtService;
 import jakarta.servlet.http.HttpServletResponse;
-import lombok.AllArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -29,12 +29,11 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
  */
 @Configuration
 @EnableWebSecurity
-@AllArgsConstructor
 public class SecurityConfig {
 
-  private UserDetailsService userDetailsService;
+  @Autowired private UserDetailsService userDetailsService;
 
-  private final JwtService jwtService;
+  @Autowired private JwtService jwtService;
 
   /**
    * Bean definition for JwtFilter. It is a custom filter that get injected into a filter chain
