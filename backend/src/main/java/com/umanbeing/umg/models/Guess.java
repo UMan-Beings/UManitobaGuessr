@@ -1,10 +1,9 @@
 package com.umanbeing.umg.models;
 
 import jakarta.persistence.*;
+import java.math.BigDecimal;
 import lombok.Getter;
 import lombok.Setter;
-
-import java.math.BigDecimal;
 
 /**
  * Represents a guess made by a user in a round. This class is mapped to the "GUESS" table in the

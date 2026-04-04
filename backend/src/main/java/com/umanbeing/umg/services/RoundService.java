@@ -19,7 +19,6 @@ public class RoundService {
   private final RoundRepo roundRepo;
   private final LocationService locationService;
 
-
   /**
    * Creates rounds for a given game by selecting random locations and associating them with the
    * game.
