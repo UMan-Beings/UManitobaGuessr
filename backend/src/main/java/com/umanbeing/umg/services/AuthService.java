@@ -9,8 +9,8 @@ import com.umanbeing.umg.models.User;
 import com.umanbeing.umg.repos.UserRepo;
 import java.util.Collections;
 import java.util.Optional;
-import lombok.AllArgsConstructor;
 import org.jspecify.annotations.NonNull;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -30,16 +30,15 @@ import org.springframework.stereotype.Component;
  * generation.
  */
 @Component
-@AllArgsConstructor
 public class AuthService implements UserDetailsService {
 
-  private final UserRepo userRepo;
+  @Autowired private UserRepo userRepo;
 
-  @Lazy private final AuthenticationManager authenticationManager;
+  @Lazy @Autowired private AuthenticationManager authenticationManager;
 
-  private final JwtService tokenService;
+  @Autowired private JwtService tokenService;
 
-  @Lazy private final PasswordEncoder passwordEncoder;
+  @Lazy @Autowired private PasswordEncoder passwordEncoder;
 
 
   /**
