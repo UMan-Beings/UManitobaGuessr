@@ -93,9 +93,9 @@ jobs:
 
       # step 6: SonarQubeCloud analysis via Gradle (ensures Java classpath/libraries are provided)
       - name: Run SonarQubeCloud analysis
-        working-directory: backend
         run: >
-          ./gradlew sonarqube --no-daemon
+          ./backend/gradlew -p backend sonar --no-daemon
+          -Dsonar.projectBaseDir=${{ github.workspace }}
           -Dsonar.organization=${{ secrets.SONAR_ORGANIZATION }}
           -Dsonar.token=${{ secrets.SONAR_TOKEN }}
           -Dsonar.host.url=https://sonarcloud.io

@@ -70,10 +70,10 @@ dependencies {
 sonar {
 	properties {
 		property 'sonar.projectKey', 'UMan-Beings_UManitobaGuessr'
-		property 'sonar.sources', 'src/main,../web/src'
-		property 'sonar.exclusions', '**/node_modules/**,**/dist/**,**/build/**,**/.gradle/**,**/gradle/**,../docs/**'
-		property 'sonar.coverage.jacoco.xmlReportPaths', 'build/reports/jacoco/test/jacocoTestReport.xml'
-		property 'sonar.typescript.tsconfigPaths', '../web/tsconfig.json'
+		property 'sonar.sources', 'backend/src/main,web/src'
+		property 'sonar.exclusions', '**/node_modules/**,**/dist/**,**/build/**,**/.gradle/**,**/gradle/**,docs/**'
+		property 'sonar.coverage.jacoco.xmlReportPaths', 'backend/build/reports/jacoco/test/jacocoTestReport.xml'
+		property 'sonar.typescript.tsconfigPaths', 'web/tsconfig.json'
 	}
 }
 
