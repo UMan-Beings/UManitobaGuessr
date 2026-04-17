@@ -46,7 +46,22 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v6
         with:
-          fetch-depth: 1 
+          fetch-depth: 0
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: 22
+
+      - name: Set up pnpm
+        uses: pnpm/action-setup@v5
+        with:
+          version: 9
+          run_install: false
+
+      - name: Install frontend dependencies for Sonar
+        working-directory: web
+        run: pnpm install --frozen-lockfile
 
       # step 2: set up java 21 and cache gradle
       - name: Set up Java 21 and cache Gradle
@@ -76,15 +91,16 @@ jobs:
         working-directory: backend
         run: ./gradlew build --no-daemon
 
-      # step 6: SonarQubeCloud analysis (PRs, pushes to main, and manual runs)
-      - name: Run SonarQubeCloud scan
-        uses: SonarSource/sonarqube-scan-action@v7
-        with:
-          args: -Dsonar.organization=${{ secrets.SONAR_ORGANIZATION }}
+      # step 6: SonarQubeCloud analysis via Gradle (ensures Java classpath/libraries are provided)
+      - name: Run SonarQubeCloud analysis
+        working-directory: backend
+        run: >
+          ./gradlew sonarqube --no-daemon
+          -Dsonar.organization=${{ secrets.SONAR_ORGANIZATION }}
+          -Dsonar.token=${{ secrets.SONAR_TOKEN }}
+          -Dsonar.host.url=https://sonarcloud.io
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-          SONAR_HOST_URL: https://sonarcloud.io
 
   # build frontend container in CI, don't publish it.
   build-frontend-container:

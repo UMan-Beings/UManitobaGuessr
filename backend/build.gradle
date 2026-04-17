@@ -4,6 +4,7 @@ plugins {
 	id 'info.solidsoft.pitest' version '1.19.0-rc.3'
 	id 'org.springframework.boot' version '4.0.2'
 	id 'io.spring.dependency-management' version '1.1.7'
+	id 'org.sonarqube' version '7.2.3.7755'
 }
 
 group = 'com.umanbeing'
@@ -64,6 +65,16 @@ dependencies {
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 	testImplementation 'org.postgresql:postgresql:42.3.1'
 	pitest 'org.pitest:pitest-junit5-plugin:1.2.3'
+}
+
+sonar {
+	properties {
+		property 'sonar.projectKey', 'UMan-Beings_UManitobaGuessr'
+		property 'sonar.sources', 'src/main,../web/src'
+		property 'sonar.exclusions', '**/node_modules/**,**/dist/**,**/build/**,**/.gradle/**,**/gradle/**,../docs/**'
+		property 'sonar.coverage.jacoco.xmlReportPaths', 'build/reports/jacoco/test/jacocoTestReport.xml'
+		property 'sonar.typescript.tsconfigPaths', '../web/tsconfig.json'
+	}
 }
 
 tasks.named('test') {
