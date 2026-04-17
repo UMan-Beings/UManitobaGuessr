@@ -45,6 +45,8 @@ jobs:
       # step 1: checkout repository
       - name: Checkout repository
         uses: actions/checkout@v6
+        with:
+          fetch-depth: 1 
 
       # step 2: set up java 21 and cache gradle
       - name: Set up Java 21 and cache Gradle
@@ -74,9 +76,8 @@ jobs:
         working-directory: backend
         run: ./gradlew build --no-daemon
 
-      # step 6: SonarQubeCloud analysis (PRs only)
+      # step 6: SonarQubeCloud analysis (PRs, pushes to main, and manual runs)
       - name: Run SonarQubeCloud scan
-        if: github.event_name == 'pull_request'
         uses: SonarSource/sonarqube-scan-action@v7
         with:
           args: -Dsonar.organization=${{ secrets.SONAR_ORGANIZATION }}
