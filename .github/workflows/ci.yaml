@@ -95,7 +95,7 @@ jobs:
       - name: Run SonarQubeCloud analysis
         working-directory: backend
         run: >
-          ./gradlew sonarqube --no-daemon
+          ./gradlew sonar --no-daemon
           -Dsonar.organization=${{ secrets.SONAR_ORGANIZATION }}
           -Dsonar.token=${{ secrets.SONAR_TOKEN }}
           -Dsonar.host.url=https://sonarcloud.io
