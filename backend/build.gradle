@@ -98,6 +98,10 @@ tasks.named('check') {
 	dependsOn tasks.named('jacocoTestReport')
 }
 
+tasks.named('sonar') {
+	dependsOn tasks.named('jacocoTestReport')
+}
+
 pitest {
 	targetClasses = ['com.umanbeing.umg.services.*']	// where to inject mutations
 	targetTests = ['com.umanbeing.umg.*Test']			// run only tests ending with "Test"
